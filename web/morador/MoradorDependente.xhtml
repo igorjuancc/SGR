@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/MoradorTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Morador - Dependente</ui:define>
+    <ui:define name="conteudo">
+        <h:form id="tabela">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Dependentes</h2><br />        
+                <p:growl id="msg"  showDetail="false" />     
+                <div style="text-align: right">
+                    <p:commandButton value="Novo Dependente" oncomplete="PF('divDependente').show()" update="divDependente" style="font-size: medium" />
+                </div><br />
+                <p:dataTable value="#{dependenteMB.dependentes}" var="dependente" emptyMessage="Nenhum dependente encontrado."
+                             paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                    <p:column headerText="Imagem" style="text-align: center" width="120" sortBy="#{dependente.id}">
+                        <p:graphicImage value="/ImagemPessoa/#{dependente.imagem.id}#{dependente.imagem.extensao}" height="150" width="120" style="#{dependente.status == 4 ? 'filter: grayscale(100%)' : ''}" rendered="#{dependente.imagem != null}" />                               
+                        <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{dependente.imagem == null}"/> 
+                    </p:column> 
+                    <p:column headerText="Nome" width="190" sortBy="#{dependente.nome}">
+                        <h:outputText value="#{dependente.nome}"/>                                
+                    </p:column>            
+                    <p:column headerText="Email" width="190" sortBy="#{dependente.email}">
+                        <h:outputText value="#{dependente.email}"/>                                
+                    </p:column> 
+                    <p:column headerText="Editar" style="text-align: center; width: 5vw;"> 
+                        <p:commandButton icon="ui-icon-pencil" action="#{dependenteMB.setEditDependente(dependente)}" update="novoDependenteForm" oncomplete="PF('divDependente').show()" style="font-size: small" />                 
+                    </p:column>  
+                    <p:column headerText="Acesso" style="text-align: center" sortBy="#{dependente.status}"> 
+                        <p:selectOneButton value="#{dependente.status}" required="true" requiredMessage="Necessário definir o acesso do dependente" style="font-size: small" >
+                            <f:selectItem itemLabel="Liberado" itemValue="1" />
+                            <f:selectItem itemLabel="Bloqueado" itemValue="4" /> 
+                            <p:ajax event="change" update="tabela" listener="#{dependenteMB.atualizarStatusDependente(dependente)}" />
+                        </p:selectOneButton>                     
+                    </p:column>
+                    <p:column headerText="Excluir" style="text-align: center; width: 5vw;">
+                        <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small">
+                            <p:ajax event="click" listener="#{dependenteMB.removerDependente(dependente)}" update="tabela" />
+                            <p:confirm header="Remover" message="Remover dependente?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>                      
+                    </p:column>
+                </p:dataTable> 
+            </p:panel>
+        </h:form>
+        <ui:include src="formulario/MoradorFormularioDependente.xhtml" /> 
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,269 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/SindicoTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Sindico - Acesso Morador</ui:define>
+    <ui:define name="conteudo">        
+        <h:form id="dados">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Acesso Moradores</h2> 
+                <p:outputPanel id="panelMsg">
+                    <p:messages showDetail="false"  closable="true" escape="false" />
+                    <p:growl escape="false" />                            
+                </p:outputPanel> 
+                <div class="ui-g">
+                    <div class="ui-g-10">                                               
+                    </div>  
+                    <div class="ui-g-2" style="text-align: right">
+                        <p:commandButton value="Debitos" type="button" style="font-size: small"> 
+                            <p:ajax event="click" update="divDeb" listener="#{moradorInfoMB.iniciaListaMoradoresDebitos}" oncomplete="PF('divDeb').show()" />         
+                        </p:commandButton>                         
+                    </div>
+                </div>
+                <br />
+                <p:tabView class="boxConteudo" id="tabViewMoradores">                                         
+                    <p:tab title="Total" id="tabTotal">
+                        <h3 class="titH2">Acesso Total</h3>                        
+                        <p:dataTable value="#{sindicoMB.listaMoradoresTotal}" var="morador" emptyMessage="Nenhum morador encontrado"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="tabelaTotal">
+                            <p:column headerText="Imagem" style="text-align: center" width="15" sortBy="#{morador.id}">
+                                <p:graphicImage value="/ImagemPessoa/#{morador.imagem.id}#{morador.imagem.extensao}" height="150" width="130" rendered="#{morador.imagem != null}"/>                               
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="130" rendered="#{morador.imagem == null}"/>                               
+                            </p:column> 
+                            <p:column headerText="Nome" sortBy="#{morador.nome}" width="30">
+                                <h:outputText value="#{morador.nome}" style="color: #{sindicoMB.alertaDebito(morador.id)}"/>                                
+                            </p:column>            
+                            <p:column headerText="Email" sortBy="#{morador.email}" width="20">
+                                <h:outputText value="#{morador.email}"/>                                
+                            </p:column>            
+                            <p:column headerText="Apartamento" style="text-align: center" width="15" sortBy="#{morador.apartamento}">
+                                <h:outputText value="[#{morador.apartamento.bloco}]-#{morador.apartamento.id}"/>                                
+                            </p:column>            
+                            <p:column headerText="Acesso" style="text-align: center" width="15" >
+                                <p:selectOneMenu value="#{morador.status}">
+                                    <p:ajax event="change" listener="#{sindicoMB.atualizarStatusMorador(morador)}"
+                                            update="dados:tabViewMoradores:tabelaTotal 
+                                            dados:tabViewMoradores:tabelaLimitado
+                                            dados:tabViewMoradores:tabelaReativado
+                                            dados:tabViewMoradores:tabelaDesativado
+                                            dados:panelMsg" />
+                                    <f:selectItem itemLabel="Limitado" itemValue="2" />
+                                    <f:selectItem itemLabel="Total" itemValue="3" />
+                                </p:selectOneMenu>                                                                            
+                            </p:column>            
+                            <p:column headerText="Desativar" style="text-align: center" width="5">
+                                <p:commandButton icon="ui-icon-power" type="button" style="font-size: small"> 
+                                    <p:ajax event="click" listener="#{sindicoMB.desativarMorador(morador)}"  
+                                            update="dados:tabViewMoradores:tabelaTotal 
+                                            dados:tabViewMoradores:tabelaLimitado
+                                            dados:tabViewMoradores:tabelaReativado
+                                            dados:tabViewMoradores:tabelaDesativado
+                                            dados:panelMsg"/>         
+                                    <p:confirm header="Desativar" message="Deseja desativar #{morador.nome} e seus dependentes?" icon="pi pi-exclamation-triangle" /> 
+                                </p:commandButton>                                                                             
+                            </p:column>            
+                        </p:dataTable>
+                    </p:tab>                
+                    <p:tab title="Limitado" id="tabLimitado">
+                        <h3 class="titH2">Acesso Limitado</h3>
+                        <p:dataTable value="#{sindicoMB.listaMoradoresLimitado}" var="morador" emptyMessage="Nenhum morador encontrado"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="tabelaLimitado">
+                            <p:column headerText="Imagem" style="text-align: center" width="15" sortBy="#{morador.id}">
+                                <p:graphicImage value="/ImagemPessoa/#{morador.imagem.id}#{morador.imagem.extensao}" height="150" width="130" rendered="#{morador.imagem != null}"/>                               
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="130" rendered="#{morador.imagem == null}"/>                               
+                            </p:column> 
+                            <p:column headerText="Nome" sortBy="#{morador.nome}" width="30">
+                                <h:outputText value="#{morador.nome}" style="color: #{sindicoMB.alertaDebito(morador.id)}"/>                                
+                            </p:column>            
+                            <p:column headerText="Email" sortBy="#{morador.email}" width="20">
+                                <h:outputText value="#{morador.email}"/>                                
+                            </p:column>            
+                            <p:column headerText="Apartamento" style="text-align: center" width="15" sortBy="#{morador.apartamento}">
+                                <h:outputText value="[#{morador.apartamento.bloco}]-#{morador.apartamento.id}"/>                                
+                            </p:column>            
+                            <p:column headerText="Acesso" style="text-align: center" width="15" >
+                                <p:selectOneMenu value="#{morador.status}">
+                                    <p:ajax event="change" listener="#{sindicoMB.atualizarStatusMorador(morador)}"
+                                            update="dados:tabViewMoradores:tabelaTotal 
+                                            dados:tabViewMoradores:tabelaLimitado
+                                            dados:tabViewMoradores:tabelaReativado
+                                            dados:tabViewMoradores:tabelaDesativado
+                                            dados:panelMsg" />
+                                    <f:selectItem itemLabel="Limitado" itemValue="2" />
+                                    <f:selectItem itemLabel="Total" itemValue="3" />
+                                </p:selectOneMenu>                                                                            
+                            </p:column>            
+                            <p:column headerText="Desativar" style="text-align: center" width="5">
+                                <p:commandButton icon="ui-icon-power" type="button" style="font-size: small"> 
+                                    <p:ajax event="click" listener="#{sindicoMB.desativarMorador(morador)}"  
+                                            update="dados:tabViewMoradores:tabelaTotal 
+                                            dados:tabViewMoradores:tabelaLimitado
+                                            dados:tabViewMoradores:tabelaReativado
+                                            dados:tabViewMoradores:tabelaDesativado
+                                            dados:panelMsg"/>         
+                                    <p:confirm header="Desativar" message="Deseja desativar #{morador.nome} e seus dependentes?" icon="pi pi-exclamation-triangle" /> 
+                                </p:commandButton>                                                                             
+                            </p:column>            
+                        </p:dataTable>
+                    </p:tab>                
+                    <p:tab title="Reativado" id="tabReativado">
+                        <h3 class="titH2">Reativado</h3>
+                        <p:dataTable value="#{sindicoMB.listaMoradoresReativados}" var="morador" emptyMessage="Nenhum morador encontrado"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="tabelaReativado">
+                            <p:column headerText="Imagem" style="text-align: center" width="10" sortBy="#{morador.id}">
+                                <p:graphicImage value="/ImagemPessoa/#{morador.imagem.id}#{morador.imagem.extensao}" height="150" width="130" rendered="#{morador.imagem != null}"/>                               
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="130" rendered="#{morador.imagem == null}"/>                              
+                            </p:column> 
+                            <p:column headerText="Nome" width="37" sortBy="#{morador.nome}">
+                                <h:outputText value="#{morador.nome}"/>                                
+                            </p:column>            
+                            <p:column headerText="Email" width="37" sortBy="#{morador.email}">
+                                <h:outputText value="#{morador.email}"/>                                
+                            </p:column>            
+                            <p:column headerText="Apartamento" style="text-align: center" width="15" sortBy="#{morador.apartamento}">
+                                <h:outputText value="[#{morador.apartamento.bloco}]-#{morador.apartamento.id}"/>                                
+                            </p:column>  
+                            <p:column headerText="Desativar" style="text-align: center" width="1">
+                                <p:commandButton icon="ui-icon-power" type="button" style="font-size: small"> 
+                                    <p:ajax event="click" listener="#{sindicoMB.desativarMorador(morador)}"  
+                                            update="dados:tabViewMoradores:tabelaTotal 
+                                            dados:tabViewMoradores:tabelaLimitado
+                                            dados:tabViewMoradores:tabelaReativado
+                                            dados:tabViewMoradores:tabelaDesativado
+                                            dados:panelMsg"/>         
+                                    <p:confirm header="Desativar" message="Deseja desativar #{morador.nome} e seus dependentes?" icon="pi pi-exclamation-triangle" /> 
+                                </p:commandButton>                                                                             
+                            </p:column> 
+                        </p:dataTable>
+                    </p:tab>                
+                    <p:tab title="Desativado" id="tabDesativado">
+                        <h3 class="titH2">Desativado</h3>
+                        <p:dataTable value="#{sindicoMB.listaMoradoresDesativado}" var="morador" emptyMessage="Nenhum morador encontrado"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="tabelaDesativado">
+                            <p:column headerText="Imagem" style="text-align: center" width="10" sortBy="#{morador.id}">
+                                <p:graphicImage value="/ImagemPessoa/#{morador.imagem.id}#{morador.imagem.extensao}" height="150" width="130" rendered="#{morador.imagem != null}" style="filter: grayscale(100%);"/>                               
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="130" rendered="#{morador.imagem == null}" style="filter: grayscale(100%);"/>                         
+                            </p:column> 
+                            <p:column headerText="Nome" width="32" sortBy="#{morador.nome}">
+                                <h:outputText value="#{morador.nome}"/>                                
+                            </p:column>            
+                            <p:column headerText="Email" width="32" sortBy="#{morador.email}">
+                                <h:outputText value="#{morador.email}"/>                                
+                            </p:column>            
+                            <p:column headerText="CPF" width="25" style="text-align: center" sortBy="#{morador.cpf}">
+                                <h:outputText value="#{sindicoMB.imprimeCpf(morador.cpf)}"/>                                
+                            </p:column>  
+                            <p:column headerText="Reativar" style="text-align: center" width="1">
+                                <p:commandButton icon="ui-icon-power" type="button" style="font-size: small"> 
+                                    <p:ajax event="click" update="reativar" listener="#{sindicoMB.setEditMorador(morador)}" oncomplete="PF('reativar').show()"/>         
+                                </p:commandButton>                                                                             
+                            </p:column> 
+                        </p:dataTable> 
+                    </p:tab>                
+                </p:tabView>    
+            </p:panel> 
+        </h:form>   
+        <p:dialog id="reativar" widgetVar="reativar" class="backForms" modal="true" showHeader="false" closable="false" width="1040" position="top">
+            <h:form id="formReativar">
+                <div class="conteudo">
+                    <p:panel class="boxConteudo" rendered="#{sindicoMB.morador != null}">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <h3 style="margin-bottom: 0" class="titH2">#{sindicoMB.cadastroConcluido ? 'Morador reativado com sucesso' : 'Reativar morador'}</h3> 
+                                <p:messages showDetail="false" escape="false" />
+                            </div> 
+                            <div class="ui-g-2">
+                                <p:graphicImage value="/ImagemPessoa/#{sindicoMB.morador.imagem.id}#{sindicoMB.morador.imagem.extensao}" height="180" width="150" rendered="#{sindicoMB.morador.imagem != null}" style="filter: #{sindicoMB.cadastroConcluido ? '' : 'grayscale(100%)'}"/>                               
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="180" width="150" rendered="#{sindicoMB.morador.imagem == null}" style="filter: #{sindicoMB.cadastroConcluido ? '' : 'grayscale(100%)'}"/>                                    
+                            </div>
+                            <div class="ui-g-10">                                
+                                <h4 class="titH2" style="margin: 0">Dados Pessoais</h4><br />
+                                <div class="ui-g-6">
+                                    <p:outputLabel for="nome" value="NOME:" /><br />
+                                    <h:outputText id="nome" value="#{sindicoMB.morador.nome}" /><br /><br />   
+                                    <p:outputLabel for="email" value="EMAIL" /><br />
+                                    <p:inputText id="email" value="#{sindicoMB.morador.email}" required="true" validatorMessage="Insira um email válido" rendered="#{!sindicoMB.cadastroConcluido}" disabled="#{sindicoMB.morador.tipo != 1}" >
+                                        <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"  />                        
+                                    </p:inputText>
+                                    <h:outputText value="#{sindicoMB.morador.email}" rendered="#{sindicoMB.cadastroConcluido}" />
+                                </div>
+                                <div class="ui-g-6">
+                                    <p:outputLabel for="cpf" value="CPF:" />
+                                    <h:outputText id="cpf" value="#{sindicoMB.imprimeCpf(sindicoMB.morador.cpf)}" /><br/><br /><br />  
+                                    <p:outputLabel for="dataNascimento" value="DATA DE NASCIMENTO" /><br />
+                                    <p:datePicker  id="dataNascimento" value="#{sindicoMB.morador.dataNascimento}" required="true" requiredMessage="Insira a data de nascimento do morador" rendered="#{!sindicoMB.cadastroConcluido}"/> 
+                                    <h:outputText value="#{sindicoMB.morador.dataNascimento}" rendered="#{sindicoMB.cadastroConcluido}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                                    </h:outputText>  
+                                </div>
+                            </div>
+                            <div class="ui-g-12">
+                                <h4 class="titH2" style="margin: 0">Residencial</h4>
+                                <div class="ui-g-4">
+                                    <p:outputLabel for="tipo" value="TIPO" /><br />
+                                    <p:selectOneRadio id="tipo" value="#{sindicoMB.morador.tipo}" unselectable="false" required="true" disabled="#{sindicoMB.cadastroConcluido}" >
+                                        <f:ajax event="change" listener="#{sindicoMB.buscaApartamentoBloco}" render="bloco apto formReativar:email" /> 
+                                        <f:selectItem itemLabel="Responsável" itemValue="1"  />
+                                        <f:selectItem itemLabel="Dependente" itemValue="2" />
+                                    </p:selectOneRadio>
+                                </div>
+                                <div class="ui-g-1">
+                                    <p:outputLabel for="bloco" value="BLOCO"/><br />
+                                    <p:selectOneMenu id="bloco" value="#{sindicoMB.morador.apartamento.bloco}" required="true" requiredMessage="Selecione o bloco do apartamento" disabled="#{sindicoMB.cadastroConcluido}">
+                                        <f:ajax event="change" listener="#{sindicoMB.buscaApartamentoBloco}" render="apto" /> 
+                                        <f:selectItems value="#{sindicoMB.blocos}" />
+                                    </p:selectOneMenu>                                      
+                                </div>
+                                <div class="ui-g-2">
+                                    <p:outputLabel for="apto" value="APARTAMENTO"/><br />
+                                    <p:selectOneMenu id="apto" value="#{sindicoMB.morador.apartamento}" converter="apartamentoConverter" required="true" requiredMessage="Selecione o apartamento" disabled="#{sindicoMB.cadastroConcluido}">                            
+                                        <f:selectItems value="#{sindicoMB.listaApartamento}" var="apt" itemLabel="#{apt.id}" itemValue="#{apt}" itemDescription="#{sindicoMB.responsavelApto(apt)}" />
+                                    </p:selectOneMenu>
+                                </div>
+                                <div class="ui-g-3">
+                                    <p:outputPanel rendered="#{sindicoMB.cadastroConcluido and sindicoMB.morador.tipo == 1}" style="color: red; font-weight: bold">
+                                        <p:outputLabel for="senha" value="NOVA SENHA"/><br />
+                                        <h:outputText id="senha" value="#{sindicoMB.morador.senha}" />                                         
+                                    </p:outputPanel>                                    
+                                </div>
+                                <div style="text-align: right" class="ui-g-12">
+                                    <p:commandButton value="Cancelar" update="panelReativar" type="button" rendered="#{!sindicoMB.cadastroConcluido}">
+                                        <p:confirm header="Cancelar" message="Cancelar reativação de morador?" />   
+                                        <p:ajax event="click" listener="#{sindicoMB.iniciaListasAcessos}" oncomplete="PF('reativar').hide()" 
+                                                update="dados:tabViewMoradores:tabelaTotal 
+                                                dados:tabViewMoradores:tabelaLimitado
+                                                dados:tabViewMoradores:tabelaReativado
+                                                dados:tabViewMoradores:tabelaDesativado
+                                                dados:panelMsg"/>
+                                    </p:commandButton>                                    
+                                    <p:commandButton value="Reativar" update="formReativar" actionListener="#{sindicoMB.reativarMorador}" rendered="#{!sindicoMB.cadastroConcluido}">
+                                        <p:confirm header="Reativar" message="Confirmar reativação de morador?" />                                        
+                                    </p:commandButton>
+                                    <p:commandButton value="Continuar" update="panelReativar" type="button" rendered="#{sindicoMB.cadastroConcluido}">
+                                        <p:ajax event="click" listener="#{sindicoMB.iniciaListasAcessos}" oncomplete="PF('reativar').hide()" 
+                                                update="dados:tabViewMoradores:tabelaTotal 
+                                                dados:tabViewMoradores:tabelaLimitado
+                                                dados:tabViewMoradores:tabelaReativado
+                                                dados:tabViewMoradores:tabelaDesativado
+                                                dados:panelMsg"/>
+                                    </p:commandButton>                              
+                                </div>
+                            </div>
+                        </div>
+                    </p:panel> 
+                </div>
+            </h:form>
+        </p:dialog>
+        <ui:include src="formulario/SindicoListaMoradorDebitos.xhtml" />
+        <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>  
+        <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false" style="background-color: black">  
+            <p:graphicImage value="/css/icones/load.gif" />
+        </p:dialog> 
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/css/MoradorEsqSenha.css" />
+        <title>SGR - Recuperação de acesso do morador</title>      
+    </h:head>
+    <h:body>      
+        <h:form id="frmSenha">
+            <p:fieldset legend="SGR" rendered="#{!moradorMB.cadastroConcluido}"> 
+                <p:messages showDetail="false" />
+                <h:panelGrid columns="1" style="text-align: left; width: 95%; height: 100%">
+                    <h4 style="margin: 0">Morador</h4>
+                    <h3 style="margin-top: 0">Recuperar acesso: </h3>
+                    <p:outputLabel for="cpf" value="CPF" />
+                    <p:inputMask placeholder="CPF" value="#{moradorMB.morador.cpf}" mask="999.999.999-99" style="width: 100%; margin-bottom: 2vh"
+                                 required="true" requiredMessage="Digite o número do CPF" id="cpf" />  
+                    <p:outputLabel for="email" value="Email" />
+                    <p:inputText placeholder="Email" id="email" value="#{moradorMB.morador.email}" style="width: 100%" 
+                                 required="true" requiredMessage="Digite o seu email" validatorMessage="Informe um email válido">
+                        <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"/>                        
+                    </p:inputText>                     
+                    <br />
+                </h:panelGrid>
+                <div style="text-align: center">
+                    <p:commandButton value="Cancelar" type="button"> 
+                        <p:ajax event="click" listener="#{moradorMB.redirecionar('index.jsf')}" />
+                        <p:confirm header="Cancelar" message="Cancelar recuperação de acesso?" icon="pi pi-exclamation-triangle" />
+                    </p:commandButton> 
+                    <p:commandButton value="Recuperar" actionListener="#{moradorMB.recuperarAcesso}" update="frmSenha">                            
+                        <p:confirm header="Recuperar" message="Solicitar recuperação de acesso?" icon="pi pi-exclamation-triangle" />
+                    </p:commandButton> 
+                </div>
+            </p:fieldset>
+            <p:panel class="formMorador" rendered="#{moradorMB.cadastroConcluido}" style="margin-top: 30vh; width: 70vw; margin-left: 13.5vw">
+                <p:panelGrid class="formMorador">
+                    <h2>Cadastro de morador recuperado com sucesso, uma nova senha foi enviada em seu email, clique no botão para continuar...</h2><br />
+                    <div style="text-align: right">
+                        <p:linkButton outcome="MoradorLogin" value="Continuar..." />                                            
+                    </div>
+                </p:panelGrid>                
+            </p:panel>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>
+        <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>  
+        <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false" style="background-color: black">  
+            <p:graphicImage value="/css/icones/load.gif" />
+        </p:dialog> 
+    </h:body>
+</html>
+

@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/css/MoradorNovaSenha.css" />
+        <title>SGR - Nova senha morador</title>      
+    </h:head>
+    <h:body>      
+        <h:form id="frmSenha">
+            <p:fieldset legend="SGR" rendered="#{!moradorMB.cadastroConcluido}"> 
+                <h2>Bem-vindo(a) <br />#{moradorMB.login.morador.nome}</h2>    
+                <br /><p:messages showDetail="false" />
+                <h:panelGrid columns="1" style="text-align: left; width: 95%; height: 100%">
+                    <h3 style="margin-top: 0">Definir nova senha: </h3>
+                    <p:outputLabel for="senha" value="Senha atual" />
+                    <p:password id="senhaAtual" value="#{moradorMB.senhaAtual}" required="true" 
+                                inline="true" requiredMessage="Digite a senha atual" 
+                                validatorMessage="Digite a senha atual"
+                                promptLabel="Digite a senha atual"                                
+                                style="width: 100%" > 
+                        <f:validateLength minimum="5" maximum="100"/>
+                    </p:password><br/>
+                    <p:outputLabel for="senha" value="Nova Senha" />
+                    <p:password id="senha" value="#{moradorMB.morador.senha}" match="confSenha" required="true" 
+                                feedback="true" inline="true" requiredMessage="Digite uma senha" 
+                                validatorMessage="Senha e/ou confirmação inválida [Minimo 5 Caracteres]"
+                                promptLabel="Digite a senha"
+                                weakLabel="Força da senha : Fraca" 
+                                goodLabel="Força da senha : Média"
+                                strongLabel="Força da senha : Forte"
+                                style="width: 100%" > 
+                        <f:validateLength minimum="5" maximum="100"/>
+                    </p:password><br/>
+                    <p:outputLabel for="confSenha" value="Confirmar Senha" />
+                    <p:password id="confSenha" value="#{moradorMB.confirmaSenha}" required="true" 
+                                feedback="true" inline="true" requiredMessage="Confirme a senha"
+                                promptLabel="Confirme a senha"
+                                weakLabel="Força da senha : Fraca" 
+                                goodLabel="Força da senha : Média"
+                                strongLabel="Força da senha : Forte"
+                                style="width: 100%"/>
+                    <br />                    
+                </h:panelGrid>
+                <div style="text-align: center">
+                    <p:commandButton value="Sair" type="button"> 
+                        <p:ajax event="click" listener="#{LoginMB.logout}" />
+                        <p:confirm header="Cancelar" message="Cancelar alteração de senha e sair?" icon="pi pi-exclamation-triangle" />
+                    </p:commandButton> 
+                    <p:commandButton value="Salvar" actionListener="#{moradorMB.alterarSenha}" update="frmSenha">                            
+                        <p:confirm header="Salvar" message="Alterar senha?" icon="pi pi-exclamation-triangle" />
+                    </p:commandButton> 
+                </div>
+            </p:fieldset>
+            <p:panel class="formMorador" rendered="#{moradorMB.cadastroConcluido}" style="margin-top: 30vh; width: 70vw; margin-left: 13.5vw">
+                <p:panelGrid class="formMorador">
+                    <h2>Morador ativado com sucesso, clique no botão para continuar...</h2><br />
+                    <div style="text-align: right">
+                        <p:linkButton outcome="/morador/MoradorHome" value="Continuar..." />                                            
+                    </div>
+                </p:panelGrid>                
+            </p:panel>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>
+    </h:body>
+</html>
+

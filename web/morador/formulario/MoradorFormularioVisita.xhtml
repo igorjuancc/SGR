@@ -1,0 +1,130 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="boxFormVisita" header="Visita" widgetVar="formVisita" modal="true" fitViewport="true" draggable="false" positionType="absolute" class="dialogFormDependente" closable="false" showHeader="false" width="90vw" position="60,10">
+        <h:form id="formVisita" class="formDependente" rendered="#{visitaMB.visita != null}">            
+            <p:panel class="boxCadastro" rendered="#{!visitaMB.cadastroConcluido}">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p:messages id="msgVisita"  showDetail="false" escape="false"  /> 
+                        <h2 class="titH2">#{visitaMB.visita.id != 0 ? 'Edição visita' : 'Nova visita'}</h2>
+                        <br />                                               
+                    </div>
+                    <div class="ui-g-8">
+                        <h3>Data</h3> 
+                        <div class="ui-g-6">
+                            <p:outputLabel for="dataInicio" value="Data inicial" />
+                            <br />                        
+                            <p:datePicker id="dataInicio" showIcon="true" value="#{visitaMB.visita.dataInicio}" required="true" requiredMessage="Insira a data de inicio da visita" disabled="#{visitaMB.visitantesPresentes.size() > 0}"  />
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="dataFim" value="Data final" />
+                            <br />
+                            <p:datePicker id="dataFim" showIcon="true" value="#{visitaMB.visita.dataFim}" required="true" requiredMessage="Insira a data fim da visita" /> 
+                        </div> 
+                        <div class="ui-g-12">
+                            <h3>Visitantes</h3><br />                          
+                            <p:dataTable id="listaVisitantes" value="#{visitaMB.visita.visitantes}" var="visitante" emptyMessage="Nenhum visitante adicionado">                            
+                                <p:column headerText="Imagem" style="text-align: center" width="65">
+                                    <p:graphicImage value="/ImagemPessoa/#{visitante.imagem.id}#{visitante.imagem.extensao}" height="60" width="60" rendered="#{visitante.imagem != null}" />
+                                    <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="60" width="60" rendered="#{visitante.imagem == null}" />
+                                </p:column> 
+                                <p:column headerText="Nome">
+                                    <h:outputText value="#{visitante.nome}"/>                                
+                                </p:column>
+                                <p:column headerText="Remover" width="80" style="text-align: center">
+                                    <p:commandButton style="font-size: small" icon="ui-icon-circle-minus" type="button" disabled="#{visitante.regEntradaSaida.size() > 0}" >
+                                        <p:ajax event="click" listener="#{visitaMB.removerVisitante(visitante)}" update="formVisita:visitantesDisponiveis formVisita:listaVisitantes" />                                    
+                                    </p:commandButton>                                                                                                   
+                                </p:column>  
+                            </p:dataTable>                      
+                        </div>
+                    </div>                    
+                    <div class="ui-g-4">
+                        <h3>Adicionar visitante</h3><br />
+                        <p:dataTable id="visitantesDisponiveis" style="height: 50vh" scrollable="true" scrollHeight="80%" value="#{visitaMB.visitantesDisponiveis}" var="vst" emptyMessage="Nenhum visitante encontrado">
+                            <p:column headerText="Nome" width="95">      
+                                <p:commandLink  value="" type="button" class="divImgPessoa">
+                                    <p:graphicImage value="/ImagemPessoa/#{vst.imagem.id}#{vst.imagem.extensao}" height="47" width="45" style="border-radius: 100%" rendered="#{vst.imagem != null}" />  
+                                    <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="47" width="45" style="border-radius: 100%;" rendered="#{vst.imagem == null}" />  
+                                    <h:outputText value="#{vst.nome}" style="margin-left: 0.5vw" />
+                                    <p:ajax event="click" listener="#{visitaMB.setVisitante(vst)}" update="dialogVerVisitante" oncomplete="PF('dialogVerVisitante').show()" />                                    
+                                </p:commandLink>
+                            </p:column> 
+                            <p:column width="5" style="text-align: center">
+                                <p:commandButton style="font-size: small" icon="ui-icon-circle-plus" type="button"  ajax="true">
+                                    <p:ajax event="click" listener="#{visitaMB.addVisitante(vst)}" update="formVisita:visitantesDisponiveis formVisita:listaVisitantes" />                                    
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </div>                    
+                    <div class="ui-g-12" style="text-align: center">  
+                        <p:commandButton  value="Cancelar" type="button">
+                            <p:confirm header="Cancelar" message="#{visitaMB.visita.id != 0 ? 'Cancelar edição de visita?' : 'Cancelar nova visita?'}" icon="pi pi-exclamation-triangle" />  
+                            <p:ajax event="click" listener="#{visitaMB.cancelarVisita}" />
+                        </p:commandButton>                       
+                        <p:commandButton value="Salvar" actionListener="#{visitaMB.cadastrarVisita}" update="formVisita" ajax="true" rendered="#{visitaMB.visita.id == 0}">
+                            <p:confirm header="Salvar" message="Salvar nova visita?" icon="pi pi-exclamation-triangle" />  
+                        </p:commandButton>                        
+                        <p:commandButton value="Atualizar" actionListener="#{visitaMB.atualizarVisita}" update="formVisita" ajax="true" rendered="#{visitaMB.visita.id != 0}">
+                            <p:confirm header="Atualizar" message="Atualizar visita?" icon="pi pi-exclamation-triangle" />  
+                        </p:commandButton> 
+                    </div>                    
+                </div>
+            </p:panel>
+            <p:panel class="boxCadastro" rendered="#{visitaMB.cadastroConcluido}">
+                <h2 class="titH2">
+                    <h:outputText value="Visita salva no período de: #{visitaMB.imprimeData(visitaMB.visita.dataInicio)} até #{visitaMB.imprimeData(visitaMB.visita.dataFim)}" />
+                </h2>
+                <br /><br />                    
+                <h:outputText value="Visitantes:" /><br />
+                <p:dataList value="#{visitaMB.visita.visitantes}" var="vst">
+                    <h:outputText value="#{vst.nome}" />                                   
+                </p:dataList> 
+                <br /><br />
+                <div style="text-align: right">
+                    <p:linkButton outcome="/morador/MoradorVisita" value="Continuar" />                    
+                </div>                
+            </p:panel>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>        
+    </p:dialog> 
+    <p:dialog modal="true" draggable="false" id="dialogVerVisitante" widgetVar="dialogVerVisitante" class="dialogFormDependente" width="50vw"  closable="false" showHeader="false" positionType="absolute">
+        <h:form class="formDependente" rendered="#{visitaMB.visitante != null}">
+            <p:panel class="boxCadastro">
+                <div class="ui-g">
+                    <div class="ui-g-12">                        
+                        <h3> <h:outputText value="#{visitaMB.visitante.nome}" /> </h3> 
+                        <br />
+                        <div style="text-align: center">
+                            <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="300" width="300" rendered="#{visitaMB.visitante.imagem == null}" />                                     
+                            <p:graphicImage value="/ImagemPessoa/#{visitaMB.visitante.imagem.id}#{visitaMB.visitante.imagem.extensao}" height="300" width="300" rendered="#{visitaMB.visitante.imagem != null}" />  
+                        </div>
+                        <br /><br />
+                        <h:outputText value="NOME: #{visitaMB.visitante.nome}" /><br />
+                        <h:outputText value="CPF: #{visitaMB.imprimeCpf(visitaMB.visitante.cpf)}" /><br />  
+                        <h:outputText value="DATA DE NASCIMENTO: " />
+                        <h:outputText value="#{visitaMB.visitante.dataNascimento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText><br />                                    
+                        <h:outputText value="EMAIL: #{visitaMB.visitante.email}" />
+                    </div>
+                    <div class="ui-g-12" style="text-align: center">
+                        <p:commandButton type="button" value="Voltar">
+                            <p:ajax event="click" oncomplete="PF('dialogVerVisitante').hide()" />                            
+                        </p:commandButton>
+                        <p:commandButton type="button" value="Adicionar">
+                            <p:ajax event="click" listener="#{visitaMB.addVisitante(visitaMB.visitante)}" update="formVisita:visitantesDisponiveis formVisita:listaVisitantes" oncomplete="PF('dialogVerVisitante').hide()" />                                                
+                        </p:commandButton>                                                                       
+                    </div>
+                </div>                 
+            </p:panel>                   
+        </h:form>
+    </p:dialog>
+</ui:composition>

@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/SindicoTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Sindico - Advertência</ui:define>
+    <ui:define name="conteudo">
+        <h:form id="formAdv">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Advertências e Multas</h2>                
+                <p:growl showDetail="false" />
+                <div style="text-align: right">                    
+                    <p:commandButton value="Nova Advertência" action="#{notificacaoMB.setNovaNotificacao}" oncomplete="PF('divFormNvAdv').show()" style="font-size: medium" update="divFormNvAdv"/>
+                    <p:commandButton  value="Infrações" oncomplete="PF('divFormInf').show()" style="font-size: medium" type="buttom" update="divFormInf" />                    
+                </div>
+                <br />
+                <p:dataTable value="#{notificacaoMB.listaNotificacoes}" var="notificacao" emptyMessage="Nenhuma notificação registrada."
+                             paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                    <p:column headerText="Id" width="1" style="text-align: center" sortBy="#{notificacao.id}">
+                        <h:outputText value="#{notificacao.id}" />
+                    </p:column>                                 
+                    <p:column headerText="Infração" width="63" sortBy="#{notificacao.infracao.descricao}">
+                        <h:outputText value="#{notificacao.infracao.descricao}" />
+                    </p:column>
+                    <p:column headerText="Emissão" style="text-align: center" width="10" sortBy="#{notificacao.dataEmissao}">
+                        <h:outputText value="#{notificacao.dataEmissao}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                        </h:outputText>
+                    </p:column> 
+                    <p:column headerText="Tipo" width="8" sortBy="#{notificacao.tipo}">
+                        <h:outputText value="#{notificacao.tipo == 0 ? 'Advertência' : 'Multa'}" />
+                    </p:column>                     
+                    <p:column headerText="Apto" width="1" style="text-align: center" sortBy="#{notificacao.morador.id}">
+                        <h:outputText value="[#{notificacao.morador.apartamento.bloco}] - #{notificacao.morador.apartamento.id}" />
+                    </p:column>                     
+                    <p:column headerText="Status" style="text-align: center" width="14">
+                        <h:outputText value="#{notificacaoMB.statusNotificacao(notificacao)}" />
+                    </p:column>                                 
+                    <p:column headerText="Ver" style="text-align: center" width="1">
+                        <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                            <p:ajax event="click" listener="#{notificacaoMB.setVerNotificacao(notificacao)}" oncomplete="PF('divVerAdv').show()" update="divVerAdv" />  
+                        </p:commandButton>
+                    </p:column>                                 
+                    <p:column headerText="Editar" style="text-align: center" width="1">
+                        <p:commandButton icon="ui-icon-pencil" type="button" style="font-size: small" >
+                            <p:ajax event="click" listener="#{notificacaoMB.setEdicaoNotificacao(notificacao)}" oncomplete="PF('divFormNvAdv').show()" update="divFormNvAdv"/>  
+                        </p:commandButton>
+                    </p:column>                                 
+                    <p:column headerText="Apagar" style="text-align: center" width="1">
+                        <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small" disabled="#{notificacaoMB.statusNotificacao(notificacao) == 'PAGO'}" >
+                            <p:ajax event="click" listener="#{notificacaoMB.apagarNotificacao(notificacao)}" update="formAdv"/> 
+                            <p:confirm header="Apagar" message="Deseja apagar notificação?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>                                 
+                </p:dataTable> 
+            </p:panel> 
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>
+        <p:dialog id="divFormInf" widgetVar="divFormInf" class="backForms" modal="true" showHeader="true" header="Infrações" width="800" fitViewport="true">
+            <div class="ui-g conteudo">
+                <h:form id="formInf" style="width: 100%">
+                    <p:panel class="boxConteudo" id="panelInf">
+                        <h3 class="titH2">Infrações</h3>
+                        <div style="text-align: right"> 
+                            <p:commandButton  value="Nova infração" type="buttom" style="font-size: medium" >
+                                <p:ajax event="click" listener="#{notificacaoMB.setNovaInfracao}" />
+                            </p:commandButton>                    
+                        </div>
+                        <p:messages id="msgInf"  showDetail="false" /> 
+                        <br />
+                        <p:dataTable id="tabInf" value="#{notificacaoMB.infracoes}" var="infracaoLista" emptyMessage="Nenhuma infração registrada.">
+                            <p:column headerText="Id" width="5" style="text-align: center">
+                                <h:outputText value="#{infracaoLista.id}" />                                
+                            </p:column>
+                            <p:column headerText="Descrição" width="65">
+                                <h:outputText value="#{infracaoLista.descricao}" />                                
+                            </p:column>
+                            <p:column headerText="Classificação" width="15" style="text-align: center">
+                                <h:outputText value="Leve" rendered="#{infracaoLista.classificacao == 0}" />                                
+                                <h:outputText value="Média" rendered="#{infracaoLista.classificacao == 1}" />                                
+                                <h:outputText value="Grave" rendered="#{infracaoLista.classificacao == 2}" />                                
+                            </p:column>
+                            <p:column headerText="Editar" style="text-align: center" width="5">
+                                <p:commandButton icon="ui-icon-pencil" style="font-size: small" action="#{notificacaoMB.setInfracao(infracaoLista)}" update="divFormNvInf" onstart="PF('divFormInf').hide()" oncomplete="PF('divFormNvInf').show()" /> 
+                            </p:column>
+                            <p:column headerText="Remover" style="text-align: center" width="5">
+                                <p:commandButton icon="ui-icon-trash" style="font-size: small" action="#{notificacaoMB.apagarInfracao(infracaoLista)}" update="formInf:panelInf" >
+                                    <p:confirm header="Remover" message="Remover infração?" icon="pi pi-exclamation-triangle" />                                    
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel> 
+                </h:form>
+            </div>
+        </p:dialog>  
+        <p:dialog id="divFormNvInf" widgetVar="divFormNvInf" class="backForms" modal="true" closable="false" showHeader="false" width="800">
+            <div class="ui-g conteudo">
+                <h:form id="formNvInf" style="width: 100%">
+                    <p:panel class="boxConteudo" id="panelFormNvInf">
+                        <h3 class="titH2">
+                            <h:outputText value="#{notificacaoMB.infracao == null or notificacaoMB.infracao.id == 0 ? 'Nova' : 'Editar'} Infração" />                            
+                        </h3>  
+                        <p:messages id="msgNvInf"  showDetail="false" escape="false" /> 
+                        <p:outputLabel for="descInf" value="Descrição" /><br />
+                        <p:inputText value="#{notificacaoMB.infracao.descricao}" style="width: 98.4%" id="descInf" required="true" 
+                                     requiredMessage="Digite a descrição da infração" validatorMessage="Insira uma descrição válida" 
+                                     counter="display" maxlength="100" counterTemplate="Caracteres restantes [{0}]" rendered="#{notificacaoMB.infracao != null}" >
+                            <f:validateRegex pattern="[A-Za-zÀ-ú /]*"/>                   
+                        </p:inputText> 
+                        <br />
+                        <h:outputText id="display"  style="font-style: italic; font-size: smaller; float: right" />
+                        <br/>
+                        <p:outputLabel for="clas" value="Classificação" /><br />
+                        <p:selectOneRadio id="clas" value="#{notificacaoMB.infracao.classificacao}" required="true" unselectable="false">
+                            <f:selectItem itemLabel="Leve" itemValue="0"/>
+                            <f:selectItem itemLabel="Média" itemValue="1"/>
+                            <f:selectItem itemLabel="Grave" itemValue="2"/>
+                        </p:selectOneRadio>
+                        <div style="text-align: right"> 
+                            <br />
+                            <p:commandButton  value="Cancelar" type="buttom" style="font-size: small">
+                                <p:confirm header="Cancelar" message="Cancelar #{notificacaoMB.infracao == null or notificacaoMB.infracao.id == 0 ? 'nova' : 'edição de'} infração?" icon="pi pi-exclamation-triangle" />
+                                <p:ajax event="click" listener="#{notificacaoMB.cancelaNovaInfracao}" update="formNvInf" resetValues="true" />
+                            </p:commandButton>                    
+                            <p:commandButton  value="Salvar" style="font-size: small" ajax="true" actionListener="#{notificacaoMB.novaInfracao}" update="panelFormNvInf" rendered="#{notificacaoMB.infracao.id == 0}">
+                                <p:confirm header="Salvar" message="Salvar #{notificacaoMB.infracao == null or notificacaoMB.infracao.id == 0 ? 'nova' : 'edição de'} infração?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>                      
+                            <p:commandButton  value="Salvar" style="font-size: small" ajax="true" actionListener="#{notificacaoMB.editarInfracao}" update="panelFormNvInf" rendered="#{notificacaoMB.infracao.id != 0}">
+                                <p:confirm header="Salvar" message="Salvar #{notificacaoMB.infracao == null or notificacaoMB.infracao.id == 0 ? 'nova' : 'edição de'} infração?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>                      
+                        </div>
+                    </p:panel> 
+                </h:form>
+            </div>
+        </p:dialog>  
+        <ui:include src="formulario/SindicoFormularioAdvertencia.xhtml" />
+        <ui:include src="formulario/SindicoVerAdvertencia.xhtml" />
+    </ui:define>
+</ui:composition>
+

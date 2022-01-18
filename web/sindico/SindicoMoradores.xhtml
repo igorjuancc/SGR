@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/SindicoTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Sindico - Moradores</ui:define>
+    <ui:define name="conteudo">
+        <h:form id="moradores">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Moradores</h2>
+                <p:tabView class="boxConteudo" id="tabViewMoradores">
+                    <p:tab title="Por Apartamento">
+                        <h3 class="titH2">Apartamentos com moradores</h3>
+                        <ui:repeat value="#{moradorInfoMB.aptoComMorador}" var="apto">
+                            <p:commandButton value="[#{apto.bloco}] - #{apto.id}" action="#{moradorInfoMB.setSindicoMoradorAptoDados(apto)}" update="divMorador" oncomplete="PF('divMorador').show()" />                
+                        </ui:repeat>                         
+                    </p:tab>                    
+                    <p:tab title="Ativos">
+                        <h3 class="titH2">Moradores ativos</h3>
+                        <p:dataTable value="#{moradorInfoMB.listaMoradorAtv}" var="moradorAtv" emptyMessage="Nenhum morador encontrado."
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="Morador" width="76" sortBy="#{moradorAtv.nome}">
+                                <h:outputText value="#{moradorAtv.nome}" style="color: #{moradorInfoMB.alertaDebito(moradorAtv.id)}" />
+                            </p:column>
+                            <p:column headerText="Tipo" width="1" style="text-align: left">
+                                <h:outputText value="#{moradorAtv.tipo == 1 ? 'RESP' : 'DEPE'}" />
+                            </p:column>
+                            <p:column headerText="CPF" width="13" style="text-align: center" sortBy="#{moradorAtv.cpf}">
+                                <h:outputText value="#{moradorInfoMB.imprimeCpf(moradorAtv.cpf)}" />
+                            </p:column> 
+                            <p:column headerText="Ver" width="1" style="text-align: center">
+                                <p:commandButton icon="ui-icon-search" style="font-size: small" action="#{moradorInfoMB.setMorador(moradorAtv)}" update="moradores:verDependente" oncomplete="PF('verDependente').show()" rendered="#{moradorAtv.tipo == 2}" />
+                                <p:commandButton icon="ui-icon-search" style="font-size: small" action="#{moradorInfoMB.setSindicoMoradorDados(moradorAtv.id)}" update="divMorador" oncomplete="PF('divMorador').show()" rendered="#{moradorAtv.tipo == 1}" />
+                            </p:column> 
+                            <p:column headerText="Nova Senha" width="9" style="text-align: center">
+                                <p:commandButton icon="ui-icon-key" style="font-size: small" action="#{sindicoMB.recuperarAcessoMorador(moradorAtv)}" update="moradores:novaSenha" oncomplete="PF('novaSenha').show()" disabled="#{moradorAtv.tipo == 2}">
+                                    <p:confirm header="Nova senha" message="Deseja definir uma nova senha para o morador #{moradorAtv.nome}?" icon="ui-icon-key" />
+                                </p:commandButton>
+                            </p:column> 
+                        </p:dataTable>
+                    </p:tab>                    
+                    <p:tab title="Desativados">
+                        <h3 class="titH2">Moradores desativados</h3>
+                        <p:dataTable value="#{moradorInfoMB.listaMoradorDst}" var="moradorDstv" emptyMessage="Nenhum morador encontrado."
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="Morador" width="90" sortBy="#{moradorDstv.nome}">
+                                <h:outputText value="#{moradorDstv.nome}" />
+                            </p:column> 
+                            <p:column headerText="CPF" width="9" style="text-align: center" sortBy="#{moradorDstv.cpf}">
+                                <h:outputText value="#{moradorInfoMB.imprimeCpf(moradorDstv.cpf)}" />
+                            </p:column> 
+                            <p:column headerText="Ver" width="1" style="text-align: center">
+                                <p:commandButton icon="ui-icon-search" style="font-size: small" action="#{moradorInfoMB.setMorador(moradorDstv)}" update="moradores:verDependente" oncomplete="PF('verDependente').show()" rendered="#{moradorDstv.tipo == 2}" />    
+                                <p:commandButton icon="ui-icon-search" style="font-size: small" action="#{moradorInfoMB.setSindicoMoradorDados(moradorDstv.id)}" update="divMorador" oncomplete="PF('divMorador').show()" rendered="#{moradorDstv.tipo == 1}" />    
+                            </p:column> 
+                        </p:dataTable>
+                    </p:tab>                    
+                </p:tabView>                
+            </p:panel>
+            <p:dialog header="Dependente" modal="true" id="verDependente" widgetVar="verDependente" class="backForms" width="50vw">
+                <p:panel class="conteudo" rendered="#{moradorInfoMB.morador != null}">
+                    <p:panel class="boxConteudo">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <h2 class="titH2">Morador #{moradorInfoMB.morador.status == 0 || moradorInfoMB.morador.status == 4 ? 'Desativado' : ''}</h2>  
+                                <p:messages showDetail="false" /> 
+                            </div>                            
+                            <div class="ui-g-4" style="text-align: center">                              
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="170" width="100%" rendered="#{moradorInfoMB.morador.imagem == null}" style="#{moradorInfoMB.morador.status == 0 || moradorInfoMB.morador.status == 4 ? 'filter: grayscale(100%)' : ''}"/>    
+                                <p:graphicImage value="/ImagemPessoa/#{moradorInfoMB.morador.imagem.id}#{moradorInfoMB.morador.imagem.extensao}" height="170" width="100%" rendered="#{moradorInfoMB.morador.imagem != null}" style="#{moradorInfoMB.morador.status == 0 || moradorInfoMB.morador.status == 4 ? 'filter: grayscale(100%)' : ''}"/>    
+                            </div>                            
+                            <div class="ui-g-8" style="padding-top: 8%">
+                                <p:outputLabel rendered="#{moradorInfoMB.morador.apartamento != null}">
+                                    <h:outputText value="APARTAMENTO: [#{moradorInfoMB.morador.apartamento.bloco}] - #{moradorInfoMB.morador.apartamento.id}" /><br />                                    
+                                </p:outputLabel>                                
+                                <h:outputText value="NOME: #{moradorInfoMB.morador.nome}" /><br />
+                                <h:outputText value="CPF: #{moradorInfoMB.imprimeCpf(moradorInfoMB.morador.cpf)}" /><br />
+                                <h:outputText value="EMAIL: #{moradorInfoMB.morador.email}" /><br />
+                                <h:outputText value="NASCIMENTO:" />
+                                <h:outputText value="#{moradorInfoMB.morador.dataNascimento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText><br />
+                                <h:outputText value="FONE: #{moradorInfoMB.morador.fone}" /><br />
+                                <h:outputText value="CEL: #{moradorInfoMB.morador.celular}" />
+                            </div>                             
+                        </div>                        
+                    </p:panel>
+                </p:panel>                
+            </p:dialog>            
+            <p:dialog header="Nova Senha" modal="true" id="novaSenha" widgetVar="novaSenha" class="backForms" width="50vw">
+                <p:panel class="conteudo" rendered="#{sindicoMB.morador != null}">
+                    <p:panel class="boxConteudo">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <h2 class="titH2">Nova Senha</h2>  
+                                <p:messages showDetail="false" /> 
+                            </div>                            
+                            <div class="ui-g-4" style="text-align: center">                              
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="170" width="100%" rendered="#{sindicoMB.morador.imagem == null}" style="#{sindicoMB.morador.status == 0 || sindicoMB.morador.status == 4 ? 'filter: grayscale(100%)' : ''}"/>    
+                                <p:graphicImage value="/ImagemPessoa/#{sindicoMB.morador.imagem.id}#{sindicoMB.morador.imagem.extensao}" height="170" width="100%" rendered="#{sindicoMB.morador.imagem != null}" style="#{sindicoMB.morador.status == 0 || sindicoMB.morador.status == 4 ? 'filter: grayscale(100%)' : ''}"/>    
+                            </div>                            
+                            <div class="ui-g-8">
+                                <p:outputLabel rendered="#{sindicoMB.morador.apartamento != null}">
+                                    <h:outputText value="APARTAMENTO: [#{sindicoMB.morador.apartamento.bloco}] - #{sindicoMB.morador.apartamento.id}" /><br />                                    
+                                </p:outputLabel>                                
+                                <h:outputText value="NOME: #{sindicoMB.morador.nome}" /><br />
+                                <h:outputText value="CPF: #{sindicoMB.imprimeCpf(sindicoMB.morador.cpf)}" /><br />
+                                <h:outputText value="EMAIL: #{sindicoMB.morador.email}" /><br />
+                                <h:outputText value="NASCIMENTO:" />
+                                <h:outputText value="#{sindicoMB.morador.dataNascimento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText><br />
+                                <h:outputText value="FONE: #{sindicoMB.morador.fone}" /><br />
+                                <h:outputText value="CEL: #{sindicoMB.morador.celular}" /><br />
+                                <h:outputText value="NOVA SENHA: #{sindicoMB.morador.senha}" style="color: red; font-weight: bold" />
+                            </div>                             
+                        </div>                        
+                    </p:panel>
+                </p:panel>                
+            </p:dialog>            
+        </h:form>
+        <ui:include src="formulario/SindicoListaMoradorDebitos.xhtml" />
+    </ui:define>
+</ui:composition>
+

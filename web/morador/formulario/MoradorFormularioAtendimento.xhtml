@@ -1,0 +1,200 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog modal="true" draggable="false" id="divNovoAtendimento" widgetVar="divNovoAtendimento" class="dialogFormDependente" closable="false" showHeader="false" width="875" >
+        <h:form id="novoAtendimentoForm" enctype="multipart/form-data" class="formDependente">
+            <p:panel class="boxCadastro" visible="#{!atendimentoMB.cadastroConcluido}">
+                <div class="ui-g">
+                    <div class="ui-g-12">   
+                        <h2 class="titH2">
+                            <h:outputText value="#{atendimentoMB.atendimento.id != 0 ? 'Editar atendimento' : 'Novo atendimento'}" rendered="#{(facesContext.viewRoot.viewId).equals('/morador/MoradorAtendimento.xhtml')}" />                            
+                            <h:outputText value="#{atendimentoMB.atendimento.id != 0 ? 'Alteração de nova vaga' : 'Solicitação de nova vaga'}" rendered="#{(facesContext.viewRoot.viewId).equals('/morador/MoradorVagas.xhtml')}" />                            
+                            <h:outputText value="#{atendimentoMB.atendimento.id != 0 ? 'Alteração de agendamento' : 'Agendamento'}" rendered="#{(facesContext.viewRoot.viewId).equals('/morador/MoradorSalao.xhtml')}" />                            
+                        </h2>                        
+                        <br />
+                        <h5 align="right" style="margin: 0">
+                            <h:outputText value="#{atendimentoMB.atendimento.dataAbertura}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />                        
+                            </h:outputText>
+                        </h5>
+                        <p:messages id="msgNovoAtendimento"  showDetail="false"  /> 
+                    </div>
+                    <div class="ui-g-4">
+                        <p:outputPanel>
+                            <p:outputLabel for="tipoAtendimento" value="Atendimento" /><br />
+                            <p:selectOneMenu id="tipoAtendimento" value="#{atendimentoMB.atendimento.tipo}" converter="tipoAtendimentoConverter" required="true" requiredMessage="Selecione o tipo de atendimento" disabled="#{(facesContext.viewRoot.viewId).equals('/morador/MoradorVagas.xhtml') || (facesContext.viewRoot.viewId).equals('/morador/MoradorSalao.xhtml')}"> 
+                                <p:ajax event="change" update="novoAtendimentoForm" />
+                                <f:selectItems value="#{atendimentoMB.listaTipoAtendimento}" var="tipo" itemLabel="#{tipo.descricao}" itemValue="#{tipo}"/>
+                            </p:selectOneMenu>                                
+                        </p:outputPanel>                            
+                    </div>
+                    <div class="ui-g-8">
+                        <p:outputPanel class="divGaragemSalao">
+                            <p:outputLabel for="vagaGaragem" value="Vaga" rendered="#{atendimentoMB.atendimento.tipo.id == 4}" style="display: block" />
+                            <p:selectOneMenu id="vagaGaragem" value="#{atendimentoMB.vagaEstacionamento}" converter="vagaEstacionamentoConverter" required="true" requiredMessage="Selecione a vaga requisitada" rendered="#{atendimentoMB.atendimento.tipo.id == 4}" > 
+                                <f:selectItems value="#{atendimentoMB.vagasDisponiveis}" var="vaga" itemLabel="#{vaga.id}" itemValue="#{vaga}"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel for="dataSalao" value="Data da reserva" rendered="#{atendimentoMB.atendimento.tipo.id == 5}" style="display: block" />
+                            <p:datePicker id="dataSalao" value="#{atendimentoMB.dataSalao}" required="true" requiredMessage="Insira a data do agendamento" rendered="#{atendimentoMB.atendimento.tipo.id == 5}"  />
+                        </p:outputPanel> 
+                    </div>
+                    <div class="ui-g-12">
+                        <p:outputPanel>
+                            <p:outputLabel for="descAtendimento" value="Descrição" rendered="#{(atendimentoMB.atendimento.tipo.id != 4) and (atendimentoMB.atendimento.tipo.id != 5)}" style="display: block" />
+                            <p:inputTextarea value="#{atendimentoMB.atendimento.descricao}" id="descAtendimento" rows="2" cols="80" counter="display" maxlength="255" counterTemplate="{0} caracteres restantes" autoResize="true" required="true" requiredMessage="Adicione a descrição da solicitação" rendered="#{(atendimentoMB.atendimento.tipo.id != 4) and (atendimentoMB.atendimento.tipo.id != 5)}" />                            
+                            <div style="text-align: right">
+                                <h:outputText id="display"  style="font-style: italic; font-size: smaller;" /><br /><br />
+                                <p:commandButton  value="Cancelar" type="button">
+                                    <p:confirm header="Cancelar" message="Cancelar #{atendimentoMB.atendimento.id != 0 ? 'edição de' : 'novo'} atendimento?" icon="pi pi-exclamation-triangle" />  
+                                    <p:ajax event="click" listener="#{atendimentoMB.redirecionar()}" />
+                                </p:commandButton> 
+                                <p:commandButton value="Salvar" actionListener="#{atendimentoMB.novoAtendimento}" update="novoAtendimentoForm" ajax="true" rendered="#{atendimentoMB.atendimento.id == 0}">
+                                    <p:confirm header="Salvar" message="Salvar novo atendimento?" icon="pi pi-exclamation-triangle" />  
+                                </p:commandButton>  
+                                <p:commandButton value="Atualizar" actionListener="#{atendimentoMB.editarAtendimento}" update="novoAtendimentoForm" ajax="true" rendered="#{atendimentoMB.atendimento.id != 0}" >
+                                    <p:confirm header="Atualizar" message="Salvar edição de atendimento?" icon="pi pi-exclamation-triangle" />  
+                                </p:commandButton>  
+                            </div>
+                        </p:outputPanel>                            
+                    </div>                        
+                </div>   
+            </p:panel> 
+            <p:panel class="boxCadastro" visible="#{atendimentoMB.cadastroConcluido}">
+                <h2>Atendimento registrado com sucesso.</h2><br/>
+                <div style="text-align: right">
+                    <p:commandButton value="Continuar" actionListener="#{atendimentoMB.redirecionar}" />                  
+                </div>                                
+            </p:panel>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>            
+    </p:dialog>  
+    <p:dialog onShow="PF('myPoll').start()" onHide="PF('myPoll').stop()" modal="true" draggable="false" id="divVerAtendimento" widgetVar="divVerAtendimento" class="dialogFormDependente" showHeader="#{atendimentoMB.atendimento.status != 4}" width="1000" positionType="absolute">
+        <h:form id="verAtendimentoForm" enctype="multipart/form-data" class="formDependente">
+            <p:panel class="boxCadastro" visible="#{!atendimentoMB.cadastroConcluido}">
+                <p:ajax event="close" update="tabAtendimento" />                
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <p:commandButton icon="ui-icon-arrowrefresh-1-w" type="button" disabled="#{atendimentoMB.calcularDias(atendimentoMB.atendimento)}" style="font-size: small; float: right" rendered="#{atendimentoMB.atendimento != null and atendimentoMB.atendimento.status == 1}">
+                            <p:confirm header="Reabrir" message="Deseja reabrir o atendimento?" />
+                            <p:ajax event="click" listener="#{atendimentoMB.setReabrirAtendimento(atendimentoMB.atendimento)}" oncomplete="PF('divVerAtendimento').show()" update="divVerAtendimento"/>  
+                        </p:commandButton>
+                        <h2 class="titH2">Atendimento #{atendimentoMB.atendimento.status == 4 ? '(Reabertura)' : ''}</h2>
+                        <p:messages id="msgComentario"  showDetail="false"  /> 
+                    </div>                            
+                    <div class="ui-g-4">
+                        <h:outputText value="ID: #{atendimentoMB.atendimento.id}" /><br />  
+                        <h:outputText value="TIPO: #{atendimentoMB.atendimento.tipo.descricao}" />                            
+                    </div>
+                    <div class="ui-g-4">
+                        <h:outputText value="ABERTURA: " />                             
+                        <h:outputText value="#{atendimentoMB.atendimento.dataAbertura}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />                        
+                        </h:outputText> <br />   
+                        <h:outputText value="FECHAMENTO: " />                             
+                        <h:outputText value="#{atendimentoMB.atendimento.dataFechamento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" />                        
+                        </h:outputText>      
+                    </div>
+                    <div class="ui-g-4">
+                        <h:outputText value="STATUS: #{atendimentoMB.statusAtendimento(atendimentoMB.atendimento)}" /><br />                             
+                        <h:outputText value="FUNCIONARIO: #{atendimentoMB.atendimento.funcionario.nome}" />
+                    </div>
+                    <div class="ui-g-12">
+                        <h:outputText value="DESCRIÇÃO: " /><br />
+                        <div style="width: 98%; background-color: white; border: 1px solid grey; padding: 1%;">
+                            <h:outputText value="#{atendimentoMB.atendimento.descricao}"/>
+                        </div>
+                        <br /><hr />
+                    </div>
+                    <div class="ui-g-12">
+                        <p:dataView id="dataViewComentarios" value="#{atendimentoMB.atendimento.comentarios}" var="comentario" gridIcon="pi pi-th-large" listIcon="pi pi-bars">
+                            <h:outputText value="Nenhum comentário adicionado" rendered="#{atendimentoMB.atendimento.comentarios == null || atendimentoMB.atendimento.comentarios.size() == 0}" />
+                            <p:dataViewListItem>
+                                <p:outputPanel>
+                                    <h:panelGrid columns="3" onmouseover="exibeDelete(this)" onmouseout=" ocultaDelete(this)" id="eleComentario">
+                                        <p:outputPanel>
+                                            <p:graphicImage value="/ImagemPessoa/#{comentario.pessoa.imagem.id}#{comentario.pessoa.imagem.extensao}" height="45" width="45" style="border-radius: 100%" rendered="#{comentario.pessoa.imagem != null}"/>  
+                                            <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="45" width="45" style="border-radius: 100%" rendered="#{comentario.pessoa.imagem == null}"/> 
+                                        </p:outputPanel> 
+                                        <p:outputPanel class="comentarioAtendimentoMorador" style="background-color: #{atendimentoMB.corComentario(comentario)}" >
+                                            <h:outputText value="#{comentario.pessoa.nome}" style="font-size: xx-small; margin: 0; font-weight: bold" /><br />                                                
+                                            <h:outputText value="#{comentario.descricao}" />                                                 
+                                        </p:outputPanel>
+                                        <p:outputPanel>
+                                            <p:commandButton type="button" style=" font-size: xx-small; display: none" icon="ui-icon-trash" disabled="#{comentario.pessoa.id != atendimentoMB.login.morador.id || comentario.atendimento.status != 0}">
+                                                <p:confirm header="Apagar" message="Deseja apagar comentário?" />
+                                                <p:ajax event="click" listener="#{atendimentoMB.apagarComentario(comentario)}" update="divVerAtendimento" oncomplete="PF('divVerAtendimento').show()" />                                            
+                                            </p:commandButton><br />
+                                            <h:outputText value="#{comentario.data}" style="font-size: xx-small">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />                        
+                                            </h:outputText>   
+                                        </p:outputPanel>                                             
+                                    </h:panelGrid>                                        
+                                </p:outputPanel>
+                            </p:dataViewListItem>                                
+                        </p:dataView> 
+
+                    </div>                        
+                    <div class="ui-g-12"> 
+                        <p:outputPanel rendered="#{atendimentoMB.atendimento.status != 1 and atendimentoMB.atendimento.status != 4}">
+                            <div class="ui-g-1">
+                                <p:graphicImage value="/ImagemPessoa/#{LoginMB.morador.imagem.id}#{LoginMB.morador.imagem.extensao}" height="45" width="45" style="border-radius: 100%" rendered="#{LoginMB.morador.imagem != null}"/>  
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="45" width="45" style="border-radius: 100%" rendered="#{LoginMB.morador.imagem == null}"/>  
+                            </div>
+                            <div class="ui-g-11">
+                                <div class="ui-inputgroup">
+                                    <p:inputText value="#{atendimentoMB.comentario.descricao}" placeholder="Escreva um comentário..." style="margin-top: 1vh; width: 80%" required="true" />
+                                    <p:commandButton icon="ui-icon-comment" styleClass="white-button" style="font-size: small; margin-top: 1vh" actionListener="#{atendimentoMB.novoComentario}" update="divVerAtendimento" oncomplete="PF('divVerAtendimento').show()" />
+                                </div>
+                            </div>   
+                        </p:outputPanel>                                                  
+                        <div class="ui-g-12" style=" text-align: center; display: #{atendimentoMB.atendimento.status == 4 ? 'block' : 'none'}">                             
+                            <p:inputText value="#{atendimentoMB.comentario.descricao}" placeholder="Justificativa de reabertura" style="margin-top: 1vh; width: 90%" required="true" rendered="#{atendimentoMB.atendimento.status == 4}" requiredMessage="Insira a mensagem de reabertura do atendimento" /><br /><br />
+                            <p:commandButton value="Cancelar" type="button" rendered="#{atendimentoMB.atendimento.status == 4}">
+                                <p:confirm header="Cancelar" message="Cancelar reabertura de atendimento?" />
+                                <p:ajax event="click" listener="#{atendimentoMB.redirecionar()}" />
+                            </p:commandButton>
+                            <p:commandButton value="Salvar" actionListener="#{atendimentoMB.reabrirAtendimento()}" update="divVerAtendimento" oncomplete="PF('divVerAtendimento').show()" rendered="#{atendimentoMB.atendimento.status == 4}">
+                                <p:confirm header="Salvar" message="Prosseguir reabertura de atendimento?" />
+                            </p:commandButton>
+                        </div>
+                    </div>
+                </div>
+            </p:panel>
+            <p:panel class="boxCadastro" visible="#{atendimentoMB.cadastroConcluido}">
+                <h2>Atendimento registrado com sucesso.</h2><br/>
+                <div style="text-align: right">
+                    <p:commandButton value="Continuar..." type="button">
+                        <p:ajax event="click" listener="#{atendimentoMB.redirecionar}" />
+                    </p:commandButton>
+                </div>                                
+            </p:panel>
+        </h:form>
+    </p:dialog>
+    <style type="text/css">
+        .ui-dataview-content {
+            background-color: rgba(255,255,255,0);     
+            border: none;
+        }            
+    </style>
+    <script>
+        function exibeDelete(ele) {
+            var id = ele.id;
+            id = id.split(":");
+            $("#verAtendimentoForm\\:dataViewComentarios\\:" + id[2] + "\\:eleComentario").find("button").css("display", "inline-block");
+        }
+        ;
+        function ocultaDelete(ele) {
+            var id = ele.id;
+            id = id.split(":");
+            $("#verAtendimentoForm\\:dataViewComentarios\\:" + id[2] + "\\:eleComentario").find("button").css("display", "none");
+        }
+        ;
+    </script>
+</ui:composition>

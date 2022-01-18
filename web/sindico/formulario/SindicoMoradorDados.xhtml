@@ -1,0 +1,190 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="divMorador" widgetVar="divMorador" class="backForms" modal="true" closable="true" showHeader="true" width="1300" header="Morador" positionType="absolute">
+        <div class="ui-g conteudo">
+            <h:form id="formMorador" style="width: 100%">
+                <p:panel class="boxConteudo" id="panelMorador" rendered="#{moradorInfoMB.morador != null}">
+                    <h2 class="titH2">Informações Morador</h2>
+                    <p:tabView class="boxConteudo" id="tabViewMorador">
+                        <p:tab title="Dados Pessoais" id="tabPessoal">
+                            <div class="ui-g">
+                                <div class="ui-g-6">
+                                    <div class="ui-g-12" style="padding-bottom: 0">
+                                        <h3 class="titH2" style="margin-bottom: 2vh; margin-top: 0">Dados Pessoais</h3>                                 
+                                    </div>                            
+                                    <div class="ui-g-3">
+                                        <p:graphicImage value="/ImagemPessoa/#{moradorInfoMB.morador.imagem.id}#{moradorInfoMB.morador.imagem.extensao}" height="160" width="130" rendered="#{moradorInfoMB.morador.imagem != null}"/>                               
+                                        <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="180" width="130" rendered="#{moradorInfoMB.morador.imagem == null}"/> 
+                                    </div>
+                                    <div class="ui-g-9">
+                                        <div class="ui-g-5" style="text-align: right">
+                                            <h:outputText value="STATUS: " /><br/>
+                                            <h:outputText value="APARTAMENTO: " /><br/>
+                                            <h:outputText value="NOME: " /><br/>
+                                            <h:outputText value="CPF: " /><br/>
+                                            <h:outputText value="EMAIL: " /><br/>
+                                            <h:outputText value="NASCIMENTO: " /><br/>
+                                            <h:outputText value="ULT.CADASTRO: " /><br/>
+                                            <h:outputText value="FONE: " /><br/>
+                                            <h:outputText value="CEL: " /><br/>                                  
+                                        </div>
+                                        <div class="ui-g-6">
+                                            <h:outputText rendered="#{moradorInfoMB.morador.status == 0}" value="DESATIVADO" />
+                                            <h:outputText rendered="#{moradorInfoMB.morador.status == 1}" value="DEPENDENTE" />
+                                            <h:outputText rendered="#{moradorInfoMB.morador.status == 2}" value="ACESSO LIMITADO" />
+                                            <h:outputText rendered="#{moradorInfoMB.morador.status == 3}" value="ACESSO TOTAL" />
+                                            <h:outputText rendered="#{moradorInfoMB.morador.status == 4}" value="DESLIGADO" /><br />
+                                            <p:outputLabel rendered="#{moradorInfoMB.morador.apartamento != null}">
+                                                <h:outputText value="[#{moradorInfoMB.morador.apartamento.bloco}] - #{moradorInfoMB.morador.apartamento.id}" /><br />                                    
+                                            </p:outputLabel>
+                                            <h:outputText value="#{moradorInfoMB.morador.nome}" /><br />
+                                            <h:outputText value="#{moradorInfoMB.imprimeCpf(moradorInfoMB.morador.cpf)}" /><br />
+                                            <h:outputText value="#{moradorInfoMB.morador.email}" /><br />
+                                            <h:outputText value="#{moradorInfoMB.morador.dataNascimento}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText><br />
+                                            <h:outputText value="#{moradorInfoMB.morador.dataCadastro}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText><br />
+                                            <h:outputText value="#{moradorInfoMB.morador.fone}" /><br />
+                                            <h:outputText value="#{moradorInfoMB.morador.celular}" />  
+                                        </div>                                        
+                                    </div>                                    
+                                </div>                                             
+                                <div class="ui-g-6">
+                                    <div class="ui-g-12" style="padding-bottom: 0">
+                                        <h3 class="titH2" style="margin-bottom: 2vh; margin-top: 0">Registros</h3>
+                                        <p:dataTable value="#{moradorInfoMB.logsCadastroMorador}" var="log" emptyMessage="Nenhum registro encontrado">
+                                            <p:column headerText="Aprovação" style="text-align: center">
+                                                <h:outputText value="#{log.dataAprovacao}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </h:outputText>    
+                                            </p:column>
+                                            <p:column headerText="Desligamento" style="text-align: center">
+                                                <h:outputText value="#{log.dataDesligamento}">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                </h:outputText>    
+                                                <h:outputText value="-" rendered="#{log.dataDesligamento == null}" />
+                                            </p:column>
+                                        </p:dataTable>                                        
+                                    </div>                                   
+                                </div> 
+                                <div class="ui-g-6" style="display: #{moradorInfoMB.morador.apartamento.moradores.size() > 0 ? 'block' : 'none'}">
+                                    <h3 class="titH2" style="margin-bottom: 0">Dependentes</h3>    
+                                    <p:dataView value="#{moradorInfoMB.morador.apartamento.moradores}" var="morador">
+                                        <p:dataViewListItem>
+                                            <h:panelGrid columns="2">
+                                                <p:graphicImage value="/ImagemPessoa/#{morador.imagem.id}#{morador.imagem.extensao}" height="150" width="120" rendered="#{morador.imagem != null}"/>                                              
+                                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{morador.imagem == null}"/>                                              
+                                                <p:outputPanel>
+                                                    <p:outputLabel rendered="#{morador.tipo == 1}">
+                                                        <h4 style="margin: 0">RESPONSAVEL</h4>
+                                                    </p:outputLabel>
+                                                    <h:outputText value="NOME: #{morador.nome}" /><br />
+                                                    <h:outputText value="CPF: #{porteiroMB.imprimeCpf(morador.cpf)}" /><br />
+                                                    <h:outputText value="NASCIMENTO: " />
+                                                    <h:outputText value="#{morador.dataNascimento}">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                                    </h:outputText>                                                
+                                                </p:outputPanel>
+                                            </h:panelGrid>                                        
+                                        </p:dataViewListItem>                                     
+                                    </p:dataView>                                            
+                                </div>
+                                <div class="ui-g-6" style="display: #{moradorInfoMB.morador.veiculos.size() > 0 ? 'block' : 'none'}">
+                                    <h3 class="titH2" style="margin-bottom: 0">Veículos</h3>
+                                    <p:dataView value="#{moradorInfoMB.morador.veiculos}" var="veiculo">
+                                        <p:dataViewListItem>
+                                            <h:panelGrid columns="1">
+                                                <p:outputPanel>
+                                                    <h:outputText value="PLACA: #{veiculo.placa}" /><br />                                              
+                                                    <h:outputText value="COR: #{veiculo.cor}" /><br />                                              
+                                                    <h:outputText value="MARCA: #{veiculo.marca}" /><br />                                              
+                                                    <h:outputText value="MODELO: #{veiculo.modelo}" /><br />                                              
+                                                </p:outputPanel>
+                                            </h:panelGrid>                                        
+                                        </p:dataViewListItem>                                     
+                                    </p:dataView>                                                                            
+                                </div>
+                            </div>                            
+                        </p:tab>
+                        <p:tab title="Financeiro" id="tabMoradorFinanc">
+                            <h3 class="titH2" style="margin-top: 0">Dados Financeiro</h3>
+                            <p:tabView class="boxConteudo" id="tabViewMoradorFinanc">
+                                <p:tab title="Taxa de Condomínio" id="tabTaxaCond">
+                                    <h4 class="titH2" style="margin-top: 0; margin-bottom: 0">Taxa de Condomínio</h4> 
+                                    <p:selectOneMenu value="#{moradorInfoMB.anoFiltro}" style="font-size: small; margin-top: 0.3vh; margin-bottom: 1vh">
+                                        <f:selectItems value="#{moradorInfoMB.anos}" var="ano" itemLabel="#{ano}" itemValue="#{ano}" />  
+                                        <p:ajax event="change" listener="#{moradorInfoMB.iniciaListaBoleto}" update="formMorador:tabViewMorador:tabViewMoradorFinanc:tabelaTaxa" />
+                                    </p:selectOneMenu>
+                                    <p:dataTable value="#{moradorInfoMB.listaBoletoTaxa}" var="boletoTaxa" emptyMessage="Nenhum pagamento registrado" id="tabelaTaxa">
+                                        <p:column headerText="Mês" style="text-align: left" width="25">
+                                            <h:outputText value="#{moradorInfoMB.nomeMes(boletoTaxa.dataReferencia.month)}" />   
+                                        </p:column>
+                                        <p:column headerText="Ult. Emissão" style="text-align: center;" width="25">
+                                            <h:outputText value="#{boletoTaxa.dataEmissao}" rendered="#{boletoTaxa.dataEmissao != null}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText> 
+                                            <h:outputText value="Não emitido" rendered="#{boletoTaxa.dataEmissao == null and moradorInfoMB.statusPagamento(boletoTaxa) != 2}" /> 
+                                            <h:outputText value="-" rendered="#{moradorInfoMB.statusPagamento(boletoTaxa) == 2}" />
+                                        </p:column>
+                                        <p:column headerText="Vencimento" style="text-align: center" width="25">
+                                            <h:outputText value="#{boletoTaxa.dataVencimento}" rendered="#{moradorInfoMB.statusPagamento(boletoTaxa) != 2}" >
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText> 
+                                            <h:outputText value="-" rendered="#{moradorInfoMB.statusPagamento(boletoTaxa) == 2}" />  
+                                        </p:column> 
+                                        <p:column headerText="Pagamento"    style="text-align: center" width="25">
+                                            <h:outputText value="Pago"      rendered="#{moradorInfoMB.statusPagamento(boletoTaxa) == 1}" />                                 
+                                            <h:outputText value="-"         rendered="#{moradorInfoMB.statusPagamento(boletoTaxa) == 2}" />                                 
+                                            <h:outputText value="Atrasado"  rendered="#{moradorInfoMB.statusPagamento(boletoTaxa) == 3}" />                                 
+                                            <h:outputText value="Em aberto" rendered="#{moradorInfoMB.statusPagamento(boletoTaxa) == 4}" />                                 
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:tab>                                
+                                <p:tab title="Multas" id="tabMultas">
+                                    <h4 class="titH2" style="margin-top: 0">Multas</h4>
+                                    <p:dataTable value="#{moradorInfoMB.listaNotificacoes}" var="notificacao" emptyMessage="Nenhuma notificação registrada."
+                                                 paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                                        <p:column headerText="Id" width="1" style="text-align: center" sortBy="#{notificacao.id}">
+                                            <h:outputText value="#{notificacao.id}" />
+                                        </p:column>                                 
+                                        <p:column headerText="Infração" width="69" sortBy="#{notificacao.infracao.descricao}">
+                                            <h:outputText value="#{notificacao.infracao.descricao}" />
+                                        </p:column>
+                                        <p:column headerText="Emissão" style="text-align: center" width="8" sortBy="#{notificacao.dataEmissao}">
+                                            <h:outputText value="#{notificacao.dataEmissao}">
+                                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                                            </h:outputText>
+                                        </p:column> 
+                                        <p:column headerText="Tipo" width="8" sortBy="#{notificacao.tipo}">
+                                            <h:outputText value="#{notificacao.tipo == 0 ? 'Advertência' : 'Multa'}" />
+                                        </p:column>                     
+                                        <p:column headerText="Status" style="text-align: center" width="14">
+                                            <h:outputText value="#{moradorInfoMB.statusNotificacao(notificacao)}" />
+                                        </p:column>                                     
+                                    </p:dataTable> 
+                                </p:tab>                                  
+                            </p:tabView>                                                        
+                        </p:tab>
+                    </p:tabView>                     
+                </p:panel>
+            </h:form>
+        </div>
+    </p:dialog>
+    <style type="text/css">
+        .ui-dataview-list .ui-dataview-row {
+            border-bottom: 1px solid #A8A8A8;
+            padding: 25px 10px;
+        }
+
+        .ui-dataview-content {
+            background-color: rgba(255,255,255,0); 
+            border: none;
+        }
+    </style>
+</ui:composition>

@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/SindicoTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Sindico - Notícias</ui:define>
+    <ui:define name="conteudo">
+        <h:form id="formTabela">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Notícias</h2>
+                <div style="text-align: right">                    
+                    <p:commandButton value="Nova Notícia" oncomplete="PF('dialogNoticia').show()" update="dialogNoticia" actionListener="#{noticiaMB.novaNoticia}" style="font-size: medium"/>
+                </div>
+                <br />
+                <p:messages />
+                <p:dataTable value="#{noticiaMB.noticiasFiltro}" var="noticia" emptyMessage="Nenhuma notícia cadastrada." 
+                             paginator="true" lazy="true" paginatorPosition="bottom" rows="10" >
+                    <p:column headerText="Cód" width="1" style="text-align: center" sortBy="#{noticia.id}">
+                        <h:outputText value="#{noticia.id}" />
+                    </p:column>                    
+                    <p:column headerText="Título" width="37.33" sortBy="#{noticia.titulo}">
+                        <h:outputText value="#{noticia.titulo}" />
+                    </p:column>                    
+                    <p:column headerText="Autor" width="32.33" sortBy="#{noticia.autor}">
+                        <h:outputText value="#{noticia.autor.nome}" />
+                    </p:column>                    
+                    <p:column headerText="Ult. Modif" width="27.33" style="text-align: center" sortBy="#{noticia.ultimaAlteracao}">
+                        <h:outputText value="#{noticia.ultimaAlteracao}">
+                            <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                        </h:outputText>h
+                    </p:column>                    
+                    <p:column headerText="Ver" width="1" style="text-align: center">
+                        <p:commandButton icon="ui-icon-search" type="button" style="font-size: small">
+                            <p:ajax event="click" listener="#{noticiaMB.setNoticia(noticia)}" update="formTabela:visualizar" oncomplete="PF('visualizar').show()"/>  
+                        </p:commandButton>
+                    </p:column>                    
+                    <p:column headerText="Editar" width="1" style="text-align: center">
+                        <p:commandButton icon="ui-icon-pencil" type="button" style="font-size: small">
+                            <p:ajax event="click" listener="#{noticiaMB.setEdicaoNoticia(noticia)}" oncomplete="PF('dialogNoticia').show()" update="dialogNoticia" />   
+                        </p:commandButton>
+                    </p:column>                    
+                    <p:column headerText="Apagar" width="1" style="text-align: center">
+                        <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small">
+                            <p:ajax event="click" listener="#{noticiaMB.apagarNoticia(noticia)}" update="formTabela" />   
+                            <p:confirm header="Apagar" message="Apagar notícia?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>                    
+                </p:dataTable>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+                </p:confirmDialog>
+
+                <p:dialog class="backForms" modal="true" draggable="false" id="visualizar" widgetVar="visualizar" fitViewport="true" position="top">
+                    <p:panel class="conteudo">
+                        <p:panel class="boxConteudo">
+                            <p:outputPanel style="text-align: right">
+                                <p:commandButton id="editarIcon" icon="ui-icon-pencil" type="button" style="font-size: small">
+                                    <p:ajax event="click" listener="#{noticiaMB.setEdicaoNoticia(noticiaMB.noticia)}" onstart="PF('visualizar').hide()" oncomplete="PF('dialogNoticia').show()" update="dialogNoticia" />                                      
+                                </p:commandButton>
+                                <p:tooltip for="editarIcon" value="Editar noticia" />  
+                                <p:commandButton id="apagarIcon" icon="ui-icon-trash" type="button" style="font-size: small">
+                                    <p:ajax event="click" listener="#{noticiaMB.apagarNoticia(noticiaMB.noticia)}" update="formTabela" />   
+                                    <p:confirm header="Apagar" message="Apagar notícia?" icon="pi pi-exclamation-triangle" />
+                                </p:commandButton>
+                                <p:tooltip for="apagarIcon" value="Apagar noticia" /> 
+                            </p:outputPanel>
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <h2 class="titH2" align="center">#{noticiaMB.noticia.titulo}</h2> 
+                                    ID:
+                                    <h:outputText value="#{(noticiaMB.noticia.id == 0) ? '' : noticiaMB.noticia.id}" /> 
+                                </div>
+                                <div class="ui-g-6">
+                                    CRIAÇÃO:
+                                    <h:outputText value="#{noticiaMB.noticia.data}">
+                                        <f:convertDateTime pattern="dd/MM/yy HH:mm" />                            
+                                    </h:outputText>h<br/>
+                                    ULT. EDIÇÃO:
+                                    <h:outputText value="#{noticiaMB.noticia.ultimaAlteracao}">
+                                        <f:convertDateTime pattern="dd/MM/yy HH:mm" />                            
+                                    </h:outputText>h
+                                </div>  
+                                <div class="ui-g-6">
+                                    AUTOR: 
+                                    <h:outputText value="#{noticiaMB.noticia.autor.nome}" /><br/>     
+                                    MODIFICADOR: 
+                                    <h:outputText value="#{noticiaMB.noticia.funcionarioAlteracao.nome}" />     
+                                </div> 
+                                <div class="ui-g-12">
+                                    <h5 align="right" style="margin: 0">
+                                        <h:outputText value="#{noticiaMB.noticia.data}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />                        
+                                        </h:outputText>
+                                    </h5>  
+                                    <p:panel style="background-color: rgba(255,255,255,0); border: none;">
+                                        <div style="text-align: center">
+                                            <p:galleria value="#{noticiaMB.noticia.arquivos}" var="arquivo"  showCaption="true" rendered="#{noticiaMB.noticia.arquivos.size() != 0}" panelHeight="500" panelWidth="1000" style="display: inline-block">
+                                                <p:graphicImage value="/ImagemNoticia/#{arquivo.id}#{arquivo.extensao}" alt="Imagem: #{noticiaMB.noticia.arquivos.indexOf(arquivo)+1}" title="#{arquivo.descricao}" width="100%" height="100%" />         
+                                            </p:galleria>                
+                                        </div>           
+                                        <h:outputText value="#{noticiaMB.noticia.descricao}" escape="false"/>                                        
+                                    </p:panel>
+                                </div>
+                            </div>
+                        </p:panel>                        
+                    </p:panel>                    
+                </p:dialog>
+
+            </p:panel>
+        </h:form>
+        <ui:include src="formulario/SindicoFormularioNoticia.xhtml" /> 
+    </ui:define>
+</ui:composition>
+

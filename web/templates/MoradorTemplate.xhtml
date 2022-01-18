@@ -1,0 +1,131 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/css/Morador.css" />
+        <title><ui:insert name="titulo">Template</ui:insert></title>
+        <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/js/CalendarioPrimefaces.js"></script>
+    </h:head>
+    <h:body onload="exibeMensagem()">
+        <div class="ui-g">            
+            <div class="topMenu ui-g-12">
+                <div class="ui-g-1" style="padding-top: 2vh">
+                    <img class="icone-menu" src="#{facesContext.externalContext.requestContextPath}/css/logo.png"  alt="inicio"/>
+                </div>
+                <div class="ui-g-8">
+
+                </div>
+                <h:form>
+                    <div class="ui-g-1" style="height: 9.95vh">
+                        <div class="ui-g-6" style="padding-top:2vh"> 
+                            <p:menuButton class="btnMsg" icon="ui-icon-alert" rendered="#{menuMB.renderizar}"  >
+                                <p:menuitem value="Existe uma nova assembléia em andamento!" url="../morador/MoradorAssembleia.jsf" style="font-size: small" rendered="#{menuMB.assembleia != null}" />
+                            </p:menuButton> 
+                        </div>
+                        <div class="ui-g-6" style="padding-top:2vh">
+                            <p:menuButton class="btnMsg" icon="ui-icon-mail-closed" rendered="#{menuMB.totalMensagem > 0}"  >
+                                <p:menuitem value="Você tem #{menuMB.totalMensagem} nova(s) mensagen(s)!" url="../morador/MoradorMensagem.jsf" style="font-size: small" />
+                            </p:menuButton>                            
+                        </div>
+                    </div>
+                    <div class="ui-g-2" style="padding: 0">
+                        <div class="ui-g-3" style="padding-bottom: 0; padding-top: 1.3vh">
+                            <p:graphicImage class="imagemLogin" value="/ImagemPessoa/SemFoto.PNG" rendered="#{menuMB.login.morador.imagem == null}"/> 
+                            <p:graphicImage class="imagemLogin" value="/ImagemPessoa/#{menuMB.login.morador.imagem.id}#{menuMB.login.morador.imagem.extensao}" rendered="#{menuMB.login.morador.imagem != null}"/>                         
+                        </div>
+                        <div class="ui-g-9" style="padding-bottom: 0; padding-top: 1.2vh;">
+                            <p:menuButton class="menuBtn" value="#{menuMB.login.morador.nome.length() > 17 ? menuMB.login.morador.nome.substring(0,17) : menuMB.login.morador.nome}" iconPos="right" >
+                                <p:menuitem value="Meus Dados" url="../morador/MoradorDados.jsf" style="font-size: small" />
+                                <p:menuitem value="Sair" action="#{loginMB.logout}" style="font-size: small">
+                                    <p:confirm header="Sair" message="Deseja sair de SGR?" />                                    
+                                </p:menuitem>
+                            </p:menuButton>
+                        </div>                                        
+                    </div>
+                </h:form>
+            </div>           
+
+            <p:sidebar widgetVar="aviso" position="top" baseZIndex="10000" rendered="#{(menuMB.assembleia.presidente.id == menuMB.login.morador.id) and (menuMB.assembleia.encerramento == 1 and menuMB.assembleia.parecer == null) }" style="height: 32vh; background-color: white">
+                <p:outputPanel rendered="#{(menuMB.assembleia.presidente.id == menuMB.login.morador.id) and (menuMB.assembleia.encerramento == 1 and menuMB.assembleia.parecer == null) }">
+                    <h3 class="titH2">Assembleia em encerramento</h3>
+                    <p>
+                        Prezado(a) #{LoginMB.morador.nome} <br /><br />
+                        A assembleia nº#{menuMB.assembleia.id} com encerramento previsto para <h:outputText value="#{menuMB.assembleia.dataFim}" > <f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText> 
+                        encontra-se em processo de finalização e aguardando o seu parecer, por gentileza acesse o link para dar continuídade ao processo.                  
+                    </p>   
+                    <p:outputPanel style="text-align: right">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorAssembleia.jsf">
+                            <p:button value="Assembleia" style="font-size: medium" />
+                        </a>                         
+                    </p:outputPanel>                   
+                </p:outputPanel> 
+            </p:sidebar>
+
+            <div class="ui-g-2 boxMenu"> 
+                <div class="ui-g-12 vertical-menu">
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorHome.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorHome.jsf">Início</a>                    
+                    </div>            
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorAssembleia.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorAssembleia.jsf">Assembleia</a>                    
+                    </div>
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorAtendimento.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorAtendimento.jsf">Atendimento</a>                    
+                    </div>
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorBalanco.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorBalanco.jsf">Balanço</a>                    
+                    </div>
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorTaxa.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorTaxa.jsf">Condomínio</a>                    
+                    </div>
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorDependente.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorDependente.jsf">Dependente</a>                    
+                    </div>  
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorMensagem.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorMensagem.jsf">Mensagens</a>                    
+                    </div>    
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorSalao.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorSalao.jsf">Salão de Festa</a>                    
+                    </div>                
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorVagas.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorVagas.jsf">Vagas</a>                    
+                    </div>
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorVeiculo.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorVeiculo.jsf">Veículo</a>                    
+                    </div> 
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/morador/MoradorVisita.xhtml') ? 'active' : ''}">
+                        <a href="#{facesContext.externalContext.requestContextPath}/morador/MoradorVisita.jsf">Visita</a>                    
+                    </div>                      
+                </div>                
+            </div>
+            <div class="ui-g-10">
+                <div class="ui-g-12 conteudo">
+                    <ui:insert name="conteudo">
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris malesuada malesuada lacus, sed condimentum augue blandit ac. Fusce quis luctus velit. Pellentesque ac mattis lectus. Nunc leo arcu, tristique efficitur iaculis eu, pulvinar vel nunc. Etiam ornare sit amet elit eget rhoncus. Fusce eu magna quis velit vestibulum convallis sit amet eget est. Nunc tincidunt mollis lorem, a molestie diam venenatis id. Donec interdum euismod mauris, vel lacinia ante ornare et. Praesent feugiat porta elit. Suspendisse bibendum ut magna quis scelerisque. Donec tellus libero, lobortis molestie ullamcorper vel, sodales ac neque. Aenean tellus est, tincidunt a velit vel, aliquet dapibus nibh. Praesent sed urna eu leo facilisis commodo in eget quam. Donec ultricies vestibulum nisi sit amet tempor.
+
+                            Duis sodales dolor eu mattis dapibus. Curabitur consequat ac erat vitae sagittis. Praesent commodo non mi at congue. Nam scelerisque magna nec feugiat rutrum. Aliquam vel ultricies justo, eu lacinia orci. Proin viverra diam non ex eleifend commodo. Etiam faucibus nec tortor vel condimentum. Mauris mauris turpis, finibus eget sem eu, convallis vehicula diam. Nullam et ullamcorper velit. Cras vehicula mauris purus, ac pulvinar velit tempus a. Donec id sem sit amet ligula maximus ornare. Sed quis mollis sem.
+
+                            Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Etiam fermentum urna urna, non dapibus nulla mattis laoreet. Nam aliquam, magna vulputate imperdiet tristique, lectus velit feugiat sapien, volutpat commodo metus sapien vel elit. Nulla scelerisque, leo eget iaculis pharetra, arcu ex imperdiet tortor, in finibus sapien mi sit amet purus. Nulla placerat arcu magna, et placerat arcu consectetur ac. Donec sodales dapibus ex, varius accumsan lorem sollicitudin quis. Maecenas commodo felis at malesuada egestas. Aenean interdum mattis dolor, vitae convallis mauris porta quis. Pellentesque quam diam, fringilla vel ex ac, rhoncus interdum quam. Nullam tempor urna eget felis suscipit ornare. Morbi vulputate libero ac felis vulputate rutrum.
+
+                            Quisque dictum mollis auctor. Sed mollis arcu at odio mattis sollicitudin. Vivamus ornare tellus nibh, in elementum eros laoreet eu. Nam velit orci, facilisis ut pharetra nec, rhoncus vitae magna. Integer condimentum nunc in massa pulvinar, quis molestie lacus aliquam. Cras luctus sollicitudin nibh, in vehicula odio luctus vel. Cras nec vulputate justo. Phasellus erat tortor, hendrerit eget felis ac, iaculis pharetra nunc. Praesent mollis blandit metus, ut facilisis risus blandit in. Sed ut justo eget lectus suscipit consequat non sagittis enim. Suspendisse non purus vitae nulla condimentum viverra et accumsan dui. Pellentesque eleifend arcu tellus, non lacinia sem viverra eget.
+
+                            Nulla leo lacus, ullamcorper at rutrum sit amet, tincidunt eu mi. Sed laoreet mattis tempus. Nulla varius, nulla et mattis elementum, neque nisl tempus nibh, eu hendrerit magna justo nec elit. Etiam auctor, ligula eget porta ultrices, leo metus iaculis elit, id feugiat sem dui a arcu. Quisque dictum, dui at venenatis posuere, leo mauris lacinia ipsum, ac aliquet felis turpis a erat. Morbi porta vel massa at sodales. Etiam gravida leo non tempor ultricies. Fusce blandit felis mauris, id malesuada elit malesuada id. Duis interdum mattis tortor, non finibus felis volutpat sit amet. Curabitur interdum a nisl eu blandit. Suspendisse lorem magna, porta faucibus vulputate in, rutrum ac velit. Pellentesque a leo dapibus sapien lacinia auctor ac eget ligula. Phasellus lobortis finibus elit. Integer laoreet dolor id augue blandit, luctus semper metus fringilla.
+
+                        </p>
+                    </ui:insert>
+                </div>
+            </div>   
+        </div>
+    </h:body>
+    <script>
+        function exibeMensagem() {
+            if (window.location.href !== "http://localhost:8080/SGR/morador/MoradorAssembleia.jsf") {
+                PF("aviso").show();
+            }
+        }
+    </script>
+</html>
+

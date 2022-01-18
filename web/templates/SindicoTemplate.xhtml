@@ -1,0 +1,121 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/css/Sindico.css" />
+        <title><ui:insert name="titulo">Template</ui:insert></title>
+        <script type="text/javascript" src="#{facesContext.externalContext.requestContextPath}/js/CalendarioPrimefaces.js"></script>
+    </h:head>
+    <h:body>  
+        <div class="ui-g">
+            <div class="topMenu ui-g-12">
+                <div class="ui-g-1" style="padding-top: 2vh">
+                    <img class="icone-menu" src="#{facesContext.externalContext.requestContextPath}/css/logo.png"  alt="inicio"/>
+                </div>
+                <div class="ui-g-8">
+
+                </div>
+                <h:form>
+                    <div class="ui-g-1" style="height: 9.95vh">
+                        <div class="ui-g-6" style="padding-top:2vh"> 
+                            <p:menuButton class="btnMsg" icon="ui-icon-alert" rendered="#{menuMB.renderizar}"  >
+                                <p:menuitem value="Existe uma nova assembléia em andamento!" url="../sindico/SindicoAssembleia.jsf" style="font-size: small" rendered="#{menuMB.assembleia != null}" />
+                                <p:menuitem value="Existe #{menuMB.totalAtendimentosAbertos} novo(s) atendimento(s)!" url="../sindico/SindicoAtendimento.jsf"       style="font-size: small" rendered="#{menuMB.totalAtendimentosAbertos > 0}" />
+                                <p:menuitem value="Existe #{menuMB.totalAtendimentosReabertos} atendimento(s) reaberto(s)!" url="../sindico/SindicoAtendimento.jsf" style="font-size: small" rendered="#{menuMB.totalAtendimentosReabertos > 0}" />
+                                <p:menuitem value="Existe #{menuMB.totalAtendimentosProcesso} atendimento(s) em processo!" url="../sindico/SindicoAtendimento.jsf"  style="font-size: small" rendered="#{menuMB.totalAtendimentosProcesso > 0}" />
+                                <p:menuitem value="Existe #{menuMB.totalNovosMoradores} novo(s) morador(es)!" url="../sindico/SindicoNovoMorador.jsf"               style="font-size: small" rendered="#{menuMB.totalNovosMoradores > 0}" />
+                                <p:menuitem value="Existe #{menuMB.totalMoradoresDebitos} morador(es) com débito(s)!" url="../sindico/SindicoAcessoMorador.jsf"     style="font-size: small" rendered="#{menuMB.totalMoradoresDebitos > 0}" />
+                                <p:menuitem value="Existe #{menuMB.totalNovasReceitas} novo(s) registro(s) de receita(s)!" url="../sindico/SindicoFinanceiro.jsf"   style="font-size: small" rendered="#{menuMB.totalNovasReceitas > 0}" />
+                            </p:menuButton> 
+                        </div>
+                        <div class="ui-g-6" style="padding-top:2vh">
+                            <p:menuButton class="btnMsg" icon="ui-icon-mail-closed" rendered="#{menuMB.totalMensagem > 0}"  >
+                                <p:menuitem value="Você tem #{menuMB.totalMensagem} nova(s) mensagen(s)!" url="../sindico/SindicoMensagem.jsf" style="font-size: small" />
+                            </p:menuButton>                            
+                        </div>
+                    </div>
+                    <div class="ui-g-2" style="padding: 0">
+                        <div class="ui-g-3" style="padding-bottom: 0; padding-top: 1.3vh">
+                            <p:graphicImage class="imagemLogin" value="/ImagemPessoa/SemFoto.PNG" rendered="#{menuMB.login.funcionario.imagem == null}"/> 
+                            <p:graphicImage class="imagemLogin" value="/ImagemPessoa/#{menuMB.login.funcionario.imagem.id}#{menuMB.login.funcionario.imagem.extensao}" rendered="#{menuMB.login.funcionario.imagem != null}"/>                         
+                        </div>
+                        <div class="ui-g-9" style="padding-bottom: 0; padding-top: 1.2vh;">
+                            <p:menuButton class="menuBtn" value="#{menuMB.login.funcionario.nome.length() > 17 ? menuMB.login.funcionario.nome.substring(0,16) : menuMB.login.funcionario.nome}" iconPos="right" >
+                                <p:menuitem value="Meus Dados" url="../sindico/SindicoDados.jsf" style="font-size: small" />
+                                <p:menuitem value="Sair" action="#{loginMB.logout}" style="font-size: small">
+                                    <p:confirm header="Sair" message="Deseja sair de SGR?" />                                    
+                                </p:menuitem>
+                            </p:menuButton>
+                        </div>                                        
+                    </div>
+                </h:form>
+            </div>           
+        </div>
+        <div class="ui-g-2 boxMenu">
+
+        </div>
+        <h:form>
+            <div class="ui-g-2 boxMenu"> 
+                <div class="ui-g-12 vertical-menu">
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/sindico/SindicoHome.xhtml') ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoHome.jsf" value="Inicio" style="width: 100%"/>
+                    </div>                    
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/sindico/SindicoAcessoMorador.xhtml') ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoAcessoMorador.jsf" value="Acesso Morador" style="width: 100%" />                   
+                    </div>
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/sindico/SindicoAdvertencia.xhtml') ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoAdvertencia.jsf" value="Advertência" style="width: 100%"/>
+                    </div>
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoAssembleia.xhtml')  ) ? 'active' : ''}"> 
+                        <p:link outcome="/sindico/SindicoAssembleia.jsf" value="Assembleia" style="width: 100%"/>               
+                    </div> 
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoAtendimento.xhtml')  ) ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoAtendimento.jsf" value="Atendimento" style="width: 100%"/>               
+                    </div> 
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoBalanco.xhtml')  ) ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoBalanco.jsf" value="Balanço" style="width: 100%"/>               
+                    </div> 
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoVagas.xhtml')  ) ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoVagas.jsf" value="Estacionamento" style="width: 100%"/>               
+                    </div> 
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoFinanceiro.xhtml')  ) ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoFinanceiro.jsf" value="Financeiro" style="width: 100%"/>               
+                    </div>  
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/sindico/SindicoFuncionario.xhtml') ? 'active' : ''}"> 
+                        <p:link outcome="/sindico/SindicoFuncionario.jsf" value="Funcionários" style="width: 100%"/>                    
+                    </div>  
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoMensagem.xhtml')  ) ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoMensagem.jsf" value="Mensagens" style="width: 100%"/>               
+                    </div>   
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoMoradores.xhtml')  ) ? 'active' : ''}"> 
+                        <p:link outcome="/sindico/SindicoMoradores.jsf" value="Moradores" style="width: 100%"/>               
+                    </div>  
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoListaNoticia.xhtml')  ) ? 'active' : ''}"> 
+                        <p:link outcome="/sindico/SindicoListaNoticia.jsf" value="Notícias" style="width: 100%"/>               
+                    </div>                      
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/sindico/SindicoNovoMorador.xhtml') ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoNovoMorador.jsf" value="Novo Morador" style="width: 100%"/>                                                               
+                    </div>
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoRelatorio.xhtml')  ) ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoRelatorio.jsf" value="Relatórios" style="width: 100%"/>               
+                    </div> 
+                    <div class="elemento-menu #{((facesContext.viewRoot.viewId).equals('/sindico/SindicoSalao.xhtml')  ) ? 'active' : ''}">
+                        <p:link outcome="/sindico/SindicoSalao.jsf" value="Salão de Festa" style="width: 100%"/>               
+                    </div> 
+                </div>
+            </div>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>            
+        </h:form>
+        <div class="ui-g-10">
+            <div class="ui-g-12 conteudo">
+                <ui:insert name="conteudo">
+                </ui:insert>
+            </div>
+        </div>
+    </h:body>
+</html>
+

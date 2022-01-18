@@ -1,0 +1,135 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/SindicoTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Sindico - Atendimento</ui:define>
+    <ui:define name="conteudo">
+        <h:form id="formTabela">
+            <p:poll widgetVar="myPoll" listener="#{atendimentoMB.pollComentarios}" update="verAtendimentoForm:dataViewComentarios" autoStart="false" />
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Atendimento</h2>
+                <p:messages id="mensagem"  />
+                <p:tabView  class="boxConteudo" id="tabView">
+                    <p:tab title="Abertos">
+                        <p:dataTable value="#{atendimentoMB.listaAtendimentoAberto}" var="aberto" emptyMessage="Nenhum atendimento aberto"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="tabAbertos">
+                            <p:column headerText="Status" style="text-align: center" width="8" sortBy="#{aberto.status}">
+                                <h:outputText value="#{atendimentoMB.statusAtendimento(aberto)}" />
+                            </p:column>                            
+                            <p:column headerText="Morador" width="20" sortBy="#{aberto.morador.nome}">
+                                <h:outputText value="#{aberto.morador.nome}" />
+                            </p:column>            
+                            <p:column headerText="Descrição" width="40" sortBy="#{aberto.descricao}">
+                                <h:outputText value="#{aberto.descricao}" />
+                            </p:column>            
+                            <p:column headerText="Abertura" style="text-align: center" width="7" sortBy="#{aberto.dataAbertura}">
+                                <h:outputText value="#{aberto.dataAbertura}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>                             
+                            <p:column headerText="Ver" style="text-align: center" width="2">
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                    <p:ajax event="click" listener="#{atendimentoMB.setVerAtendimento(aberto)}"  update="divVerAtendimento" oncomplete="PF('divVerAtendimento').show()"/>  
+                                </p:commandButton>
+                            </p:column>                                
+                        </p:dataTable>                                
+                    </p:tab>
+                    <p:tab title="Em Atendimento">
+                        <p:dataTable value="#{atendimentoMB.listaAtendimentoEmAtendimento}" var="emAtendimento" emptyMessage="Nenhum atendimento em iniciado"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="tabEmAtendimento">
+                            <p:column headerText="Status" style="text-align: center" width="8" sortBy="#{emAtendimento.status}">
+                                <h:outputText value="#{atendimentoMB.statusAtendimento(emAtendimento)}" />
+                            </p:column>                            
+                            <p:column headerText="Descrição" width="50" sortBy="#{emAtendimento.descricao}">
+                                <h:outputText value="#{emAtendimento.descricao}" />
+                            </p:column>            
+                            <p:column headerText="Abertura" style="text-align: center" width="5" sortBy="#{emAtendimento.dataAbertura}">
+                                <h:outputText value="#{emAtendimento.dataAbertura}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Fechamento" style="text-align: center" width="14" sortBy="#{emAtendimento.dataFechamento}">
+                                <h:outputText value="#{emAtendimento.dataFechamento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Atendente" style="text-align: center" width="21" sortBy="#{emAtendimento.funcionario.nome}">
+                                <h:outputText value="#{emAtendimento.funcionario.nome}" />
+                            </p:column>                                 
+                            <p:column headerText="Ver" style="text-align: center" width="2">
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                    <p:ajax event="click" listener="#{atendimentoMB.setVerAtendimento(emAtendimento)}"  update="divVerAtendimento" oncomplete="PF('divVerAtendimento').show()"/>  
+                                </p:commandButton>
+                            </p:column>                                
+                        </p:dataTable>   
+                    </p:tab>  
+                    <p:tab title="Reabertos">
+                        <p:dataTable value="#{atendimentoMB.listaAtendimentoReaberto}" var="reaberto" emptyMessage="Nenhum atendimento reaberto"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="tabReabertos">
+                            <p:column headerText="Status" style="text-align: center" width="8" sortBy="#{reaberto.status}">
+                                <h:outputText value="#{atendimentoMB.statusAtendimento(reaberto)}" />
+                            </p:column>                            
+                            <p:column headerText="Descrição" width="50" sortBy="#{reaberto.descricao}">
+                                <h:outputText value="#{reaberto.descricao}" />
+                            </p:column>            
+                            <p:column headerText="Abertura" style="text-align: center" width="5" sortBy="#{reaberto.dataAbertura}">
+                                <h:outputText value="#{reaberto.dataAbertura}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Fechamento" style="text-align: center" width="14" sortBy="#{reaberto.dataFechamento}">
+                                <h:outputText value="#{reaberto.dataFechamento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Atendente" style="text-align: center" width="21" sortBy="#{reaberto.funcionario.nome}">
+                                <h:outputText value="#{reaberto.funcionario.nome}" />
+                            </p:column>                                 
+                            <p:column headerText="Ver" style="text-align: center" width="2">
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                    <p:ajax event="click" listener="#{atendimentoMB.setVerAtendimento(reaberto)}"  update="divVerAtendimento" oncomplete="PF('divVerAtendimento').show()"/>  
+                                </p:commandButton>
+                            </p:column>                                
+                        </p:dataTable>   
+                    </p:tab>  
+                    <p:tab title="Fechados">
+                        <p:dataTable value="#{atendimentoMB.listaAtendimentoFechado}" var="fechado" emptyMessage="Nenhum atendimento fechado"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="tabFechados">
+                            <p:column headerText="Status" style="text-align: center" width="8" sortBy="#{fechado.status}">
+                                <h:outputText value="#{atendimentoMB.statusAtendimento(fechado)}" />
+                            </p:column>                            
+                            <p:column headerText="Descrição" width="50" sortBy="#{fechado.descricao}">
+                                <h:outputText value="#{fechado.descricao}" />
+                            </p:column>            
+                            <p:column headerText="Abertura" style="text-align: center" width="5" sortBy="#{fechado.dataAbertura}">
+                                <h:outputText value="#{fechado.dataAbertura}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Fechamento" style="text-align: center" width="14" sortBy="#{fechado.dataFechamento}">
+                                <h:outputText value="#{fechado.dataFechamento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Atendente" style="text-align: center" width="21" sortBy="#{fechado.funcionario.nome}">
+                                <h:outputText value="#{fechado.funcionario.nome}" />
+                            </p:column>                                 
+                            <p:column headerText="Ver" style="text-align: center" width="2">
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                    <p:ajax event="click" listener="#{atendimentoMB.setVerAtendimento(fechado)}"  update="divVerAtendimento" oncomplete="PF('divVerAtendimento').show()"/>  
+                                </p:commandButton>
+                            </p:column>                                
+                        </p:dataTable>   
+                    </p:tab>  
+                </p:tabView>                
+            </p:panel>            
+        </h:form>
+        <ui:include src="formulario/SindicoFormularioAtendimento.xhtml" />         
+    </ui:define>
+</ui:composition>
+

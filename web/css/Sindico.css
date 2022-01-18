@@ -1,0 +1,190 @@
+html{
+    background-image: url("back/SindicoBack.jpg"); 
+    background-size: cover;    
+}
+
+body{
+    margin: 0;
+}
+
+.boxMenu{
+    padding: 0;       
+}
+
+.topMenu{
+    background-color: rgb(28,28,28);
+    padding: 0;
+}
+
+.menuBtn{
+    font-size: x-small;
+    margin-top: 2vh;
+}
+
+.imagemLogin{
+    border-radius: 100%;
+    height: 7vh;
+    width: 3.3vw;
+}
+
+.vertical-menu {
+    padding: 0;
+    height: 120vh;
+    background-color: rgba(28,28,28,0.9);
+}
+
+.dropMenu{
+    background-color: rgb(54,54,54); 
+    padding-left: 1vw;
+    padding-top: 2vh;
+    padding-bottom: 1vh;
+}
+
+.dropMenu:hover{
+    background-color: rgb(105,105,105);  
+    font-weight: bold;
+}
+
+.activeDropMenu{
+    background-color: rgb(105,105,105);
+    font-weight: bold;
+    border-left: 0.3vw solid #4169E1;
+}
+
+.elemento-dropMenu{
+    background-color: rgb(79,79,79); 
+    padding-left: 2vw;
+    padding-top: 2vh;
+    padding-bottom: 1vh;
+    display: none;
+}
+
+.elemento-dropMenu:hover{
+    background-color: rgb(105,105,105);  
+    font-weight: bold;
+}
+
+.elemento-menu{
+    background-color: rgb(54,54,54);    
+    margin-bottom: 0.5vh;
+    padding-left: 1vw;
+    padding-top: 2vh;
+    padding-bottom: 1vh;
+}
+
+.vertical-menu a {  
+    color: white;    
+    display: inline-block;
+    padding-left: 0.3vw;
+    padding-top: 0.5vh;
+    height: 4vh;
+    width: 10vw;
+    vertical-align: top;
+    text-decoration: none;
+    font-family: sans-serif;
+}
+
+.elemento-menu:hover{
+    background-color: rgb(105,105,105);  
+    font-weight: bold;
+}
+
+.active{
+    border-left: 0.3vw solid #1E90FF;
+    background-color: rgb(79,79,79);
+    font-weight: bold;
+}
+
+.icone-menu{
+    height: 6vh;
+    width: 6vw;
+    padding-top: 0;
+}
+
+.conteudo{
+    margin-top: 1vh;
+    background-color: rgba(255,255,255,0.8);
+    padding: 1%;
+    border-radius: 10px;
+}
+
+.sucesso{
+    background-color: rgba(0,139,139,0.8);
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    padding: 5vw;
+    display: none;
+}
+
+.sucessoNoticia{
+    background-color: white;
+    padding: 10px;
+    width: 26vw;
+    text-align: center;
+    margin-left: 32vw;
+}
+
+.ui-dataview-header {
+    display: none;
+}
+
+.titH2{
+    border-bottom: 1px solid;    
+}
+
+.painelImg{
+    margin-left: 0.6vw;
+    margin-right: 0.6vw;
+    width: 100vw;   
+    display: none;
+}
+
+.btnNovaImagem{
+    display: block;
+    border: none; 
+    text-align: center;
+}
+
+.boxConteudo{
+    background-color: rgba(255,255,255,0.4);
+}
+
+.backForms{
+    background-image: url("back/SindicoBack.jpg"); 
+    background-size: cover;   
+    background-color: rgba(255,255,255,0.4);
+}
+
+.comentarioAtendimento{
+    border: 1px solid grey;
+    padding: 5px;
+    padding-top: 1px;
+    border-radius: 25px 25px;
+}
+
+.divContato{
+    background-color: #6495ED;
+    width: fit-content;
+    padding: 1px;
+    border-radius: 20px;
+    display: inline-block;    
+}
+
+.divContContato{
+    display: flex;
+    align-items: center;    
+}
+
+.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-icon-right{
+    width: 11vw;
+}
+
+.ui-menubutton.ui-widget.btnMsg {
+    font-size: x-small; 
+    box-shadow: 0 0 20px #CBA328; 
+
+}

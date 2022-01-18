@@ -1,0 +1,160 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/MoradorTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Morador - Visita</ui:define>
+    <ui:define name="conteudo">  
+        <h:form id="formListaVisita"> 
+            <p:panel class="boxConteudo" id="panelVisitas">
+                <h2 class="titH2">Visita</h2>
+                <br />
+                <p:messages id="msg" showDetail="false" /> 
+                <p:tabView class="boxConteudo" id="tabVisita">                
+                    <p:tab title="Visita">                          
+                        <div style="text-align: right">
+                            <p:commandButton value="Nova visita" actionListener="#{visitaMB.setNovaVisita}" update="boxFormVisita" oncomplete="PF('formVisita').show()" style="font-size: medium"/>
+                        </div>          
+                        <h3>Visitas</h3><br />   
+                        <p:dataTable value="#{visitaMB.listaVisitaApto}" var="visitaPrint" emptyMessage="Nenhuma visita cadastrada." id="tbVisita"
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="Visitantes" width="430">
+                                <p:dataList value="#{visitaPrint.visitantes}" var="vst">
+                                    <h:outputText value="#{vst.nome}" />                                   
+                                </p:dataList>                                                                                  
+                            </p:column>
+                            <p:column headerText="Inicio" style="text-align: center" sortBy="#{visitaPrint.dataInicio}">
+                                <h:outputText value="#{visitaPrint.dataInicio}" >
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                            
+                            </p:column>
+                            <p:column headerText="Fim" style="text-align: center" sortBy="#{visitaPrint.dataFim}">
+                                <h:outputText value="#{visitaPrint.dataFim}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                           
+                            </p:column>
+                            <p:column headerText="Ver" width="60" style="text-align: center">
+                                <p:commandButton icon="ui-icon-search" action="#{visitaMB.verVisita(visitaPrint,2)}" update="formListaVisita:verVisita" oncomplete="PF('verVisita').show()" style="font-size: small" />                 
+                            </p:column>
+                            <p:column headerText="Editar" width="60" style="text-align: center">
+                                <p:commandButton icon="ui-icon-pencil" action="#{visitaMB.verVisita(visitaPrint,1)}" update="boxFormVisita" oncomplete="PF('formVisita').show()" style="font-size: small" />                 
+                            </p:column>
+                            <p:column headerText="Apagar" width="60" style="text-align: center">
+                                <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small">
+                                    <p:ajax event="click" listener="#{visitaMB.apagarVisita(visitaPrint)}" update="formListaVisita" />   
+                                    <p:confirm header="Remover" message="Remover visita?" icon="pi pi-exclamation-triangle" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>  
+                    </p:tab> 
+                    <p:tab title="Visitante">
+                        <div style="text-align: right">
+                            <p:commandButton type="button" value="Novo Visitante" onclick="PF('formVisitante').show()" style="font-size: medium" />
+                        </div>  
+                        <h3>Visitantes Cadastrados</h3><br />
+                        <p:dataTable value="#{visitanteMB.visitantesCadastrados}" var="vstPrint" emptyMessage="Nenhum visitante cadastrado." id="tbVisitantesCad">
+                            <p:column headerText="Imagem" style="text-align: center" width="95">
+                                <p:graphicImage value="/ImagemPessoa/#{vstPrint.imagem.id}#{vstPrint.imagem.extensao}" height="100" width="90" rendered="#{vstPrint.imagem != null}" />                               
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="100" width="90" rendered="#{vstPrint.imagem == null}"/> 
+                            </p:column>                        
+                            <p:column headerText="Nome">
+                                <h:outputText value="#{vstPrint.nome}" /> 
+                            </p:column>                        
+                            <p:column headerText="Email" style="text-align: center">
+                                <h:outputText value="#{vstPrint.email}"/> 
+                            </p:column>                        
+                            <p:column headerText="Editar" width="60" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-pencil" actionListener="#{visitanteMB.setEditarVisitante(vstPrint)}" update="boxFormVisitante" oncomplete="PF('formVisitante').show()" style="font-size: small" />
+                            </p:column>
+                            <p:column headerText="Apagar" width="60" style="text-align: center">
+                                <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small">
+                                    <p:ajax event="click" listener="#{visitanteMB.deletarVisitante(vstPrint)}" update="tbVisitantesCad formListaVisita:msg" />   
+                                    <p:confirm header="Remover" message="Remover visitante?" icon="pi pi-exclamation-triangle" />
+                                </p:commandButton>                             
+                            </p:column>                      
+                        </p:dataTable> 
+                        <br />
+                        <h3>Outros</h3><br />
+                        <p:dataTable value="#{visitanteMB.visitantesPrazo}" var="vstPrint" emptyMessage="Nenhum visitante para exibir." id="tbVisitantesPrazo">
+                            <p:column headerText="Imagem" style="text-align: center" width="95">
+                                <p:graphicImage value="/ImagemPessoa/#{vstPrint.imagem.id}#{vstPrint.imagem.extensao}" height="100" width="90" rendered="#{vstPrint.imagem != null}" />                               
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="100" width="90" rendered="#{vstPrint.imagem == null}"/>              
+                            </p:column>                        
+                            <p:column headerText="Nome">
+                                <h:outputText value="#{vstPrint.nome}"/> 
+                            </p:column>                        
+                            <p:column headerText="Email" style="text-align: center">
+                                <h:outputText value="#{vstPrint.email}"/> 
+                            </p:column>                        
+                        </p:dataTable>   
+                    </p:tab>                
+                </p:tabView>
+            </p:panel>            
+            <p:dialog id="verVisita" widgetVar="verVisita" modal="true" fitViewport="true" draggable="false" class="dialogFormDependente" width="70vw" header="Visita"> 
+                <p:panel class="formDependente">
+                    <p:panel class="boxCadastro">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <h2 class="titH2">Visita</h2> 
+                            </div>                       
+                            <div class="ui-g-2">
+                                <h:outputText value="ID: #{visitaMB.visita.id}" />                                
+                            </div>
+                            <div class="ui-g-4">
+                                <h:outputText value="DATA: " />
+                                <h:outputText value="#{visitaMB.visita.dataInicio}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>  
+                                <h:outputText value=" - " />
+                                <h:outputText value="#{visitaMB.visita.dataFim}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                                 
+                            </div>
+                            <div class="ui-g-12">
+                                <h3 class="titH2">Presentes</h3><br />
+                                <p:dataTable value="#{visitaMB.visitantesPresentes}" var="vstPresente" emptyMessage="Nenhum visitante presente.">
+                                    <p:column headerText="Imagem" style="text-align: center" width="3">
+                                        <p:graphicImage value="/ImagemPessoa/#{vstPresente.imagem.id}#{vstPresente.imagem.extensao}" height="100" width="90" rendered="#{vstPresente.imagem != null}" />                               
+                                        <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="100" width="90" rendered="#{vstPresente.imagem == null}"/> 
+                                    </p:column>                        
+                                    <p:column headerText="Nome" width="57">
+                                        <h:outputText value="#{vstPresente.nome}" /> 
+                                    </p:column>                        
+                                    <p:column headerText="Entrada/Saida" style="text-align: center" width="40">
+                                        <p:dataList value="#{vstPresente.regEntradaSaida}" var="reg" type="definition">
+                                            <h:outputText value="#{reg.dataEntrada}">
+                                                <f:convertDateTime pattern="dd/MM/yy HH:mm" />
+                                            </h:outputText> 
+                                            <h:outputText value=" - " /> 
+                                            <h:outputText value="#{reg.dataSaida}">
+                                                <f:convertDateTime pattern="dd/MM/yy HH:mm" />
+                                            </h:outputText> 
+                                        </p:dataList> 
+                                    </p:column>          
+                                </p:dataTable> 
+                                <br />
+                                <h3 class="titH2">Ausentes</h3><br />   
+                                <p:dataTable value="#{visitaMB.visitantesAusentes}" var="vstAusente" emptyMessage="Nenhum visitante ausente.">
+                                    <p:column headerText="Imagem" style="text-align: center" width="95">
+                                        <p:graphicImage value="/ImagemPessoa/#{vstAusente.imagem.id}#{vstAusente.imagem.extensao}" height="100" width="90" rendered="#{vstAusente.imagem != null}" />                               
+                                        <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="100" width="90" rendered="#{vstAusente.imagem == null}"/> 
+                                    </p:column>                        
+                                    <p:column headerText="Nome">
+                                        <h:outputText value="#{vstAusente.nome}" /> 
+                                    </p:column> 
+                                </p:dataTable> 
+                            </div>
+                        </div>                        
+                    </p:panel>                    
+                </p:panel>
+            </p:dialog>
+        </h:form>
+        <ui:include src="formulario/MoradorFormularioVisitante.xhtml" /> 
+        <ui:include src="formulario/MoradorFormularioVisita.xhtml" /> 
+    </ui:define>
+</ui:composition>
+

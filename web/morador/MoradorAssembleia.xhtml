@@ -1,0 +1,148 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/MoradorTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Morador - Assembleia</ui:define>
+    <ui:define name="conteudo">  
+        <h:form id="formAssembleia">
+            <p:poll widgetVar="myPoll" listener="#{votoMB.pollComentarios}" autoStart="false" />
+            <p:panel class="boxConteudo" id="listaAssembleia" rendered="#{votoMB.assembleia == null}">
+                <h2 class="titH2">Assembleia</h2><br /> 
+                <p:dataTable value="#{votoMB.assembleias}" var="assembleia" emptyMessage="Nenhuma assembleia encontrada"
+                             paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                    <p:column headerText="Assembleia" sortBy="#{assembleia.id}" width="20">
+                        <h:outputText value="ID: #{assembleia.id}" />                        
+                    </p:column>                    
+                    <p:column headerText="Status"  sortBy="#{assembleia.encerramento}" width="25" style="text-align: center">
+                        <h:outputText value="#{assembleia.encerramento == 2 ? 'FINALIZADA' : 'EM ABERTO'}" />                        
+                    </p:column>                    
+                    <p:column headerText="Inicio" sortBy="#{assembleia.dataInicio}" width="25" style="text-align: center">
+                        <h:outputText value="#{assembleia.dataInicio}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText>
+                    </p:column>                    
+                    <p:column headerText="Fim" sortBy="#{assembleia.dataFim}" width="25" style="text-align: center">
+                        <h:outputText value="#{assembleia.dataFim}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText>
+                    </p:column>                    
+                    <p:column headerText="Ver" style="text-align: center" width="5">
+                        <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                            <p:ajax event="click" listener="#{votoMB.verAssembleia(assembleia.id)}" update="formAssembleia" />  
+                        </p:commandButton>
+                    </p:column>                    
+                </p:dataTable>                        
+            </p:panel>
+            <p:panel class="boxConteudo" id="verAssembleia" rendered="#{votoMB.assembleia != null}">
+                <h2 class="titH2">Assembleia - #{votoMB.assembleia.id}</h2>
+                <br />
+                <p:outputPanel rendered="#{(votoMB.assembleia.presidente.id == votoMB.login.morador.id) and (votoMB.assembleia.encerramento == 1 and votoMB.assembleia.parecer == null) }">
+                    <p:staticMessage severity="warn" summary="Atenção!" detail="Assembleia aguardando seu parecer para encerramento!" />
+                    <br />
+                    <p:commandButton type="button" style="float: right; font-size: medium" value="Parecer" onclick="PF('dialogParecer').show()" />
+                    <br/>                    
+                </p:outputPanel>                
+                <div class="ui-g">     
+                    <div class="ui-g-12">
+                        <h3 class="titH2" style="margin:0">Informações</h3>                        
+                    </div>
+                    <div class="ui-g-4">
+                        <h:outputText value="ID: #{votoMB.assembleia.id}" /><br />
+                        <h:outputText value="TIPO: #{votoMB.assembleia.tipo == 2 ? 'GERAL ORDINÁRIA' : 'GERAL EXTRAORDINÁRIA'}" />                          
+                    </div>                    
+                    <div class="ui-g-4">
+                        <h:outputText value="ABERTURA: " />
+                        <h:outputText value="#{votoMB.assembleia.dataInicio}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText><br />                        
+                        <h:outputText value="ENCERRAMENTO: " />     
+                        <h:outputText value="#{votoMB.assembleia.dataFim}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText><br />   
+                    </div>                    
+                    <div class="ui-g-4">
+                        <h:outputText value="CRIADOR: #{votoMB.assembleia.sindico.nome}" /><br />                        
+                        <h:outputText value="PRESIDENTE: #{votoMB.assembleia.presidente.nome}" />                         
+                    </div>      
+                    <p:outputPanel class="ui-g-12" rendered="#{votoMB.assembleia.parecer != null}">
+                        <h:outputText value="PARECER PRESIDENTE: " />
+                        <h:outputText value="#{votoMB.assembleia.parecer}" escape="false" />
+                    </p:outputPanel>                    
+                </div>
+                <br />
+                <p:dataGrid value="#{votoMB.assembleia.questoes}" var="questao" columns="3" layout="grid" emptyMessage="Nenhuma questão encontrada">
+                    <f:facet name="header">                        
+                        Questões
+                    </f:facet>
+                    <p:panel> 
+                        <f:facet name="header"> 
+                            #{questao.titulo.length() > 20 ? questao.titulo.substring(0,20) : questao.titulo}     
+                            <p:commandButton type="button" style="font-size: small; float: right" icon="ui-icon-search">
+                                <p:ajax event="click" listener="#{votoMB.verQuestao(questao)}" oncomplete="PF('dialogVer').show()" update="dialogVer"  />
+                            </p:commandButton> 
+                        </f:facet> 
+                        <p:donutChart model="#{votoMB.graficoDonut(questao)}" style="width: 100%; height: 50vh;" rendered="#{votoMB.totalVotos(questao) != 0}"/>
+                        <p:graphicImage value="/css/icones/#{questao.opcoes.size() == 0 ? 'assembleia.png' : 'eleicao.PNG'}" height="307" width="100%" alt="AssembleiaIcon" rendered="#{votoMB.totalVotos(questao) == 0}" />
+                        <h:outputText value="Comentarios: #{questao.comentarios.size()}" />
+                        <br />
+                        <h:outputText value="Votos: #{votoMB.totalVotos(questao)}" rendered="#{questao.opcoes.size() != 0}" />
+                    </p:panel> 
+                </p:dataGrid>
+                <div style="text-align: center">
+                    <p:commandButton value="Voltar" type="button" style="margin-top: 1vh" >
+                        <p:ajax event="click" listener="#{votoMB.redirecionar()}"/>
+                        <p:confirm header="Voltar" message="Voltar a lista de assembléias?" /> 
+                    </p:commandButton>                    
+                </div>              
+            </p:panel>
+        </h:form> 
+        <ui:include src="formulario/MoradorVoto.xhtml" /> 
+        <p:dialog closable="false" modal="true" id="dialogParecer" widgetVar="dialogParecer" class="dialogFormDependente" header="Parecer" showHeader="false">
+            <h:form id="parecerForm" enctype="multipart/form-data" class="conteudo">
+                <p:panel class="boxConteudo" rendered="#{votoMB.assembleia.parecer == null}">
+                    <h2 class="titH2">Parecer de encerramento de assembleia</h2>
+                    <br />
+                    <p:messages showDetail="false" /> 
+                    <p:staticMessage severity="warn" summary="Atenção!" detail="Atenção, o envio do parecer é unico e não é possível editar ou cancelar!" />
+                    <br />
+                    <h3>Parecer</h3>
+                    <br />
+                    <p:textEditor style=" background-color: white;" widgetVar="editor" value="#{votoMB.assembleia.parecer}" placeholder="Novo texto..." required="true"  requiredMessage="Preencha o campo parecer!" >
+                        <f:facet name="toolbar">
+                            <span class="ql-formats">
+                                <button class="ql-bold"></button>
+                                <button class="ql-italic"></button>
+                                <button class="ql-underline"></button>
+                                <button class="ql-strike"></button>
+                                <button class="ql-align"></button>
+                                <select class="ql-size"></select>
+                            </span>
+                        </f:facet>
+                    </p:textEditor> 
+                    <br />
+                    <div style="text-align: right">
+                        <p:commandButton value="Cancelar" style="font-size: medium" oncomplete="PF('dialogParecer').hide()">
+                            <p:confirm header="Cancelar" message="Cancelar novo parecer?" />                            
+                        </p:commandButton>                                            
+                        <p:commandButton value="Salvar" actionListener="#{votoMB.novoParecer}" style="font-size: medium" update="parecerForm formAssembleia" >
+                            <p:confirm header="Salvar" message="Salvar novo parecer? Atenção, o envio do parecer é unico e não é possível editar ou cancelar" />                            
+                        </p:commandButton>                                              
+                    </div>                    
+                </p:panel>
+                <p:panel class="boxConteudo" rendered="#{votoMB.assembleia.parecer != null}">
+                    <h3>Parecer enviado com sucesso.</h3>
+                    <br/>
+                    <div style="text-align: right">
+                        <p:commandButton value="Continuar" style="font-size: small;" oncomplete="PF('dialogParecer').hide()" />                        
+                    </div>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

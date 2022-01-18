@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog modal="true" id="divViewBoleto" widgetVar="divViewBoleto" class="dialogFormDependente" width="90vw" height="90vh" >
+        <p:outputPanel rendered="#{boletoMB.previewBoleto != null}" >
+            <iframe src="data:application/pdf;base64,#{boletoMB.verBoletoBase64(boletoMB.previewBoleto)}" width="100%" height="550" style="border: none;"></iframe>                        
+        </p:outputPanel>
+    </p:dialog>    
+</html>
+

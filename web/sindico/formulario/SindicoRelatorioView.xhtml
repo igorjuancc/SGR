@@ -1,0 +1,76 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <p:dialog modal="true" id="divViewRelatorio" widgetVar="divViewRelatorio" class="backForms" width="90vw" height="90vh" >
+        <p:outputPanel rendered="#{relatorioMB.previewRelatorio != null}" >
+            <iframe src="data:application/pdf;base64,#{relatorioMB.verRelatorioBase64(relatorioMB.previewRelatorio)}" width="100%" height="550" style="border: none;"></iframe>                        
+        </p:outputPanel>  
+    </p:dialog>  
+
+    <p:dialog modal="true" id="divViewFormRelatorio" widgetVar="divViewFormRelatorio" class="backForms" width="50vw" showHeader="false" >
+        <h:form id="formRelatorio" enctype="multipart/form-data">            
+            <div class="conteudo">
+                <p:panel class="boxConteudo">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h2 class="titH2">
+                                <h:outputText value="Entrada e Saída de Visitantes" rendered="#{relatorioMB.infoRelatorio == 1}" />
+                                <h:outputText value="Alteração de dados pessoais" rendered="#{relatorioMB.infoRelatorio == 2}" />
+                                <h:outputText value="Alteração de acessos" rendered="#{relatorioMB.infoRelatorio == 3}" /> 
+                                <h:outputText value="Exclusão de pessoas" rendered="#{relatorioMB.infoRelatorio == 4}" />
+                            </h2>
+                            <p:messages id="mensagem" showDetail="false" escape="false" /> 
+                        </div>     
+                        <div class="ui-g-6">
+                            <p:outputLabel for="dataEntrada" value="Data de Entrada" rendered="#{relatorioMB.infoRelatorio == 1}" />
+                            <p:outputLabel for="dataInicial" value="Data Inicial" rendered="#{relatorioMB.infoRelatorio != 1}"/><br />
+                            <p:datePicker  id="dataEntrada" value="#{relatorioMB.dataInicial}" required="true" requiredMessage="Insira a data de entrada da(s) visita(s)" rendered="#{relatorioMB.infoRelatorio == 1}" /> 
+                            <p:datePicker  id="dataInicial" value="#{relatorioMB.dataInicial}" required="true" requiredMessage="Insira a data de inicial" rendered="#{relatorioMB.infoRelatorio != 1}" /> 
+                        </div>                    
+                        <div class="ui-g-6">
+                            <p:outputLabel for="dataSaida" value="Data de Saída" rendered="#{relatorioMB.infoRelatorio == 1}"/>
+                            <p:outputLabel for="dataFinal" value="Data Final" rendered="#{relatorioMB.infoRelatorio != 1}"/><br />
+                            <p:datePicker  id="dataSaida" value="#{relatorioMB.dataFinal}" required="true" requiredMessage="Insira a data de saída da(s) visita(s)" rendered="#{relatorioMB.infoRelatorio == 1}" /> 
+                            <p:datePicker  id="dataFinal" value="#{relatorioMB.dataFinal}" required="true" requiredMessage="Insira a data de final" rendered="#{relatorioMB.infoRelatorio != 1}" /> 
+                        </div>  
+                        <div class="ui-g-12" style="text-align: center">
+                            <p:commandButton type="button" value="Cancelar">
+                                <p:confirm header="Cancelar" message="Cancelar emissão de relatório?" icon="pi pi-exclamation-triangle" />
+                                <p:ajax oncomplete="PF('divViewFormRelatorio').hide()" listener="#{relatorioMB.setInfoRelatorio(0)}" />
+                            </p:commandButton>     
+                            <p:commandButton value="Emitir" ajax="true" 
+                                             actionListener="#{relatorioMB.relatorioEntradaSaidaVisitantes}" 
+                                             update="formRelatorio divViewRelatorio"
+                                             rendered="#{relatorioMB.infoRelatorio == 1}">                            
+                                <p:confirm header="Emitir" message="Confirmar emissão de relatório?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>  
+                            <p:commandButton value="Emitir" ajax="true" 
+                                             actionListener="#{relatorioMB.relatorioAlteracaoDadosPessoais}" 
+                                             update="formRelatorio divViewRelatorio"
+                                             rendered="#{relatorioMB.infoRelatorio == 2}">                            
+                                <p:confirm header="Emitir" message="Confirmar emissão de relatório?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>  
+                            <p:commandButton value="Emitir" ajax="true" 
+                                             actionListener="#{relatorioMB.relatorioAlteracaoAcesso}" 
+                                             update="formRelatorio divViewRelatorio"
+                                             rendered="#{relatorioMB.infoRelatorio == 3}">                            
+                                <p:confirm header="Emitir" message="Confirmar emissão de relatório?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>  
+                            <p:commandButton value="Emitir" ajax="true" 
+                                             actionListener="#{relatorioMB.relatorioExclusaoPessoa}" 
+                                             update="formRelatorio divViewRelatorio"
+                                             rendered="#{relatorioMB.infoRelatorio == 4}">                            
+                                <p:confirm header="Emitir" message="Confirmar emissão de relatório?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>  
+                        </div>                             
+                    </div>                              
+                </p:panel>                  
+            </div>                      
+        </h:form>
+    </p:dialog>      
+
+</html>
+

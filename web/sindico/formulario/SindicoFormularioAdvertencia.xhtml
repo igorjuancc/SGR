@@ -1,0 +1,314 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="divFormNvAdv" widgetVar="divFormNvAdv" class="backForms" modal="true" closable="false" showHeader="false" width="1030" positionType="absolute">
+        <div class="ui-g conteudo">
+            <h:form id="formNvAdv" style="width: 100%">
+                <p:panel class="boxConteudo" id="panelFormNvAdv" rendered="#{!notificacaoMB.cadastroConcluido}">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h3 class="titH2">
+                                <h:outputText value="#{notificacaoMB.notificacao.id == 0 ? 'Nova' : 'Editar'} Advertência" />                            
+                            </h3>
+                            <div style="margin: 0; text-align: right">
+                                <p:commandButton  value="Atendimentos" style="font-size: small" type="buttom" >
+                                    <p:ajax event="click" listener="#{notificacaoMB.setDetalhes(1)}" oncomplete="PF('divDetalhes').show()" />
+                                </p:commandButton>                                 
+                                <p:commandButton  value="Anexos" style="font-size: small" type="buttom" >
+                                    <p:ajax event="click" listener="#{notificacaoMB.setDetalhes(2)}" oncomplete="PF('divDetalhes').show()" />
+                                </p:commandButton>                                                                 
+                            </div>
+                            <p:messages showDetail="false" escape="false" />
+                            <p:outputLabel for="tipo" value="Tipo" /><br />
+                            <p:selectOneRadio id="tipo" value="#{notificacaoMB.notificacao.tipo}" required="true" unselectable="false">
+                                <f:selectItem itemLabel="Advertência" itemValue="0"/>
+                                <f:selectItem itemLabel="Multa" itemValue="1"/>
+                            </p:selectOneRadio>
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="morador"  value="Morador:" /><br />
+                            <p:selectOneMenu id="morador" value="#{notificacaoMB.notificacao.morador}" converter="moradorConverter">
+                                <f:selectItems value="#{notificacaoMB.moradores}" var="moradorVar" itemLabel="AP[#{moradorVar.apartamento.id}] - #{moradorVar.nome}" itemValue="#{moradorVar}" />
+                                <p:ajax event="change" listener="#{notificacaoMB.setDadosMorador(moradorVar)}" />
+                            </p:selectOneMenu>
+                            <p:commandButton type="buttom" icon="ui-icon-info" style="font-size: medium; margin-top: 0.2vh; margin-left: 0.3vw" disabled="#{notificacaoMB.moradores.size() == 0}">
+                                <p:ajax event="click" listener="#{notificacaoMB.setDadosMorador(null)}" oncomplete="PF('divInfo').show()" update="divInfo"  />
+                            </p:commandButton>
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="data" value="Data da ocorrência: "/><br />
+                            <p:datePicker id="data" value="#{notificacaoMB.notificacao.dataReferencia}" required="true" requiredMessage="Insira a data da ocorrência"  />
+                        </div>
+                        <div class="ui-g-12">
+                            <p:outputLabel for="infSelect"  value="Infração:" /><br />
+                            <p:selectOneMenu id="infSelect" value="#{notificacaoMB.notificacao.infracao}" converter="infracaoConverter">
+                                <f:selectItems value="#{notificacaoMB.infracoes}" var="infracaoVar" itemLabel="#{infracaoVar.descricao}" itemValue="#{infracaoVar}" />                                
+                            </p:selectOneMenu>  
+                            <br/><br/>
+                            <p:outputLabel for="obsNot" value="Observações: " /><br />
+                            <p:inputTextarea value="#{notificacaoMB.notificacao.descricao}" id="obsNot" rows="2" cols="99" counter="display" maxlength="200" counterTemplate="{0} caracteres restantes" autoResize="true" />  
+                            <br/>
+                            <h:outputText id="display"  style="font-style: italic; font-size: smaller; float: right" />                            
+                        </div>   
+                        <div class="ui-g-12">
+                            <p:outputPanel id="panelAtendimento" >
+                                <p:dataTable id="tabAtendimentosAdd" value="#{notificacaoMB.notificacao.atendimentos}" var="atend" emptyMessage="Nenhum atendimento inserido" rendered="#{notificacaoMB.notificacao.atendimentos != null and notificacaoMB.notificacao.atendimentos.size() > 0}">
+                                    <f:facet name="header">
+                                        Atendimentos
+                                    </f:facet>
+                                    <p:column headerText="Data" style="text-align: center" width="10" >
+                                        <h:outputText value="#{atend.dataAbertura}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>  
+                                    </p:column> 
+                                    <p:column headerText="Descrição" width="45" > 
+                                        <h:outputText value="#{atend.descricao}" />
+                                    </p:column> 
+                                    <p:column headerText="Tipo" width="20" style="text-align: center" > 
+                                        <h:outputText value="#{atend.tipo.descricao}" />
+                                    </p:column> 
+                                    <p:column headerText="Morador" width="25" > 
+                                        <h:outputText value="#{atend.morador.nome}" />
+                                    </p:column> 
+                                </p:dataTable>
+                            </p:outputPanel>
+                            <p:outputPanel id="panelAnexos">
+                                <p:dataGrid value="#{notificacaoMB.previewArquivos}" var="arquivo" columns="3" layout="grid" rendered="#{notificacaoMB.previewArquivos != null and notificacaoMB.previewArquivos.size() != 0}" style="margin-top: 1vh">
+                                    <f:facet name="header">
+                                        Anexos
+                                    </f:facet>
+                                    <p:panel>                                              
+                                        <p:outputPanel rendered="#{notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)).extensao != '.MP4'}">
+                                            <img height="200vh" width="100%" src="data:image/png;base64,#{notificacaoMB.verArquivoBase64(arquivo)}" alt="Imagem anexo" />                                                 
+                                        </p:outputPanel>
+                                        <p:outputPanel rendered="#{notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)).extensao == '.MP4'}">
+                                            <video controls="true" src="data:video/mp4;base64,#{notificacaoMB.verArquivoBase64(arquivo)}" height="200vh" width="100%"></video>                                                
+                                        </p:outputPanel>
+                                        <f:facet name="footer">
+                                            <h:outputText value="#{notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)).descricao}" />           
+                                            <h:outputText value="#{notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)).descricao == null
+                                                                   or notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)).descricao == '' ? 'Sem descrição' : ''}" />           
+                                        </f:facet>
+                                    </p:panel>
+                                </p:dataGrid>
+                            </p:outputPanel>
+                        </div>
+                        <div class="ui-g-12" style="text-align: center">
+                            <p:commandButton type="button" value="Cancelar" style="font-size: medium" >
+                                <p:confirm header="Cancelar" message="Cancelar #{notificacaoMB.notificacao.id == 0 ? 'nova' : 'edição de'} advertência?" icon="pi pi-exclamation-triangle" />
+                                <p:ajax event="click" onsuccess="PF('divFormNvAdv').hide()" />
+                            </p:commandButton>
+                            <p:commandButton value="Salvar" actionListener="#{notificacaoMB.salvarNotificacao}" update="divFormNvAdv"  style="font-size: medium" oncomplete="PF('divFormNvAdv').show()"  >
+                                <p:confirm header="Salvar" message="Salvar #{notificacaoMB.notificacao.id == 0 ? 'nova' : 'edição de'} advertência?" icon="pi pi-exclamation-triangle" />  
+                            </p:commandButton>
+                        </div>                        
+                    </div>                    
+                </p:panel>
+                <p:panel class="boxConteudo" rendered="#{notificacaoMB.cadastroConcluido}">
+                    <h2>Notificação #{notificacaoMB.notificacao.id == 0 ? 'criada' : 'modificada'} com sucesso.</h2><br/>
+                    <p:messages showDetail="false" escape="false" />
+                    <div style="text-align: right">
+                        <a href="../sindico/SindicoAdvertencia.jsf"><p:button value="Continuar..." /></a>                 
+                    </div>                                
+                </p:panel> 
+            </h:form>
+        </div>
+    </p:dialog> 
+    <p:dialog id="divInfo" widgetVar="divInfo" class="backForms" modal="true" closable="true" showHeader="true" header="Advertências Morador" positionType="absolute" width="1200" >
+        <div class="ui-g conteudo">
+            <h:form id="formInfo" style="width: 100%" rendered="#{notificacaoMB.notificacao.morador != null}">
+                <p:panel class="boxConteudo" id="panelInfo">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h3 style="margin-bottom: 0">
+                                <h:outputText value="Advertências Morador" />                            
+                            </h3>                            
+                            <h5 class="titH2" style="margin-top: 0; margin-bottom: 0">
+                                <h:outputText value="Apartamento [#{notificacaoMB.notificacao.morador.apartamento.bloco}-#{notificacaoMB.notificacao.morador.apartamento.id}]" />                            
+                            </h5>                            
+                        </div>
+                        <div class="#{notificacaoMB.notificacao.morador.apartamento.moradores.size() > 1 || notificacaoMB.notificacao.morador.veiculos.size() > 0 ? 'ui-g-8' : 'ui-g-12'}">
+                            <h:panelGrid columns="2">
+                                <p:graphicImage value="/ImagemPessoa/#{notificacaoMB.notificacao.morador.imagem.id}#{notificacaoMB.notificacao.morador.imagem.extensao}" height="150" width="120" rendered="#{notificacaoMB.notificacao.morador.imagem != null}"/>                                              
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{notificacaoMB.notificacao.morador.imagem == null}"/>                                              
+
+                                <p:outputPanel>
+                                    <p:outputLabel>
+                                        <h4 style="margin: 0">RESPONSAVEL</h4>
+                                    </p:outputLabel>
+                                    <h:outputText value="NOME: #{notificacaoMB.notificacao.morador.nome}" /><br />
+                                    <h:outputText value="CPF: #{notificacaoMB.imprimeCpf(notificacaoMB.notificacao.morador.cpf)}" /><br />
+                                    <h:outputText value="NASCIMENTO: " />
+                                    <h:outputText value="#{notificacaoMB.notificacao.morador.dataNascimento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>                                                
+                                </p:outputPanel>
+                            </h:panelGrid>
+
+                            <h3 class="titH2">Notificações</h3>
+                            <p:dataTable value="#{notificacaoMB.listaNotificacoes}" var="notifi" emptyMessage="Nenhuma notificação registrada."
+                                         paginator="true" lazy="true" paginatorPosition="bottom" rows="5"> 
+                                <p:column width="10" style="text-align: center" headerText="Data" sortBy="#{notifi.dataEmissao}"> 
+                                    <h:outputText value="#{notifi.dataEmissao}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText> 
+                                </p:column> 
+                                <p:column headerText="Notificação" width="90" sortBy="#{notifi.infracao.descricao}" > 
+                                    <h:outputText value="#{notifi.infracao.descricao}" />                                    
+                                </p:column> 
+                            </p:dataTable>
+
+                        </div>
+
+                        <div class="ui-g-4" style="display: #{notificacaoMB.notificacao.morador.apartamento.moradores.size() > 1 || notificacaoMB.notificacao.morador.veiculos.size() > 0 ? 'block' : 'none'}">
+                            <p:outputPanel rendered="#{notificacaoMB.notificacao.morador.apartamento.moradores.size() > 1}">
+                                <h3 class="titH2">Moradores</h3>  
+                                <p:dataTable id="tabMoradores" value="#{notificacaoMB.notificacao.morador.apartamento.moradores}" var="morador" emptyMessage="Nenhum dependente encontrado">
+                                    <p:column width="10" style="text-align: center"> 
+                                        <p:graphicImage value="/ImagemPessoa/#{morador.imagem.id}#{morador.imagem.extensao}" height="50" width="50" rendered="#{morador.imagem != null}" />  
+                                        <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="50" width="50" rendered="#{morador.imagem == null}"/>  
+                                    </p:column> 
+                                    <p:column headerText="Nome" width="90" > 
+                                        <h:outputText value="#{morador.nome}" style="font-weight: #{morador.tipo == 1 ? 'bold' : ''}" />
+                                    </p:column> 
+                                </p:dataTable>
+                            </p:outputPanel>
+                            <p:outputPanel rendered="#{notificacaoMB.notificacao.morador.veiculos.size() > 0}">
+                                <h3 class="titH2">Veículos</h3>  
+                                <p:dataView id="tabVeiculos" value="#{notificacaoMB.notificacao.morador.veiculos}" var="veiculo" >
+                                    <p:dataViewListItem>
+                                        <h:panelGrid columns="1">
+                                            <p:outputPanel>
+                                                <h:outputText value="PLACA: #{veiculo.placa}" /><br />                                              
+                                                <h:outputText value="COR: #{veiculo.cor}" /><br />                                              
+                                                <h:outputText value="MARCA: #{veiculo.marca}" /><br />                                              
+                                                <h:outputText value="MODELO: #{veiculo.modelo}" /><br />                                              
+                                            </p:outputPanel>
+                                        </h:panelGrid>                                        
+                                    </p:dataViewListItem> 
+                                </p:dataView>
+                            </p:outputPanel>
+
+                        </div>
+                    </div>   
+                </p:panel>
+            </h:form>
+        </div>
+    </p:dialog>
+    <p:dialog id="divDetalhes" widgetVar="divDetalhes" class="backForms" modal="true" closable="false" showHeader="false" width="1000" positionType="absolute">
+        <div class="ui-g conteudo">
+            <h:form id="formDetalhes" style="width: 100%"> 
+                <p:panel class="boxConteudo" id="panelAtendimento" visible="#{notificacaoMB.verDiv == 1}">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h3 class="titH2" >Atendimentos</h3>
+                            <p:messages id="msgAtnd"  showDetail="false" />
+                            <h4 class="titH2" >Atendimentos de notificação</h4>
+                            <p:dataTable id="tabAtendimentosNot" value="#{notificacaoMB.notificacao.atendimentos}" var="atendRmv" emptyMessage="Nenhum atendimento inserido">
+                                <p:column headerText="Data" style="text-align: center" width="10" >
+                                    <h:outputText value="#{atendRmv.dataAbertura}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>  
+                                </p:column> 
+                                <p:column headerText="Descrição" width="45" > 
+                                    <h:outputText value="#{atendRmv.descricao}" />
+                                </p:column> 
+                                <p:column headerText="Tipo" width="20" style="text-align: center" > 
+                                    <h:outputText value="#{atendRmv.tipo.descricao}" />
+                                </p:column> 
+                                <p:column headerText="Morador" width="22" > 
+                                    <h:outputText value="#{atendRmv.morador.nome}" />
+                                </p:column> 
+                                <p:column headerText="Remover" width="3" style="text-align: center">
+                                    <p:commandButton type="buttom" icon="ui-icon-circle-minus" style="font-size: small;">
+                                        <p:ajax event="click" listener="#{notificacaoMB.removerAtendimento(atendRmv)}" update="formDetalhes:tabAtendimentos formDetalhes:tabAtendimentosNot formDetalhes:msgAtnd"  />
+                                    </p:commandButton>
+                                </p:column> 
+                            </p:dataTable>
+                            <h4 class="titH2" >Atendimentos</h4>                            
+                            <p:dataTable id="tabAtendimentos" value="#{notificacaoMB.atendimentos}" var="atendAdd" emptyMessage="Nenhum atendimento encontrado"
+                                         paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                                <p:column headerText="Data" style="text-align: center" width="10" sortBy="#{atendAdd.dataAbertura}" >
+                                    <h:outputText value="#{atendAdd.dataAbertura}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>  
+                                </p:column> 
+                                <p:column headerText="Descrição" width="45" sortBy="#{atendAdd.descricao}" > 
+                                    <h:outputText value="#{atendAdd.descricao}" />
+                                </p:column> 
+                                <p:column headerText="Tipo" width="20" style="text-align: center" sortBy="#{atendAdd.tipo.descricao}" > 
+                                    <h:outputText value="#{atendAdd.tipo.descricao}" />
+                                </p:column> 
+                                <p:column headerText="Morador" width="22" sortBy="#{atendAdd.morador.nome}" > 
+                                    <h:outputText value="#{atendAdd.morador.nome}" />
+                                </p:column> 
+                                <p:column headerText="Inserir" width="3" style="text-align: center"> 
+                                    <p:commandButton type="buttom" icon="ui-icon-circle-plus" style="font-size: small;">
+                                        <p:ajax event="click" listener="#{notificacaoMB.inserirAtendimento(atendAdd)}" update="formDetalhes:tabAtendimentos formDetalhes:tabAtendimentosNot formDetalhes:msgAtnd"  />
+                                    </p:commandButton>                                 
+                                </p:column> 
+                            </p:dataTable>
+                            <br />
+                            <div style="text-align: right">
+                                <p:commandButton type="button" value="Voltar" style="font-size: medium" >
+                                    <p:ajax event="click" oncomplete="PF('divDetalhes').hide()" update="formNvAdv:panelAtendimento" />
+                                </p:commandButton>                               
+                            </div>
+                        </div>                        
+                    </div>
+                </p:panel>
+                <p:panel class="boxConteudo" id="panelAnexo" visible="#{notificacaoMB.verDiv == 2}">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h3 class="titH2">Anexos</h3>                             
+                            <p:outputPanel id="anexoPanel">
+                                <p:messages id="msgAnexo"  showDetail="false" />
+                                <p:fileUpload label="Adicionar anexo" mode="advanced" skinSimple="true" style="font-size: small;"
+                                              fileUploadListener="#{notificacaoMB.uploadArquivo}" multiple="false" update="divPreview msgAnexo" auto="true"
+                                              allowTypes="/(\.|\/)(gif|jpe?g|png|PNG|mp4|MP4)$/" sizeLimit="2000000"
+                                              invalidSizeMessage="Tamanho Máximo 1MB" invalidFileMessage="Somente arquivos .jpg, .png, .mp4 ou .gif"
+                                              />
+                                <br />                                
+                                <p:fragment id="divPreview" >
+                                    <p:dataGrid value="#{notificacaoMB.previewArquivos}" var="arquivo" columns="3" layout="grid" rendered="#{notificacaoMB.previewArquivos != null and notificacaoMB.previewArquivos.size() != 0}">
+                                        <p:panel> 
+                                            <p:commandButton id="apagarIcon" style="font-size: small; float: right; margin-bottom: 2%" icon="ui-icon-trash" update="formDetalhes:divPreview formDetalhes:msgAnexo" action="#{notificacaoMB.apagarArquivo(notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)))}" >
+                                                <p:confirm header="Apagar" message="Apagar anexo?" />
+                                            </p:commandButton> 
+                                            <p:tooltip for="apagarIcon" value="Apagar anexo?" />                                             
+                                            <p:outputPanel rendered="#{notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)).extensao != '.MP4'}">
+                                                <img  id="imgVer" height="200vh" width="100%" src="data:image/png;base64,#{notificacaoMB.verArquivoBase64(arquivo)}" alt="Imagem anexo" />                                                 
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)).extensao == '.MP4'}">
+                                                <video controls="true" src="data:video/mp4;base64,#{notificacaoMB.verArquivoBase64(arquivo)}" height="200vh" width="100%"></video>                                                
+                                            </p:outputPanel>
+                                            <f:facet name="footer">
+                                                <h:outputText value="Descrição" /><br/>
+                                                <p:inputText value="#{notificacaoMB.notificacao.arquivos.get(notificacaoMB.previewArquivos.indexOf(arquivo)).descricao}" validatorMessage="Insira uma descrição valida para o arquivo" style="width: 95%">
+                                                    <f:validateRegex pattern="[0-9A-Za-zÀ-ú ]*"/> 
+                                                </p:inputText>                   
+                                            </f:facet>
+                                        </p:panel>
+                                    </p:dataGrid>
+                                </p:fragment> 
+                                <br />
+                                <div style="text-align: right">
+                                    <p:commandButton  value="Voltar" oncomplete="PF('divDetalhes').hide()" style="font-size: medium" type="buttom" update="formNvAdv:panelAnexos" />                                 
+                                </div>
+                            </p:outputPanel>
+                        </div>                        
+                    </div>
+                </p:panel>
+            </h:form>
+        </div>
+    </p:dialog> 
+    <style>
+        .ui-dataview-content {
+            background: none;
+            border: none;
+        }
+    </style>
+</ui:composition>

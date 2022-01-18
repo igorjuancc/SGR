@@ -1,0 +1,51 @@
+html{
+    background-image: url("back/IndexBack.jpg"); 
+    background-size: cover; 
+}
+
+body{
+    margin: 0;
+}
+
+.conteudo{
+    height: 100vh;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+#j_idt5_content{
+    padding: 0;    
+}
+
+.backLogo{
+    height: 100vh;
+    background-image: -webkit-linear-gradient(10deg, rgba(0,0,0,0.0) 14%, rgba(0,46,101,0.7) 15%);
+}
+
+.logoSgr{
+    margin-top: 32vh;
+    height: 16vh;
+    width: 16vw;
+    margin-left: 20vw;    
+}
+
+.titH2{
+    color: #ADD8E6;
+    margin: 0;
+    margin-left: 10vw;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+.divButton{
+    background-color: rgba(0,46,101,0.4);
+    border: none;
+    margin-left: 15vw;
+    margin-top: 41vh;    
+    width: 20.2vw;
+    padding: 1%;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgb(0,46,101);
+}

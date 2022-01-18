@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog class="backForms" id="dialogQuestao" widgetVar="dialogQuestao" modal="true" showHeader="false" width="1150" positionType="absolute" >
+        <h:form id="questaoForm" enctype="multipart/form-data" class="conteudo">
+            <p:panel class="boxConteudo" rendered="#{!assembleiaMB.cadastroConcluido}">
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <h2 class="titH2">#{assembleiaMB.questao.id == 0 ? 'Nova Questão' : 'Editar Questão'}</h2> 
+                        <p:messages showDetail="false" id="msgQuestao" escape="false" />                          
+                    </div>
+                    <div class="ui-g-12">
+                        <h3 class="titH2" style="margin-top: 0">Questão</h3>
+                        <p:outputLabel for="titulo" value="Titulo:" /><br />
+                        <p:inputText value="#{assembleiaMB.questao.titulo}" id="titulo" required="true" requiredMessage="Digite o titulo da questão" style="width: 99%" />
+                        <br /><br />
+                        <p:outputLabel for="desc" value="Descrição" /><br />
+                        <p:inputTextarea id="desc" value="#{assembleiaMB.questao.descricao}" cols="106" counter="display" maxlength="300" counterTemplate="{0} Caracteres restantes." required="true" requiredMessage="Necessário inserir uma descrição para a questão." />
+                        <h:outputText id="display" style="float: right" />
+                    </div>
+                    <div class="ui-g-4">
+                        <h3 class="titH2" style="margin-top: 0">Opções</h3>
+                        <p:outputPanel id="rptOpc">
+                            <p:fragment>
+                                <p:commandButton id="btnOpc" style="font-size: small; float: right" icon="ui-icon-circle-plus"
+                                                 action="#{assembleiaMB.novaOpcQuestao}" update="msgQuestao rptOpc">
+                                </p:commandButton>
+                                <br />
+                                <p:tooltip for="btnOpc" value="Adicionar nova opção para voto" />
+                                <p:repeat value="#{assembleiaMB.questao.opcoes}" var="opc">
+                                    <h:outputText value="Opção #{assembleiaMB.questao.opcoes.indexOf(opc)+1}"/><br />
+                                    <p:inputText value="#{opc.descricao}" style="width: 84.3%; margin-bottom: 2%" />
+                                    <p:commandButton type="button" style="font-size: small; margin-left: 0.5vw" icon="ui-icon-trash">
+                                        <p:ajax event="click" listener="#{assembleiaMB.removerOpcQuestao(opc)}" update="questaoForm:rptOpc questaoForm:msgQuestao" />
+                                    </p:commandButton>
+                                    <br />
+                                </p:repeat>                                  
+                            </p:fragment>                             
+                        </p:outputPanel>      
+                    </div>                    
+                    <div class="ui-g-8">
+                        <h3 class="titH2" style="margin-top: 0">Imagens</h3>
+                        <p:outputPanel id="imgPanel">  
+                            <p:fileUpload label="Adicionar imagem" mode="advanced" skinSimple="true" style="font-size: small; width: 13vw"
+                                          fileUploadListener="#{assembleiaMB.uploadImagem}" multiple="false" update="questaoForm:imgPanel questaoForm:msgQuestao" auto="true"
+                                          allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" sizeLimit="1000000"
+                                          invalidSizeMessage="Tamanho Máximo 1MB" invalidFileMessage="Somente arquivos .jpg, .png ou .gif"
+                                          /> 
+                            <p:fragment>
+                                <p:dataGrid value="#{assembleiaMB.previewImagens}" var="imagem" columns="3" layout="grid" rendered="#{assembleiaMB.previewImagens != null and assembleiaMB.previewImagens.size() != 0}">
+                                    <p:panel>
+                                        <p:commandButton id="apagarIcon" style="font-size: small; float: right; margin-bottom: 2%" icon="ui-icon-trash" update="questaoForm:imgPanel questaoForm:msgQuestao" action="#{assembleiaMB.apagarImagem(assembleiaMB.questao.arquivos.get(assembleiaMB.previewImagens.indexOf(imagem)))}" >
+                                            <p:confirm header="Apagar" message="Apagar imagem?" />
+                                        </p:commandButton> 
+                                        <p:tooltip for="apagarIcon" value="Apagar imagem" /> 
+                                        <img id="imgVer" height="200vh" width="100%" src="data:image/png;base64,#{assembleiaMB.verImagemBase64(imagem)}" alt="Imagem questao" /> 
+                                        <f:facet name="footer">
+                                            <h:outputText value="Descrição" /><br/>
+                                            <p:inputText value="#{assembleiaMB.questao.arquivos.get(assembleiaMB.previewImagens.indexOf(imagem)).descricao}" validatorMessage="Insira uma descrição valida para a imagem" style="width: 95%">
+                                                <f:validateRegex pattern="[0-9A-Za-zÀ-ú ]*"/> 
+                                            </p:inputText>                   
+                                        </f:facet>
+                                    </p:panel>
+                                </p:dataGrid>
+                            </p:fragment>
+                        </p:outputPanel>  
+                    </div>
+                    <div style="text-align: center" class="ui-g-12">
+                        <p:commandButton type="button" value="Cancelar" style="font-size: medium">
+                            <p:confirm header="Cancelar" message="#{assembleiaMB.questao.id != 0 ? 'Cancelar edição?' : 'Cancelar nova questão?'}" icon="pi pi-exclamation-triangle" /> 
+                            <p:ajax event="click" oncomplete="PF('dialogQuestao').hide()" update="formAssembleia questaoForm" />
+                        </p:commandButton> 
+                        <p:commandButton value="Salvar" actionListener="#{assembleiaMB.salvarQuestao}" update="formAssembleia questaoForm"  style="font-size: medium" rendered="#{assembleiaMB.questao.id == 0}">
+                            <p:confirm header="Salvar" message="Salvar questão?" icon="pi pi-exclamation-triangle" />  
+                        </p:commandButton>                  
+                        <p:commandButton value="Atualizar" actionListener="#{assembleiaMB.salvarQuestao}" update="formAssembleia questaoForm"  style="font-size: medium" rendered="#{assembleiaMB.questao.id != 0}">
+                            <p:confirm header="Atualizar" message="Atualizar questão?" icon="pi pi-exclamation-triangle" />  
+                        </p:commandButton>                  
+                    </div>  
+                </div>                               
+            </p:panel>
+            <p:panel class="boxConteudo" rendered="#{assembleiaMB.cadastroConcluido}">
+                <h2>Questão adicionada com sucesso.</h2><br/>
+                <div style="text-align: right">
+                    <p:commandButton type="button" value="Continuar">
+                        <p:ajax event="click" listener="#{assembleiaMB.setCadastroConcluido(false)}" oncomplete="PF('dialogQuestao').hide()" onstart="PF('dialogVer').hide()" update="dialogQuestao" />
+                    </p:commandButton>                  
+                </div>                                
+            </p:panel>  
+        </h:form>           
+    </p:dialog>
+    <style>
+        .ui-fileupload-content.ui-widget-content.ui-corner-bottom{   
+            background-color: rgba(255,255,255,0);
+            border: none;  
+        }
+
+        .ui-fileupload.ui-widget.ui-fileupload-responsive {  
+            text-align: center;
+        }
+    </style>    
+</ui:composition>

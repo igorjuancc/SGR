@@ -1,0 +1,137 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/MoradorTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Morador - Veículo</ui:define>
+    <ui:define name="conteudo"> 
+        <h:form id="tabela">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Veiculos</h2>
+                <br />
+                <p:growl showDetail="false" />              
+                <div style="text-align: right">
+                    <p:commandButton value="Novo Veículo" onclick="PF('dialogVeiculo').show()" style="font-size: medium" />
+                </div><br />
+                <p:dataTable value="#{veiculoMB.veiculosMorador}" var="veiculo" emptyMessage="Nenhum veículo encontrado."
+                             paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                    <p:column headerText="Placa" sortBy="#{veiculo.placa}">
+                        <h:outputText value="#{veiculo.placa}"/>                     
+                    </p:column>                                
+                    <p:column headerText="Marca" sortBy="#{veiculo.marca}">
+                        <h:outputText value="#{veiculo.marca}"/>                     
+                    </p:column>                                
+                    <p:column headerText="Modelo" sortBy="#{veiculo.modelo}">
+                        <h:outputText value="#{veiculo.modelo}"/>                     
+                    </p:column>                                
+                    <p:column headerText="Cor" sortBy="#{veiculo.cor}">
+                        <h:outputText value="#{veiculo.cor}"/>                     
+                    </p:column>                                
+                    <p:column headerText="Ano" sortBy="#{veiculo.ano}">
+                        <h:outputText value="#{veiculo.ano}"/>                     
+                    </p:column>                                
+                    <p:column headerText="Editar" style="text-align: center" width="50"> 
+                        <p:commandButton icon="ui-icon-pencil" action="#{veiculoMB.setEditVeiculo(veiculo)}" update="dialogVeiculo" oncomplete="PF('dialogVeiculo').show()" style="font-size: small" />               
+                    </p:column>                                
+                    <p:column headerText="Remover" style="text-align: center" width="70"> 
+                        <p:commandButton icon="ui-icon-trash" action="#{veiculoMB.removerVeiculo(veiculo)}" update="tabela" style="font-size: small">      
+                            <p:confirm header="Remover" message="Remover veiculo?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </p:column>                                
+                </p:dataTable>            
+            </p:panel>        
+        </h:form>
+        <p:dialog header="Veiculo" id="dialogVeiculo" widgetVar="dialogVeiculo" class="dialogFormDependente" width="620" modal="true" showHeader="false" positionType="absolute">
+            <h:form id="formVeiculo" class="formDependente">
+                <p:panel class="boxCadastro" rendered="#{!veiculoMB.cadastroConcluido}">
+                    <div class="ui-g">                        
+                        <div class="ui-g-12">                              
+                            <h2 class="titH2">Dados do Veículo</h2>  
+                            <p:messages showDetail="false" />
+                        </div>
+                        <div class="ui-g-6">         
+                            <p:outputLabel for="tipoPlaca" value="Tipo Placa" /> 
+                            <br/>
+                            <p:selectOneMenu id="tipoPlaca" value="#{veiculoMB.tipoPlaca}" disabled="#{veiculoMB.veiculo.id != 0 ? 'true' : 'false'}">
+                                <f:selectItem itemLabel="Tradicional" itemValue="0" />                        
+                                <f:selectItem itemLabel="Mercosul" itemValue="1" />
+                                <p:ajax event="change" update="placa" />
+                            </p:selectOneMenu>
+                            <br />
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="placa" value="Placa" />
+                            <p:inputMask id="placa" value="#{veiculoMB.veiculo.placa}" mask="#{veiculoMB.tipoPlaca == 0 ? 'aaa-9999' : 'aaa9a99'}" required="true" requiredMessage="Digite a placa do veículo" disabled="#{veiculoMB.veiculo.id != 0 ? 'true' : 'false'}"/>                        
+                        </div>
+                        <div class="ui-g-6">                    
+                            <p:outputLabel for="marca" value="Marca" /><br />
+                            <p:inputText id="marca" value="#{veiculoMB.veiculo.marca}" required="true" requiredMessage="Digite a marca do veículo" disabled="false">
+                                <f:validateRegex pattern="[0-9A-Za-zÀ-ú ]*"/>  
+                            </p:inputText>                                      
+                        </div>
+                        <div class="ui-g-6">                    
+                            <p:outputLabel for="modelo" value="Modelo" /><br />
+                            <p:inputText id="modelo" value="#{veiculoMB.veiculo.modelo}" required="true" requiredMessage="Digite o modelo do veículo" disabled="false">
+                                <f:validateRegex pattern="[0-9A-Za-zÀ-ú ]*"/>   
+                            </p:inputText>                                                     
+                        </div>           
+                        <div class="ui-g-6">                    
+                            <p:outputLabel for="cor" value="Cor" /><br />
+                            <p:selectOneMenu id="cor" value="#{veiculoMB.veiculo.cor}" required="true" requiredMessage="Selecione a cor do veículo">
+                                <f:selectItem itemLabel="AMARELO" itemValue="AMARELO" />
+                                <f:selectItem itemLabel="AZUL" itemValue="AZUL" />
+                                <f:selectItem itemLabel="BEGE" itemValue="BEGE" />
+                                <f:selectItem itemLabel="BRANCA" itemValue="BRANCA" />
+                                <f:selectItem itemLabel="CINZA" itemValue="CINZA" />
+                                <f:selectItem itemLabel="DOURADA" itemValue="DOURADA" />
+                                <f:selectItem itemLabel="GRENÁ" itemValue="GRENÁ" />
+                                <f:selectItem itemLabel="LARANJA" itemValue="LARANJA" />
+                                <f:selectItem itemLabel="MARROM" itemValue="MARROM" />
+                                <f:selectItem itemLabel="PRATA" itemValue="PRATA" />
+                                <f:selectItem itemLabel="PRETA" itemValue="PRETA" />
+                                <f:selectItem itemLabel="ROSA" itemValue="ROSA" />
+                                <f:selectItem itemLabel="ROXA" itemValue="ROXA" />
+                                <f:selectItem itemLabel="VERDE" itemValue="VERDE" />
+                                <f:selectItem itemLabel="VERMELHA" itemValue="VERMELHA" />
+                                <f:selectItem itemLabel="FANTASIA" itemValue="FANTASIA" />
+                            </p:selectOneMenu>
+                        </div>           
+                        <div class="ui-g-6">                    
+                            <p:outputLabel for="ano" value="Ano" /><br />
+                            <p:inputText id="ano" value="#{veiculoMB.veiculo.ano}" required="true" requiredMessage="Digite o ano do veículo" disabled="false" validatorMessage="Ano inválido" >
+                                <f:validateLongRange minimum="1807" maximum="2030"/> 
+                            </p:inputText>
+                        </div>           
+                        <div class="ui-g-12" style="text-align: center;"> 
+                            <p:commandButton value="Cancelar" type="button"> 
+                                <p:ajax event="click" listener="#{veiculoMB.redirecionar('MoradorVeiculo.jsf')}" />
+                                <p:confirm header="Cancelar" message="Cancelar cadastro de veículo?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton> 
+                            <p:commandButton rendered="#{veiculoMB.veiculo.id == 0}" value="Salvar" actionListener="#{veiculoMB.novoVeiculo}" update="formVeiculo" ajax="true">                            
+                                <p:confirm header="Salvar" message="Salvar veiculo?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton> 
+                            <p:commandButton rendered="#{veiculoMB.veiculo.id != 0}" value="Atualizar" actionListener="#{veiculoMB.atualizarVeiculo}" update="formVeiculo" ajax="true">                            
+                                <p:confirm header="Atualizar" message="Salvar veiculo?" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton> 
+                        </div>                          
+                    </div>                                       
+                </p:panel>
+                <p:panel class="boxCadastro" rendered="#{veiculoMB.cadastroConcluido}">
+                    <h2>Dados do veiculo salvo com sucesso, clique no botão para continuar...</h2><br />
+                    <div style="text-align: right">
+                        <p:linkButton outcome="/morador/MoradorVeiculo" value="Continuar..." />                                            
+                    </div>
+                </p:panel>                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+                </p:confirmDialog>
+            </h:form>           
+        </p:dialog>
+    </ui:define>
+</ui:composition>
+

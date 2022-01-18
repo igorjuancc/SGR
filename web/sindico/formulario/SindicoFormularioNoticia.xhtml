@@ -1,0 +1,130 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog class="backForms" id="dialogNoticia" widgetVar="dialogNoticia" modal="true" showHeader="false" closable="false" width="1100" positionType="absolute" position="top" >
+        <p:ajax event="open" update="formNoticia:editor" />
+        <h:form id="formNoticia" enctype="multipart/form-data" class="conteudo">
+            <p:panel class="boxConteudo" rendered="#{!noticiaMB.cadastroConcluido}" >
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <h2 class="titH2">
+                            <h:outputText value="#{(noticiaMB.noticia.id == 0) ? 'Nova Notícia' : noticiaMB.noticia.titulo}" />                            
+                        </h2>
+                        <p:messages id="mensagem" showDetail="false" escape="false"/> 
+                        <p:outputPanel rendered="#{noticiaMB.noticia.id != 0}">
+                            <div class="ui-g-12">
+                                ID:
+                                <h:outputText value="#{(noticiaMB.noticia.id == 0) ? '' : noticiaMB.noticia.id}" />    
+                            </div>                    
+                            <div class="ui-g-6">
+                                CRIAÇÃO:
+                                <h:outputText value="#{noticiaMB.noticia.data}">
+                                    <f:convertDateTime pattern="dd/MM/yy HH:mm" />                            
+                                </h:outputText>h<br/>
+                                ULT. EDIÇÃO:
+                                <h:outputText value="#{noticiaMB.noticia.ultimaAlteracao}">
+                                    <f:convertDateTime pattern="dd/MM/yy HH:mm" />                            
+                                </h:outputText>h
+                            </div>                    
+                            <div class="ui-g-6">
+                                AUTOR: 
+                                <h:outputText value="#{noticiaMB.noticia.autor.nome}" /><br/>     
+                                MODIFICADOR: 
+                                <h:outputText value="#{noticiaMB.noticia.funcionarioAlteracao.nome}" />     
+                            </div> 
+                        </p:outputPanel>
+                        <div class="ui-g-12">
+                            TITULO:
+                            <p:inputText value="#{noticiaMB.noticia.titulo}" required="true"  requiredMessage="Digite o titulo da notícia" validatorMessage="Insira um titulo válido" style="width: 99%;" placeholder="Titulo">
+                                <f:validateRegex pattern="[0-9A-Za-zÀ-ú ]*"/>                    
+                            </p:inputText>
+                        </div>
+                        <div class="ui-g-12">
+                            NOTÍCIA: <br />
+                            <p:textEditor widgetVar="editor" id="editor" value="#{noticiaMB.noticia.descricao}" height="300" placeholder="Digite a nova notícia..." required="true"  requiredMessage="Preencha o campo notícia!" style="background-color: white; width: 100%" >
+                                <f:facet name="toolbar">
+                                    <span class="ql-formats">
+                                        <button class="ql-bold"></button>
+                                        <button class="ql-italic"></button>
+                                        <button class="ql-underline"></button>
+                                        <button class="ql-strike"></button>
+                                        <select class="ql-align"></select>
+                                    </span>
+                                    <span class="ql-formats">
+                                        <select class="ql-font"></select>
+                                        <select class="ql-size"></select>
+                                    </span>
+                                </f:facet>
+                            </p:textEditor>                        
+                        </div>  
+
+                        <div class="ui-g-12" style="text-align: left; font-size: small; padding-left: 0.7vw">                        
+                            <p:outputPanel id="imgPanel"> 
+                                <p:messages showDetail="false" escape="false" rendered="#{noticiaMB.previewImagens != null and noticiaMB.previewImagens.size() != 0}" /> 
+                                <p:fileUpload label="Adicionar imagem" mode="advanced" skinSimple="true" style="font-size: small; width: 13vw"
+                                              fileUploadListener="#{noticiaMB.uploadImagem}" multiple="false" update="imgPanel" auto="true"
+                                              allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" sizeLimit="1000000"
+                                              invalidSizeMessage="Tamanho Máximo 1MB" invalidFileMessage="Somente arquivos .jpg, .png ou .gif"
+                                              /> 
+                                <br />
+                                <p:dataGrid value="#{noticiaMB.previewImagens}" var="imagem" columns="4" layout="grid" rendered="#{noticiaMB.previewImagens != null and noticiaMB.previewImagens.size() != 0}">
+                                    <p:panel>
+                                        <p:commandButton id="apagarIcon" type="button" style="font-size: small; float: right" icon="ui-icon-trash" >
+                                            <p:ajax event="click" listener="#{noticiaMB.removerImagem(imagem)}" update="formNoticia:imgPanel formNoticia:mensagem" />
+                                            <p:confirm header="Apagar" message="Apagar imagem?" />
+                                        </p:commandButton> 
+                                        <p:tooltip for="apagarIcon" value="Apagar imagem" /> 
+                                        <img id="imgVer" height="210" width="193" src="data:image/png;base64,#{noticiaMB.verImagemBase64(imagem)}" alt="Imagem questao" /> 
+                                        <f:facet name="footer">
+                                            <h:outputText value="Descrição" /><br/>
+                                            <p:inputText value="#{noticiaMB.noticia.arquivos.get(noticiaMB.previewImagens.indexOf(imagem)).descricao}" validatorMessage="Insira uma descrição valida para a imagem" style="width: 95%">
+                                                <f:validateRegex pattern="[0-9A-Za-zÀ-ú ]*"/> 
+                                            </p:inputText>                   
+                                        </f:facet>
+                                    </p:panel>
+                                </p:dataGrid>
+                            </p:outputPanel>      
+                        </div>
+
+                        <div class="ui-g-12" style="text-align: center">
+                            <p:commandButton value="Cancelar" ajax="true" oncomplete="PF('dialogNoticia').hide()" >                            
+                                <p:confirm header="Cancelar" message="Cancelar #{noticiaMB.noticia.id != 0 ? 'edição' : 'criação'} de notícia?" />
+                            </p:commandButton> 
+                            <p:commandButton value="Salvar" ajax="true" actionListener="#{noticiaMB.gravarNoticia}" update="formNoticia divSucesso" rendered="#{noticiaMB.noticia.id == 0}">                            
+                                <p:confirm header="Salvar" message="Salvar notícia?" />
+                            </p:commandButton>                                                 
+                            <p:commandButton value="Atualizar" ajax="true" actionListener="#{noticiaMB.atualizarNoticia}" update="formNoticia divSucesso" rendered="#{noticiaMB.noticia.id != 0}">                            
+                                <p:confirm header="Atualizar" message="Salvar alterações de notícia?" />
+                            </p:commandButton>                                                          
+                        </div>
+                    </div> 
+                </div>                                
+            </p:panel>
+            <p:panel class="boxConteudo" id="divSucesso" rendered="#{noticiaMB.cadastroConcluido}">
+                <h2 class="titH2">Notícia salva com sucesso.</h2>
+                <p:messages showDetail="false" escape="false" /> 
+                Clique no botão para continuar.
+                <div style="text-align: right">
+                    <a href="../sindico/SindicoListaNoticia.jsf"><p:button value="Continuar..." /></a>                 
+                </div> 
+            </p:panel> 
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>           
+    </p:dialog> 
+    <style>
+        .ui-fileupload-content.ui-widget-content.ui-corner-bottom{   
+            background-color: rgba(255,255,255,0);
+            border: none;  
+        }
+
+        .ui-fileupload.ui-widget.ui-fileupload-responsive {  
+            text-align: center;
+        }
+    </style>
+</ui:composition>
