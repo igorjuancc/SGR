@@ -1,0 +1,223 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/SindicoTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Sindico - Assembleia (Detalhes)</ui:define>
+    <ui:define name="conteudo"> 
+        <p:panel class="boxConteudo">
+            <h:form id="formAssembleia">
+                <p:poll widgetVar="myPoll" listener="#{assembleiaMB.pollComentarios}" autoStart="false" />
+                <h2 class="titH2">Assembleia - #{assembleiaMB.assembleia.id}</h2> 
+                <p:growl id="msgGrowl" showDetail="false" escape="false" />
+                <div class="ui-g">
+                    <div class="ui-g-6" style="text-align: left">
+                        <p:commandButton value="Nova Questão" style="font-size: medium" oncomplete="PF('dialogQuestao').show()" action="#{assembleiaMB.novaQuestao}" update="questaoForm" disabled="#{assembleiaMB.assembleia.encerramento != 0}"/>
+                        <p:commandButton value="Eleição Síndico" style="font-size: medium" oncomplete="PF('dialogSindico').show()" action="#{assembleiaMB.verificaEleicao}" update="dialogSindico" rendered="#{assembleiaMB.assembleia.tipo == 2}" disabled="#{assembleiaMB.assembleia.encerramento != 0}"/>
+                    </div>                    
+                    <div class="ui-g-6" style="text-align: right">
+                        <p:commandButton type="button" value="#{assembleiaMB.statusAssembleia()}" style="font-size: medium" disabled="#{(assembleiaMB.statusAssembleia() == 'Aguardando') || (assembleiaMB.statusAssembleia() == 'Finalizado')}">
+                            <p:ajax event="click" listener="#{assembleiaMB.atualizarStatusAssembleia}" update="formAssembleia" />
+                            <p:confirm header="#{assembleiaMB.statusAssembleia()}" message="#{assembleiaMB.statusAssembleia() == 'Finalizar' ? 'Deseja finalizar assembleia? (Aguardando parecer de presidente)' : 'Encerrar assembleia?'}" />
+                        </p:commandButton>
+                    </div>                    
+                </div>
+                <div >                    
+                </div>                
+                <div class="ui-g">     
+                    <div class="ui-g-12">
+                        <h3 class="titH2" style="margin:0">Informações</h3>                        
+                    </div>
+                    <div class="ui-g-4">
+                        <h:outputText value="ID: #{assembleiaMB.assembleia.id}" /><br />
+                        <h:outputText value="TIPO: #{assembleiaMB.assembleia.tipo == 2 ? 'GERAL ORDINÁRIA' : 'GERAL EXTRAORDINÁRIA'}" />                          
+                    </div>                    
+                    <div class="ui-g-4">
+                        <h:outputText value="ABERTURA: " />
+                        <h:outputText value="#{assembleiaMB.assembleia.dataInicio}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText><br />                        
+                        <h:outputText value="ENCERRAMENTO: " />     
+                        <h:outputText value="#{assembleiaMB.assembleia.dataFim}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText><br />   
+                    </div>                    
+                    <div class="ui-g-4">
+                        <h:outputText value="CRIADOR: #{assembleiaMB.assembleia.sindico.nome}" /><br />                        
+                        <h:outputText value="PRESIDENTE: #{assembleiaMB.assembleia.presidente.nome}" />                         
+                    </div> 
+                    <p:outputPanel class="ui-g-12" rendered="#{assembleiaMB.assembleia.parecer != null}">
+                        <h:outputText value="PARECER PRESIDENTE: " />
+                        <h:outputText value="#{assembleiaMB.assembleia.parecer}" escape="false" />
+                    </p:outputPanel>  
+                </div>
+                <p:dataGrid value="#{assembleiaMB.assembleia.questoes}" var="questao" columns="3" layout="grid" emptyMessage="Nenhuma questão encontrada">
+                    <f:facet name="header">                        
+                        Questões
+                    </f:facet>
+                    <p:panel> 
+                        <f:facet name="header"> 
+                            <div class="ui-g-9" style="padding: 0">
+                                #{questao.titulo.length() > 15 ? questao.titulo.substring(0,15) : questao.titulo} 
+                            </div>
+                            <div class="ui-g-3" style="padding: 0">
+                                <p:commandButton type="button" style="font-size: small;" icon="ui-icon-search">
+                                    <p:ajax event="click" listener="#{assembleiaMB.setEdicaoQuestao(questao)}" oncomplete="PF('dialogVer').show()" update="dialogVer" />
+                                </p:commandButton> 
+                                <p:commandButton type="button" style="font-size: small;" icon="ui-icon-trash" disabled="#{assembleiaMB.assembleia.encerramento != 0}">
+                                    <p:ajax event="click" listener="#{assembleiaMB.apagarQuestao(questao)}" update="formAssembleia" />
+                                    <p:confirm header="Apagar" message="Apagar questão?" />
+                                </p:commandButton>                                 
+                            </div>                   
+                        </f:facet> 
+                        <p:donutChart model="#{assembleiaMB.graficoDonut(questao)}" style="width: 100%; height: 50vh;" rendered="#{assembleiaMB.totalVotos(questao) != 0}"/>
+                        <p:graphicImage value="/css/icones/#{questao.opcoes.size() == 0 ? 'assembleia.png' : 'eleicao.PNG'}" height="307" width="100%" alt="AssembleiaIcon" rendered="#{assembleiaMB.totalVotos(questao) == 0}" />
+                        <h:outputText value="Comentarios: #{questao.comentarios.size()}" />
+                        <br />
+                        <h:outputText value="Votos: #{assembleiaMB.totalVotos(questao)}" rendered="#{questao.opcoes.size() != 0}" />
+                    </p:panel> 
+                </p:dataGrid>
+                <div style="text-align: center">
+                    <p:commandButton value="Voltar" type="button" style="margin-top: 1vh" >
+                        <p:ajax event="click" listener="#{assembleiaMB.redirecionar()}"/>
+                        <p:confirm header="Voltar" message="Voltar a lista de assembléias?" /> 
+                    </p:commandButton>                    
+                </div>
+            </h:form>            
+        </p:panel>
+        <ui:include src="formulario/SindicoFormularioQuestao.xhtml" /> 
+        <ui:include src="formulario/SindicoFormularioAGO.xhtml" /> 
+        <p:dialog class="backForms" id="dialogVer" widgetVar="dialogVer" modal="true" showHeader="true" header="#{assembleiaMB.questao.titulo}" onShow="PF('myPoll').start()" onHide="PF('myPoll').stop()" positionType="absolute">
+            <p:ajax event="close" update="formAssembleia" />
+            <h:form id="verForm" enctype="multipart/form-data" class="conteudo">
+                <p:growl showDetail="false" />
+                <p:panel class="boxConteudo">
+                    <p:commandButton type="button" style="font-size: medium; float: right" icon="ui-icon-pencil" disabled="#{assembleiaMB.questao.titulo == 'ELEIÇÃO DE SÍNDICO' or assembleiaMB.assembleia.encerramento != 0}">
+                        <p:ajax event="click" update="dialogQuestao" oncomplete="PF('dialogQuestao').show()" onsuccess="PF('dialogVer').hide()" />
+                    </p:commandButton> 
+                    <div class="ui-g">                                               
+                        <div class="ui-g-12">
+                            <div class="ui-g-12">
+                                <h2 class="titH2">#{assembleiaMB.questao.titulo}</h2>                                 
+                                <h:outputLabel for="desc" value="DESCRIÇÃO:" /><br />
+                                <h:outputText id="desc" value="#{assembleiaMB.questao.descricao}" />
+                            </div>                            
+                            <p:outputPanel class="#{assembleiaMB.questao.arquivos.size() > 0 ? 'ui-g-6' : 'ui-g-12'}" rendered="#{assembleiaMB.questao.opcoes.size() > 0}">
+                                <h2 class="titH2">Votos</h2> 
+                                <p:barChart model="#{assembleiaMB.graficoBar(assembleiaMB.questao)}" style="width: 100%"/>
+                                <br />
+                                <p:dataTable value="#{assembleiaMB.questao.opcoes}" var="opc" >
+                                    <f:facet name="header">
+                                        Detalhes
+                                    </f:facet>
+                                    <p:column headerText="Opção" width="56">
+                                        #{opc.descricao}
+                                    </p:column>
+                                    <p:column headerText="Votos %" width="16" style="text-align: center">
+                                        #{assembleiaMB.percentualVoto(opc)}%
+                                    </p:column>
+                                    <p:column headerText="Nº Votos" width="16" style="text-align: center">
+                                        #{opc.votos.size()}
+                                    </p:column>
+                                    <p:column headerText="Remover" width="12" style="text-align: center">
+                                        <p:commandButton type="button" style="font-size: small" icon="ui-icon-trash" disabled="#{assembleiaMB.questao.titulo == 'ELEIÇÃO DE SÍNDICO' or assembleiaMB.assembleia.encerramento != 0}" >
+                                            <p:ajax event="click" listener="#{assembleiaMB.removerOpcQuestao(opc)}" update="formAssembleia verForm" />
+                                            <p:confirm header="Apagar" message="Apagar opção de questão?" />
+                                        </p:commandButton> 
+                                    </p:column>
+                                </p:dataTable>
+                            </p:outputPanel>  
+                            <p:outputPanel class="#{assembleiaMB.questao.opcoes.size() > 0 ? 'ui-g-6' : 'ui-g-12'}" rendered="#{assembleiaMB.questao.arquivos.size() > 0}">
+                                <h2 class="titH2">Arquivos</h2> 
+                                <p:dataGrid class="boxConteudo" value="#{assembleiaMB.questao.arquivos}" var="arquivo" columns="1" layout="grid" paginator="true" rows="1" paginatorPosition="bottom" emptyMessage="Nenhuma imagem encontrada">
+                                    <p:panel style="text-align: center">
+                                        <f:facet name="header">
+                                            #{(arquivo.descricao != null) and (arquivo.descricao != '') ? arquivo.descricao : 'SEM DESCRIÇÃO'}
+                                            <p:commandButton type="button" style="font-size: small; float: right" icon="ui-icon-trash" disabled="#{assembleiaMB.questao.titulo == 'ELEIÇÃO DE SÍNDICO' or assembleiaMB.assembleia.encerramento != 0}" >
+                                                <p:ajax event="click" listener="#{assembleiaMB.apagarImagem(arquivo)}" update="formAssembleia verForm" />
+                                                <p:confirm header="Apagar" message="Apagar imagem #{arquivo.descricao != null ? arquivo.descricao : assembleiaMB.questao.arquivos.indexOf(arquivo)+1 }?" />
+                                            </p:commandButton>                                                  
+                                        </f:facet>                                             
+                                        <p:graphicImage value="/ImagemQuestao/#{arquivo.id}#{arquivo.extensao}" height="390vh" width="100%" alt="Imagem: #{assembleiaMB.questao.arquivos.indexOf(arquivo)+1}" title="#{arquivo.descricao}" />
+                                    </p:panel>
+                                </p:dataGrid>
+                            </p:outputPanel>  
+                        </div> 
+
+                        <div class="ui-g-12">
+                            <div class="ui-g-12">
+                                <h2 class="titH2">Discussão</h2>             
+                            </div> 
+                            <div class="ui-g-12">
+                                <p:dataView id="dataViewComentarios" value="#{assembleiaMB.questao.comentarios}" var="comentario" gridIcon="pi pi-th-large" listIcon="pi pi-bars">
+                                    <h:outputText value="Nenhum comentário adicionado" rendered="#{assembleiaMB.questao.comentarios == null || assembleiaMB.questao.comentarios.size() == 0}" />
+                                    <p:dataViewListItem>
+                                        <p:outputPanel>
+                                            <h:panelGrid columns="3" onmouseover="exibeDelete(this)" onmouseout=" ocultaDelete(this)" id="eleComentario">
+                                                <p:outputPanel>
+                                                    <p:graphicImage value="/ImagemPessoa/#{comentario.pessoa.imagem.id}#{comentario.pessoa.imagem.extensao}" height="45" width="45" style="border-radius: 100%" rendered="#{comentario.pessoa.imagem != null}"/>  
+                                                    <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="45" width="45" style="border-radius: 100%" rendered="#{comentario.pessoa.imagem == null}"/> 
+                                                </p:outputPanel> 
+                                                <p:outputPanel class="comentarioAtendimento" style="background-color: #{assembleiaMB.corComentario(comentario)}" >
+                                                    <h:outputText value="#{comentario.pessoa.nome}" style="font-size: xx-small; margin: 0; font-weight: bold" /><br />                                                
+                                                    <h:outputText value="#{comentario.descricao}" />                                                 
+                                                </p:outputPanel>
+                                                <p:outputPanel>
+                                                    <p:commandButton type="button" style=" font-size: xx-small; display: none" icon="ui-icon-trash" >
+                                                        <p:confirm header="Apagar" message="Deseja apagar comentário?" />
+                                                        <p:ajax event="click" listener="#{assembleiaMB.apagarComentario(comentario)}" update="verForm" />                                            
+                                                    </p:commandButton><br />
+                                                    <h:outputText value="#{comentario.data}" style="font-size: xx-small">
+                                                        <f:convertDateTime pattern="dd/MM/yyyy" />                        
+                                                    </h:outputText>   
+                                                </p:outputPanel>                                             
+                                            </h:panelGrid>                                        
+                                        </p:outputPanel>
+                                    </p:dataViewListItem>                                
+                                </p:dataView> 
+                            </div>
+
+                            <div class="ui-g-12">                            
+                                <div class="ui-g-1">
+                                    <p:graphicImage value="/ImagemPessoa/#{LoginMB.funcionario.imagem.id}#{LoginMB.funcionario.imagem.extensao}" height="45" width="45" style="border-radius: 100%" rendered="#{LoginMB.funcionario.imagem != null}"/>  
+                                    <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="45" width="45" style="border-radius: 100%" rendered="#{LoginMB.funcionario.imagem == null}"/>  
+                                </div>
+                                <div class="ui-g-11">
+                                    <div class="ui-inputgroup">
+                                        <p:inputText value="#{assembleiaMB.comentario.descricao}" placeholder="Escreva um comentário..." style="margin-top: 1vh; width: 80%" required="true" />
+                                        <p:commandButton icon="ui-icon-comment" styleClass="white-button" style="font-size: small; margin-top: 1vh" actionListener="#{assembleiaMB.novoComentario}" update="verForm" />
+                                    </div>
+                                </div> 
+                            </div>            
+                        </div> 
+                    </div>                    
+                </p:panel>                
+            </h:form>
+        </p:dialog>
+        <script>
+            function exibeDelete(ele) {
+                var id = ele.id;
+                id = id.split(":");
+                $("#verForm\\:dataViewComentarios\\:" + id[2] + "\\:eleComentario").find("button").css("display", "inline-block");
+            }
+            ;
+            function ocultaDelete(ele) {
+                var id = ele.id;
+                id = id.split(":");
+                $("#verForm\\:dataViewComentarios\\:" + id[2] + "\\:eleComentario").find("button").css("display", "none");
+            }
+            ;
+        </script>
+        <style>
+            .ui-dataview-content {
+                background-color: rgba(255,255,255,0);     
+                border: none;
+            }      
+        </style>
+    </ui:define>    
+</ui:composition>
+

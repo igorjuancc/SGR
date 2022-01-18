@@ -1,0 +1,111 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="divVerAdv" widgetVar="divVerAdv" class="backForms" modal="true" closable="true" showHeader="true" width="1030" positionType="absolute">
+        <div class="ui-g conteudo">
+            <h:form id="formVerAdv" style="width: 100%">
+                <p:panel class="boxConteudo" id="panelVerAdv" rendered="#{notificacaoMB.notificacao != null}">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h3 style="margin-bottom: 0">
+                                <h:outputText value="#{notificacaoMB.notificacao.tipo == 0 ? 'Advertência' : 'Notificação de Multa'} - #{notificacaoMB.notificacao.id}" />                            
+                            </h3>                            
+                            <h5 class="titH2" style="margin-top: 0; margin-bottom: 0">
+                                <h:outputText value="Apartamento [#{notificacaoMB.notificacao.morador.apartamento.bloco}-#{notificacaoMB.notificacao.morador.apartamento.id}]" />                            
+                            </h5>                  
+                        </div> 
+                        <div class="ui-g-6">
+                            <h:outputText value="STATUS: #{notificacaoMB.statusNotificacao(notificacaoMB.notificacao)}" rendered="#{notificacaoMB.notificacao.tipo != 0}" />                            
+                        </div>
+                        <div class="ui-g-6" style="text-align: right">
+                            <h:outputText value="#{notificacaoMB.notificacao.dataEmissao}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>                            
+                        </div>
+                        <div class="ui-g-12">
+                            <p>
+                                À
+                                SR(A). #{notificacaoMB.notificacao.morador.nome},<br />
+                                RUA ÂNGELO ZENI, 555, JARDIM SCHAFFER, CURITIBA - PR <br />
+                                APARTAMENTO #{notificacaoMB.notificacao.morador.apartamento.id}, BLOCO #{notificacaoMB.notificacao.morador.apartamento.bloco}
+                                <br /><br />
+                                PREZADO(A) SENHOR(A),
+
+                                <p:outputPanel rendered="#{notificacaoMB.notificacao.tipo == 0}">
+                                    NA QUALIDADE DE SÍNDICO(A) DO CONDOMÍNIO AZTECA, FAÇO USO DA PRESENTE PARA ADVERTI-LO(A) A RESPEITO 
+                                    DO DESCUMPRIMENTO DO REGIMENTO INTERNO NO QUE DIZ RESPEITO A #{notificacaoMB.notificacao.infracao.descricao} COM CLASSIFICAÇÃO DE NATUREZA "#{notificacaoMB.classificacaoMulta()}",
+                                    NA DATA DE <h:outputText value="#{notificacaoMB.notificacao.dataReferencia}"><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>.
+                                    SOLICITO, ASSIM, UMA MELHOR OBSERVÂNCIA DAS NORMAS DO CONDOMÍNIO A FIM DE EVITAR DESCUMPRIMENTOS FUTUROS E EVENTUAL
+                                    IMPOSIÇÃO DE MULTA.                                    
+                                </p:outputPanel>
+                                <p:outputPanel rendered="#{notificacaoMB.notificacao.tipo != 0}">
+                                    NO EXERCÍCIO DA FUNÇÃO DE SÍNDICO DO CONDOMÍNIO AZTECA, CONSIDERANDO O DISPOSTO NO ARTIGO 22, § 1º, ALÍNEA D, DA LEI Nº 4.591/64 E INCISOS IV E VII DO ARTIGO 1.348 DO CÓDIGO CIVIL, 
+                                    E TENDO EM VISTA QUE VOSSA SENHORIA COMETEU A INFRAÇÃO #{notificacaoMB.notificacao.infracao.descricao} COM CLASSIFICAÇÃO DE NATUREZA "#{notificacaoMB.classificacaoMulta()}" 
+                                    NA DATA DE <h:outputText value="#{notificacaoMB.notificacao.dataReferencia}"><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText> PREVISTA NO REGIMENTO INTERNO DO CONDOMÍNIO, 
+                                    FICA-LHE COMINADA A MULTA NO VALOR DE #{notificacaoMB.valorMulta()}, RESSALVADO O DIREITO DE RECURSO PARA A ASSEMBLÉIA GERAL, NA FORMA DO § 3º DO ARTIGO 22 DA MENCIONADA LEI Nº 4.591/64.
+                                    <br /><br />
+                                    FICA VOSSA SENHORIA DESDE LOGO INTIMADO A RECOLHER A REFERIDA IMPORTÂNCIA NO PRAZO DE 15 (QUINZE) DIAS A CONTAR DO RECEBIMENTO DESTA NOTIFICAÇÃO, OU DA CONFIRMAÇÃO DA MULTA PELA ASSEMBLÉIA 
+                                    EM CASO DE RECURSO, SOB PENA DE LHE SER COBRADA POR VIA EXECUTIVA, SEM PREJUÍZO DAS DEMAIS SANÇÕES PREVISTAS NA LEI OU NA CONVENÇÃO.
+                                    <br /><br />
+                                    APROVEITO A OPORTUNIDADE PARA RENOVAR EXPRESSÕES DE ELEVADA ESTIMA E CONSIDERAÇÃO.
+                                </p:outputPanel> 
+                                <p:outputPanel rendered="#{notificacaoMB.notificacao.descricao != null and notificacaoMB.notificacao.descricao != ''}">
+                                    <br /><br />
+                                    <h:outputText value="OBS: #{notificacaoMB.notificacao.descricao}" />                                    
+                                </p:outputPanel> 
+                                <br />
+                                <h:outputText value="#{notificacaoMB.dataAssinatura(notificacaoMB.notificacao.dataEmissao)}" />
+                                <br /><br />
+                                <h:outputText value="#{notificacaoMB.notificacao.funcionario.nome}" />
+                                <br />
+                                <h:outputText value="SÍNDICO(A)" />
+                            </p>                            
+                        </div>
+                        <div class="ui-g-12" style="display: #{notificacaoMB.notificacao.atendimentos.size() > 0 ? 'block' : 'none'}">
+                            <p:outputPanel rendered="#{notificacaoMB.notificacao.atendimentos.size() > 0}">                                
+                                <h3 class="titH2">Atendimentos referentes</h3>
+                                <p:dataView id="tabAtendimentosVer" value="#{notificacaoMB.notificacao.atendimentos}" var="atendimentoVer" >
+                                    <p:dataViewListItem>
+                                        <h:panelGrid columns="1">
+                                            <p:outputPanel>
+                                                <h:outputText value="#{atendimentoVer.tipo.descricao}" style="font-weight: bolder" /><br /> 
+                                                <h:outputText value="ABERTURA: " /><h:outputText value="#{atendimentoVer.dataAbertura}"><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br /> 
+                                                <h:outputText value="MORADOR: #{atendimentoVer.morador.nome}" /><br />                                                  
+                                                <h:outputText value="#{atendimentoVer.descricao}" /><br />                                              
+                                            </p:outputPanel>
+                                        </h:panelGrid>                                        
+                                    </p:dataViewListItem> 
+                                </p:dataView>                      
+                            </p:outputPanel>                            
+                        </div>                        
+                        <div class="ui-g-12" style="display: #{notificacaoMB.notificacao.arquivos.size() > 0 ? 'block' : 'none'}">
+                            <p:outputPanel rendered="#{notificacaoMB.notificacao.arquivos.size() > 0}">                                
+                                <h3 class="titH2">Anexos</h3>
+                                <p:repeat value="#{notificacaoMB.notificacao.arquivos}" var="anexoVer">
+                                    <div class="ui-g-#{anexoVer.extensao == '.MP4' ? '12' : '6'}" style="text-align: center" >
+                                        <p:outputPanel rendered="#{anexoVer.extensao != '.MP4'}">
+                                            <img id="imgVer" height="220vh" width="90%" src="../AnexoAdvertencia/#{anexoVer.id}#{anexoVer.extensao}" alt="Imagem anexo" />                                                 
+                                        </p:outputPanel>
+                                        <p:outputPanel rendered="#{anexoVer.extensao == '.MP4'}" >
+                                            <video controls="true" src="../AnexoAdvertencia/#{anexoVer.id}#{anexoVer.extensao}" height="300vh" width="80%"></video>                                                
+                                        </p:outputPanel>
+                                        <h:outputText value="#{anexoVer.descricao == null or anexoVer.descricao == '' ? 'Sem descrição' : anexoVer.descricao}" />           
+                                    </div>                                    
+                                </p:repeat>                   
+                            </p:outputPanel>                            
+                        </div>                        
+                    </div> 
+                </p:panel>
+            </h:form>
+        </div>
+    </p:dialog> 
+    <style>
+        .ui-dataview-content {
+            background: none;
+            border: none;
+        }
+    </style>
+</ui:composition>

@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/MoradorTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Morador - Balanço</ui:define>
+    <ui:define name="conteudo">
+        <h:form id="dados">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Balanço Financeiro</h2><br/>       
+                <p:tabView class="boxConteudo" id="tabViewFinanca">
+                    <p:tab title="Geral" id="tabGeral">
+                        <h3 class="titH2">Balanço</h3><br />
+                        <p:fieldset legend="Total" style="width: 45.8%; display: inline">
+                            <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotal == null}" alt="Sem Dados" width="100%" height="100%" />
+                            <p:barChart model="#{balancoMB.graficoTotal}" style="width: 100%" rendered="#{balancoMB.graficoTotal != null}" />
+                        </p:fieldset>
+                        <p:fieldset legend="Ano" style="width: 45.8%; display: inline">
+                            <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalAno == null}" alt="Sem Dados" width="100%" height="100%" />
+                            <p:lineChart model="#{balancoMB.graficoTotalAno}" style="width: 100%" rendered="#{balancoMB.graficoTotalAno != null}" />
+                        </p:fieldset>
+                        <p:fieldset legend="Categoria" style=" background-color: rgba(255,255,255,0.1)">
+                            <p:fieldset legend="Receita" style="width: 45%; display: inline; text-align: center; font-size: small">
+                                <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalReceita == null}" alt="Sem Dados" width="100%" height="100%" />
+                                <p:pieChart model="#{balancoMB.graficoTotalReceita}" style="width: 100%" rendered="#{balancoMB.graficoTotalReceita != null}" />                                 
+                            </p:fieldset>
+                            <p:fieldset legend="Despesa" style="width: 45%; display: inline; text-align: center; font-size: small">
+                                <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalDespesa == null}" alt="Sem Dados" width="100%" height="100%" />
+                                <p:pieChart model="#{balancoMB.graficoTotalDespesa}" style="width: 100%" rendered="#{balancoMB.graficoTotalDespesa != null}"/>                                 
+                            </p:fieldset>                        
+                        </p:fieldset>                     
+                    </p:tab>                    
+                    <p:tab title="Anual" id="tabAnual"> 
+                        <h3 class="titH2" id="titAno">Balanço Anual - <h:outputText id="anoTit" value="#{balancoMB.anoFiltro}" /> </h3>  
+                        <br />
+                        <p:selectOneMenu id="anoFiltro" value="#{balancoMB.anoFiltro}" style="font-size: small; margin-right: 1vw" rendered="#{balancoMB.anoLista.size() > 0}">
+                            <f:selectItems value="#{balancoMB.anoLista}" var="ano" itemLabel="#{ano}" itemValue="#{ano}" />  
+                            <p:ajax event="change" update="dados:tabViewFinanca:panelAno dados:tabViewFinanca:anoTit" listener="#{balancoMB.iniciaGrafAnual()}" />
+                        </p:selectOneMenu>
+                        <br/><br/>
+                        <p:outputPanel id="panelAno">                        
+                            <p:fieldset legend="Total" style="width: 45.8%; display: inline">
+                                <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalFiltroAno == null}" alt="Sem Dados" width="100%" height="100%" />
+                                <p:barChart model="#{balancoMB.graficoTotalFiltroAno}" style="width: 100%" rendered="#{balancoMB.graficoTotalFiltroAno != null}"/>
+                            </p:fieldset>
+                            <p:fieldset legend="Mês" style="width: 45.8%; display: inline">
+                                <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoMesFiltroAno == null}" alt="Sem Dados" width="100%" height="100%" />
+                                <p:barChart model="#{balancoMB.graficoMesFiltroAno}" style="width: 100%" rendered="#{balancoMB.graficoMesFiltroAno != null}"/>
+                            </p:fieldset>
+                            <p:fieldset legend="Categoria" style=" background-color: rgba(255,255,255,0.1)">
+                                <p:fieldset legend="Receita" style="width: 45%; display: inline; text-align: center; font-size: small">
+                                    <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalAnoReceita == null}" alt="Sem Dados" width="100%" height="100%" />
+                                    <p:pieChart model="#{balancoMB.graficoTotalAnoReceita}" style="width: 100%" rendered="#{balancoMB.graficoTotalAnoReceita != null}"/>                                 
+                                </p:fieldset>
+                                <p:fieldset legend="Despesa" style="width: 45%; display: inline; text-align: center; font-size: small">
+                                    <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalAnoDespesa == null}" alt="Sem Dados" width="100%" height="100%" />
+                                    <p:pieChart model="#{balancoMB.graficoTotalAnoDespesa}" style="width: 100%" rendered="#{balancoMB.graficoTotalAnoDespesa != null}" />                                 
+                                </p:fieldset>                        
+                            </p:fieldset>
+                        </p:outputPanel>
+                    </p:tab>                    
+                    <p:tab title="Mensal" id="tabMensal">
+                        <h3 class="titH2">Balanço Mensal - <h:outputText id="mesTit" value="#{balancoMB.nomeMes(balancoMB.mesFiltro)}/#{balancoMB.anoFiltro2}" /></h3> 
+                        <br />
+                        <p:selectOneMenu id="anoMesFiltro" value="#{balancoMB.anoFiltro2}" style="font-size: small; margin-right: 1vw" rendered="#{balancoMB.anoLista.size() > 0}">
+                            <f:selectItems value="#{balancoMB.anoLista}" var="ano" itemLabel="#{ano}" itemValue="#{ano}" />  
+                            <p:ajax event="change" update="dados:tabViewFinanca:filtroMes dados:tabViewFinanca:mesTit dados:tabViewFinanca:panelMes" listener="#{balancoMB.iniciaGrafMensal(0)}" />
+                        </p:selectOneMenu>
+
+                        <p:outputPanel id="filtroMes" style="display: inline-block">
+                            <p:selectOneButton value="#{balancoMB.mesFiltro}" style="font-size: small;" rendered="#{balancoMB.mesLista.size() > 0}">
+                                <f:selectItems value="#{balancoMB.mesLista}" var="mes" itemLabel="#{balancoMB.nomeMesAbrv(mes)}" itemValue="#{mes}" /> 
+                                <p:ajax event="change" update="dados:tabViewFinanca:panelMes dados:tabViewFinanca:mesTit" listener="#{balancoMB.iniciaGrafMensal(1)}"  />
+                            </p:selectOneButton>
+                        </p:outputPanel>   
+                        <br /><br />
+                        <p:outputPanel id="panelMes">                        
+                            <p:fieldset legend="Total" style="width: 45.8%; display: inline">
+                                <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalFiltroAnoMes == null}" alt="Sem Dados" width="100%" height="100%" />
+                                <p:barChart model="#{balancoMB.graficoTotalFiltroAnoMes}" style="width: 100%" rendered="#{balancoMB.graficoTotalFiltroAnoMes != null}"/>
+                            </p:fieldset>
+                            <p:fieldset legend="Previsto" style="width: 45.8%; display: inline">
+                                <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalPrevistoFiltroAnoMes == null}" alt="Sem Dados" width="100%" height="100%" />
+                                <p:barChart model="#{balancoMB.graficoTotalPrevistoFiltroAnoMes}" style="width: 100%" rendered="#{balancoMB.graficoTotalPrevistoFiltroAnoMes != null}"/>
+                            </p:fieldset>
+                            <p:fieldset legend="Categoria" style=" background-color: rgba(255,255,255,0.1)">
+                                <p:fieldset legend="Receita" style="width: 45%; display: inline; text-align: center; font-size: small">
+                                    <p:graphicImage value="/css/back/SemDados.png" rendered="#{balancoMB.graficoTotalAnoMesReceita == null}" alt="Sem Dados" width="100%" />
+                                    <p:pieChart model="#{balancoMB.graficoTotalAnoMesReceita}" style="width: 100%" rendered="#{balancoMB.graficoTotalAnoMesReceita != null}"/>                                 
+                                </p:fieldset>
+                                <p:fieldset legend="Despesa" style="width: 45%; display: inline; text-align: center; font-size: small">
+                                    <p:graphicImage value="/css/back/SemDados.png" alt="Sem Dados" width="100%" height="100%"  rendered="#{balancoMB.graficoTotalAnoMesDespesa == null}" />
+                                    <p:pieChart model="#{balancoMB.graficoTotalAnoMesDespesa}" style="width: 100%" rendered="#{balancoMB.graficoTotalAnoMesDespesa != null}" />                                 
+                                </p:fieldset>
+                            </p:fieldset> 
+                        </p:outputPanel>
+                    </p:tab>                    
+                </p:tabView>                
+            </p:panel>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade" style=" background-color: white">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>             
+        </h:form>
+    </ui:define>
+</ui:composition>
+

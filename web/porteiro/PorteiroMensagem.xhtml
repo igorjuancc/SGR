@@ -1,0 +1,317 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/PorteiroTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Porteiro - Mensagens</ui:define>
+    <ui:define name="conteudo">
+        <p:panel class="boxConteudo">
+            <h2 class="titH2">Mensagens</h2>            
+            <h:form id="formDivMensagem">
+                <p:growl id="msgGrowl" showDetail="false" />
+                <div style="text-align: right">                    
+                    <p:commandButton value="Nova Mensagem" actionListener="#{mensagemMB.setNovaMensagem}" oncomplete="PF('divFormMensagem').show()" update="divFormMensagem" style="font-size: medium"/>
+                </div><br />
+
+                <p:tabView class="boxConteudo" id="tabViewMensagens">
+                    <p:tab title="Caixa de entrada" id="tabEntrada">
+                        <h3 class="titH2" style="margin-bottom: 3vh">Caixa de entrada</h3> 
+                        <p:dataTable id="tabelaRecebidos" value="#{mensagemMB.mensagensRecebidas}" var="recebida" emptyMessage="Nenhuma mensagem encontrada."
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="De" width="1" style="text-align: center" sortBy="#{recebida.autor.id}">
+                                <p:graphicImage value="/ImagemPessoa/#{recebida.autor.imagem.id}#{recebida.autor.imagem.extensao}" height="35" width="35" style="border-radius: 100%" rendered="#{recebida.autor.imagem != null}" />  
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="35" width="35" style="border-radius: 100%" rendered="#{recebida.autor.imagem == null}"/>  
+                            </p:column>   
+                            <p:column headerText="Assunto" width="90" sortBy="#{recebida.assunto}"> 
+                                <h:outputText value="#{recebida.assunto}" style=" font-weight: #{recebida.statusReceptor == 1 ? 'bold' : ''}" />
+                            </p:column>   
+                            <p:column headerText="Data" width="20" style="text-align: center" sortBy="#{recebida.data}"> 
+                                <h:outputText value="#{recebida.data}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>   
+                            </p:column>   
+                            <p:column headerText="Ver" width="1" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                    <p:ajax event="click" listener="#{mensagemMB.verMensagem(recebida, 2)}"  update="divVerMensagem formDivMensagem" oncomplete="PF('divVerMensagem').show()"/>  
+                                </p:commandButton>
+                            </p:column> 
+                            <p:column headerText="Apagar" width="1" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small" >
+                                    <p:confirm header="Apagar" message="Enviar mensagem para lixeira?" />
+                                    <p:ajax event="click" listener="#{mensagemMB.enviarLixeiraMensagem(recebida, 2)}" />  
+                                </p:commandButton>
+                            </p:column> 
+                        </p:dataTable>
+                    </p:tab>                    
+                    <p:tab title="Enviados" id="tabEnviados">
+                        <h3 class="titH2" style="margin-bottom: 3vh">Enviados</h3> 
+                        <p:dataTable id="tabelaEnviadas" value="#{mensagemMB.mensagensEnviadas}" var="enviada" emptyMessage="Nenhuma mensagem encontrada."
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="Para" width="1" style="text-align: center" sortBy="#{enviada.receptor.id}">
+                                <p:graphicImage value="/ImagemPessoa/#{enviada.receptor.imagem.id}#{enviada.receptor.imagem.extensao}" height="35" width="35" style="border-radius: 100%" rendered="#{enviada.receptor.imagem != null}" />  
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="35" width="35" style="border-radius: 100%" rendered="#{enviada.receptor.imagem == null}"/>  
+                            </p:column>   
+                            <p:column headerText="Assunto" width="90" sortBy="#{enviada.assunto}"> 
+                                <h:outputText value="#{enviada.assunto}" />
+                            </p:column>   
+                            <p:column headerText="Data" width="20" style="text-align: center" sortBy="#{enviada.data}"> 
+                                <h:outputText value="#{enviada.data}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>   
+                            </p:column>   
+                            <p:column headerText="Ver" width="1" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                    <p:ajax event="click" listener="#{mensagemMB.verMensagem(enviada, 1)}"  update="divVerMensagem" oncomplete="PF('divVerMensagem').show()"/>  
+                                </p:commandButton>
+                            </p:column> 
+                            <p:column headerText="Apagar" width="1" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small" >
+                                    <p:confirm header="Apagar" message="Enviar mensagem para lixeira?" />
+                                    <p:ajax event="click" listener="#{mensagemMB.enviarLixeiraMensagem(enviada, 1)}" />  
+                                </p:commandButton>
+                            </p:column> 
+                        </p:dataTable>
+                    </p:tab>                    
+                    <p:tab title="Lixeira" id="tabLixeira">
+                        <h3 class="titH2" style="margin-bottom: 3vh">Itens excluídos</h3> 
+                        <h4 class="titH2" style="margin-bottom: 3vh">Recebidos excluídos</h4> 
+                        <p:dataTable id="tabelaRecebidosLixeira" value="#{mensagemMB.mensagensRecebidasLixeira}" var="recebidaLixeira" emptyMessage="Nenhuma mensagem encontrada."
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="De" width="1" style="text-align: center" sortBy="#{recebidaLixeira.autor.id}">
+                                <p:graphicImage value="/ImagemPessoa/#{recebidaLixeira.autor.imagem.id}#{recebidaLixeira.autor.imagem.extensao}" height="35" width="35" style="border-radius: 100%" rendered="#{recebidaLixeira.autor.imagem != null}" />  
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="35" width="35" style="border-radius: 100%" rendered="#{recebidaLixeira.autor.imagem == null}"/>  
+                            </p:column>   
+                            <p:column headerText="Assunto" width="90" sortBy="#{recebidaLixeira.assunto}"> 
+                                <h:outputText value="#{recebidaLixeira.assunto}" style=" font-weight: #{recebidaLixeira.statusReceptor == 3 ? 'bold' : ''}" />
+                            </p:column>   
+                            <p:column headerText="Data" width="20" style="text-align: center" sortBy="#{recebidaLixeira.data}"> 
+                                <h:outputText value="#{recebidaLixeira.data}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>   
+                            </p:column>   
+                            <p:column headerText="Ver" width="1" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                    <p:ajax event="click" listener="#{mensagemMB.verMensagem(recebidaLixeira, 2)}"  update="divVerMensagem" oncomplete="PF('divVerMensagem').show()"/>  
+                                </p:commandButton>
+                            </p:column> 
+                            <p:column headerText="Restaurar" width="5" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-refresh" type="button" style="font-size: small" >
+                                    <p:confirm header="Restaurar" message="Restaurar mensagem da lixeira?" />
+                                    <p:ajax event="click" listener="#{mensagemMB.restaurarMensagem(recebidaLixeira, 2)}" />  
+                                </p:commandButton>
+                            </p:column> 
+                            <p:column headerText="Apagar" width="1" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small" >
+                                    <p:confirm header="Apagar" message="Apagar mensagem em definitivo?" />
+                                    <p:ajax event="click" listener="#{mensagemMB.apagarMensagem(recebidaLixeira, 2)}" />  
+                                </p:commandButton>
+                            </p:column> 
+                        </p:dataTable>
+                        <h4 class="titH2" style="margin-bottom: 3vh">Enviados excluídos</h4>
+                        <p:dataTable id="tabelaEnviadosLixeira" value="#{mensagemMB.mensagensEnviadasLixeira}" var="enviadaLixeira" emptyMessage="Nenhuma mensagem encontrada."
+                                     paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="Para" width="1" style="text-align: center" sortBy="#{enviadaLixeira.receptor.id}">
+                                <p:graphicImage value="/ImagemPessoa/#{enviadaLixeira.receptor.imagem.id}#{enviadaLixeira.receptor.imagem.extensao}" height="35" width="35" style="border-radius: 100%" rendered="#{enviadaLixeira.receptor.imagem != null}" />  
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="35" width="35" style="border-radius: 100%" rendered="#{enviadaLixeira.receptor.imagem == null}"/>
+                            </p:column>   
+                            <p:column headerText="Assunto" width="90"  sortBy="#{enviadaLixeira.assunto}"> 
+                                <h:outputText value="#{enviadaLixeira.assunto}" />
+                            </p:column>   
+                            <p:column headerText="Data" width="20" style="text-align: center"  sortBy="#{enviadaLixeira.data}"> 
+                                <h:outputText value="#{enviadaLixeira.data}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                </h:outputText>   
+                            </p:column>   
+                            <p:column headerText="Ver" width="1" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                    <p:ajax event="click" listener="#{mensagemMB.verMensagem(enviadaLixeira, 1)}"  update="divVerMensagem" oncomplete="PF('divVerMensagem').show()"/>  
+                                </p:commandButton>
+                            </p:column> 
+                            <p:column headerText="Restaurar" width="5" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-refresh" type="button" style="font-size: small" >
+                                    <p:confirm header="Restaurar" message="Restaurar mensagem da lixeira?" />
+                                    <p:ajax event="click" listener="#{mensagemMB.restaurarMensagem(enviadaLixeira, 1)}" />  
+                                </p:commandButton>
+                            </p:column> 
+                            <p:column headerText="Apagar" width="1" style="text-align: center"> 
+                                <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small" >
+                                    <p:confirm header="Apagar" message="Apagar mensagem em definitivo?" />
+                                    <p:ajax event="click" listener="#{mensagemMB.apagarMensagem(enviadaLixeira, 1)}" />  
+                                </p:commandButton>
+                            </p:column> 
+                        </p:dataTable>
+                    </p:tab>                    
+                </p:tabView>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+                </p:confirmDialog>
+            </h:form>            
+        </p:panel>
+        <p:dialog id="divFormMensagem" widgetVar="divFormMensagem" class="backForms" modal="true" closable="false" showHeader="false" width="#{mensagemMB.mensagemEnviada ? '' : '800'}" fitViewport="true" positionType="absolute" position="top" >
+            <div class="ui-g conteudo">
+                <p:panel class="boxConteudo" visible="#{mensagemMB.mensagemEnviada != true}">                    
+                    <h:form id="formMensagem">
+                        <div class="ui-g-12">
+                            <h2 style="margin-bottom: 0" class="titH2"> <h:outputText value="Nova mensagem" /> </h2>  
+                            <p:messages showDetail="false" />                            
+                        </div>
+                        <div class="ui-g-1" style=" padding-right: 2vw">
+                            <p:selectBooleanButton style="font-size: smaller" onLabel="Para" offLabel="Para" value="#{mensagemMB.exibeContatos}" disabled="#{mensagemMB.resposta}">
+                                <p:ajax event="change" update="exibeContatos" listener="#{mensagemMB.iniciaListaPessoasAtivas}" />
+                            </p:selectBooleanButton>   
+                        </div>
+                        <div class="ui-g-11" style="padding-left: 2vw">                            
+                            <p:autoComplete id="pessoas" multiple="true" value="#{mensagemMB.receptores}" completeMethod="#{mensagemMB.buscaParteNomeContato}" converter="pessoaConverter"
+                                            var="pessoa" itemLabel="#{pessoa.nome}" itemValue="#{pessoa}" disabled="#{mensagemMB.resposta}"
+                                            forceSelection="true" emptyMessage="Não encontrado" minQueryLength="3" placeholder="Contato">    
+                                <p:column style="width: 10%">
+                                    <p:graphicImage value="/ImagemPessoa/#{pessoa.imagem.id}#{pessoa.imagem.extensao}" height="35" width="35" style="border-radius: 100%" rendered="#{pessoa.imagem != null}" />                                      
+                                    <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="35" width="35" style="border-radius: 100%" rendered="#{pessoa.imagem == null}" />                                       
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{pessoa.nome}" />                                    
+                                </p:column>
+                                <p:ajax event="itemSelect" listener="#{mensagemMB.iniciaListaPessoasAtivas}" update="pessoas exibeContatos"/>
+                                <p:ajax event="itemUnselect" listener="#{mensagemMB.iniciaListaPessoasAtivas}" update="pessoas exibeContatos"/>                                
+                            </p:autoComplete> 
+                        </div>
+                        <div class="ui-g-12">      
+                            <p:outputPanel id="exibeContatos" style=" display: #{mensagemMB.exibeContatos ? 'block' : 'none'} ">
+                                <p:outputPanel rendered="#{mensagemMB.exibeContatos}">
+                                    <div style=" text-align: right" >
+                                        <h:outputText value="Adicionar: " />
+                                        <p:commandButton type="button" value="Todos" icon="ui-icon-circle-plus" style="font-size: small">
+                                            <p:confirm header="Todos" message="Adicionar todos os contatos?" />
+                                            <p:ajax event="click" listener="#{mensagemMB.addGrupoContato(1)}" update="formMensagem:listaTodosContatos formMensagem:pessoas" />
+                                        </p:commandButton>
+                                        <p:commandButton type="button" value="Funcionarios" icon="ui-icon-circle-plus" style="font-size: small">
+                                            <p:confirm header="Funcionarios" message="Adicionar todos os funcionarios?" />
+                                            <p:ajax event="click" listener="#{mensagemMB.addGrupoContato(3)}" update="formMensagem:listaTodosContatos formMensagem:pessoas" />
+                                        </p:commandButton>
+                                        <p:commandButton type="button" value="Moradores" icon="ui-icon-circle-plus" style="font-size: small"> 
+                                            <p:confirm header="Moradores" message="Adicionar todos os moradores?" />
+                                            <p:ajax event="click" listener="#{mensagemMB.addGrupoContato(2)}" update="formMensagem:listaTodosContatos formMensagem:pessoas" />
+                                        </p:commandButton>
+                                    </div>
+                                </p:outputPanel>
+                                <br />
+                                <p:outputPanel id="listaTodosContatos" rendered="#{mensagemMB.exibeContatos}">
+                                    <ui:repeat value="#{mensagemMB.pessoasAtivasSistema}" var="contato">
+                                        <div class="divContato">
+                                            <div class="divContContato">
+                                                <p:graphicImage value="/ImagemPessoa/#{contato.imagem.id}#{contato.imagem.extensao}" height="35" width="35" style="border-radius: 100%" rendered="#{contato.imagem != null}" />                                      
+                                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="35" width="35" style="border-radius: 100%" rendered="#{contato.imagem == null}" />                                      
+                                                <h:outputText value="#{contato.nome}" />   
+                                                <p:commandButton icon="ui-icon-circle-plus" type="button" styleClass="white-button" style="font-size: x-small; border-radius: 100%; height: 4vh; margin: 0.6vh">
+                                                    <p:ajax event="click" listener="#{mensagemMB.addContatoLista(contato)}" update="formMensagem:listaTodosContatos formMensagem:pessoas" />
+                                                </p:commandButton>                                                
+                                            </div>                                           
+                                        </div>   
+                                    </ui:repeat>
+                                </p:outputPanel>                              
+                            </p:outputPanel>  
+                            <hr style=" margin-bottom: 0" />
+                        </div>   
+                        <div class="ui-g-12">                            
+                            <p:inputText placeholder="Assunto" value="#{mensagemMB.mensagem.assunto}" required="true" requiredMessage="Necessário inserir o assunto da mensagem"
+                                         style="background-color: rgba(255,255,255,0.0); border: none; box-shadow: none; width: 100%"/>
+                            <hr/>
+                        </div>
+                        <div class="ui-g-12">
+                            Mensagem: <br />
+                            <p:inputTextarea value="#{mensagemMB.mensagem.descricao}" placeholder="Digite a nova mensagem..." required="true"  requiredMessage="Preencha o campo mensagem!"
+                                             rows="3" cols="73" counter="display" maxlength="255" counterTemplate="{0} caracteres restantes" autoResize="true" />
+                            <br />
+                            <h:outputText id="display"  style="font-style: italic; font-size: smaller;" />
+                            <p:outputPanel rendered="#{mensagemMB.resposta}">
+                                <div class="ui-g-12">
+                                    <hr />
+                                    <h3 style="margin-bottom: 0" class="titH2"> <h:outputText value="#{mensagemMB.mensagemRecebida.assunto}" /> </h3>  
+                                </div>
+                                <div class="ui-g-1">                                                                 
+                                    <p:graphicImage value="/ImagemPessoa/#{mensagemMB.mensagemRecebida.autor.imagem.id}#{mensagemMB.mensagemRecebida.autor.imagem.extensao}" height="35" width="35" style="border-radius: 100%" rendered="#{mensagemMB.mensagemRecebida.autor.imagem != null}" />                                      
+                                    <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="35" width="35" style="border-radius: 100%" rendered="#{mensagemMB.mensagemRecebida.autor.imagem == null}" />                                       
+                                </div>
+                                <div class="ui-g-11" style="font-size: small; padding-left: 1vw; padding-top: 1.8vh">
+                                    <h:outputText value="#{mensagemMB.mensagemRecebida.autor.nome}" /><br />                            
+                                    <h:outputText value="#{mensagemMB.mensagemRecebida.data}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                                    </h:outputText><br />                            
+                                    <h:outputText value="Para: #{mensagemMB.mensagemRecebida.receptor.nome}" escape="false" />                            
+                                </div>
+                                <div class="ui-g-12">
+                                    <p:panel>
+                                        <h:outputText value="#{mensagemMB.mensagemRecebida.descricao}" escape="false" />                            
+                                    </p:panel>
+                                </div>
+                            </p:outputPanel>
+                        </div>  
+                        <div class="ui-g-12" style="text-align: center">
+                            <p:commandButton  value="Cancelar" type="button" style="font-size: medium">
+                                <p:confirm header="Cancelar" message="Cancelar nova mensagem?" icon="pi pi-exclamation-triangle" />  
+                                <p:ajax event="click" listener="#{mensagemMB.redirecionar('PorteiroMensagem.jsf')}"/>
+                            </p:commandButton>                      
+                            <p:commandButton value="Enviar" actionListener="#{mensagemMB.novaMensagem}" update="divFormMensagem" oncomplete="PF('divFormMensagem').show()" style="font-size: medium">
+                                <p:confirm header="Enviar" message="Enviar nova mensagem" icon="pi pi-exclamation-triangle" />
+                            </p:commandButton>                              
+                        </div>                        
+                    </h:form>
+                </p:panel> 
+                <p:panel id="divConcluido" visible="#{mensagemMB.mensagemEnviada}" class="boxConteudo">
+                    <h2><h:outputText value="Mensagem enviada com sucesso!" /></h2><br/>
+                    <div style="text-align: right">  
+                        <p:linkButton outcome="/porteiro/PorteiroMensagem" value="Continuar" />                  
+                    </div>  
+                </p:panel>
+            </div>            
+        </p:dialog>        
+        <p:dialog id="divVerMensagem" widgetVar="divVerMensagem" class="backForms" modal="true" closable="true" showHeader="true" fitViewport="true" positionType="absolute" position="top"  >
+            <div class="ui-g conteudo">                
+                <p:panel class="boxConteudo">
+                    <h:form id="formResposta">
+                        <div class="ui-g-12">
+                            <h2 style="margin-bottom: 0" class="titH2"> <h:outputText value="#{mensagemMB.mensagemRecebida.assunto}" /> </h2>  
+                        </div>
+                        <div class="ui-g-1">
+                            <p:graphicImage value="/ImagemPessoa/#{mensagemMB.mensagemRecebida.autor.imagem.id}#{mensagemMB.mensagemRecebida.autor.imagem.extensao}" height="45" width="45" style="border-radius: 100%" rendered="#{mensagemMB.mensagemRecebida.autor.imagem != null}" />                                      
+                            <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="45" width="45" style="border-radius: 100%" rendered="#{mensagemMB.mensagemRecebida.autor.imagem == null}" />    
+                        </div>
+                        <div class="ui-g-11" style="font-size: small; padding-left: 1vw; padding-top: 1.8vh">
+                            <h:outputText value="#{mensagemMB.mensagemRecebida.autor.nome}" /><br />                            
+                            <h:outputText value="#{mensagemMB.mensagemRecebida.data}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText><br />                            
+                            <h:outputText value="Para: #{mensagemMB.mensagemRecebida.receptor.nome}" escape="true" />                            
+                        </div>
+                        <div class="ui-g-12">
+                            <p:outputPanel id="btnResposta" style="text-align: right; margin-bottom: 0.5vh">
+                                <p:commandButton type="button" value="Responder" icon="ui-icon-arrowreturnthick-1-w" style="font-size: small" rendered="#{mensagemMB.resposta}"> 
+                                    <p:ajax event="click" listener="#{mensagemMB.setRespostaMensagem}" oncomplete="PF('divFormMensagem').show()" onstart="PF('divVerMensagem').hide()" update="divFormMensagem"/>
+                                </p:commandButton>                                
+                            </p:outputPanel>
+                            <p:panel>
+                                <h:outputText value="#{mensagemMB.mensagemRecebida.descricao}" escape="false" />                            
+                            </p:panel>
+                        </div>
+                    </h:form>  
+                </p:panel>    
+            </div>
+        </p:dialog>        
+        <style>              
+            .ui-autocomplete-multiple-container.ui-widget.ui-inputfield.ui-state-default.ui-corner-all{
+                background-color: rgba(255,255,255,0.0);
+                border: none;
+                box-shadow: none;
+                border-bottom: 1px solid #a8a8a8;
+                border-radius: 0;
+                width: 44.6vw;
+            }
+        </style>  
+    </ui:define>
+</ui:composition>
+

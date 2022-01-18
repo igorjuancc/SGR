@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/SindicoTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Sindico - Salão de Festa</ui:define>
+    <ui:define name="conteudo">
+        <p:panel class="boxConteudo" id="divBoxConteudo">
+            <h:form id="formSalao"> 
+                <p:poll widgetVar="myPoll" listener="#{atendimentoMB.pollComentarios}" update="verAtendimentoForm:dataViewComentarios" autoStart="false" />
+                <h2 class="titH2">Salão de Festas</h2> 
+                <p:panel class="boxConteudo">
+                    <div class="ui-g">
+                        <div class="ui-g-12">    
+                            <p:messages showDetail="false" />
+                            <div style="text-align: right"> 
+                                <br />
+                                <p:commandButton type="button" value="Agendar">
+                                    <p:ajax event="click" listener="#{salaoMB.iniciaListas}" oncomplete="PF('divFormReserva').show()" update="divFormReserva" />
+                                </p:commandButton>
+                                <br /><br />                                 
+                            </div>                             
+                            <p:datePicker inline="true" numberOfMonths="3" disabledDates="#{salaoMB.datasReservadas}" />
+                            <br /><br />
+                            <h3 class="titH2">Reservas</h3> 
+                            <p:dataTable value="#{salaoMB.datasSalaoReservadas}" var="reserva" emptyMessage="Nenhuma reserva encontrada."
+                                         paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                                <p:column headerText="Id" width="1" style="text-align: center" sortBy="#{reserva.id}">
+                                    <h:outputText value="#{reserva.id}" />                            
+                                </p:column>                        
+                                <p:column headerText="Morador" width="40" sortBy="#{reserva.morador.nome}">
+                                    <h:outputText value="#{reserva.morador.nome}"/>                               
+                                </p:column>                        
+                                <p:column headerText="Apto" width="1" style="text-align: center" sortBy="#{reserva.morador.apartamento}">
+                                    <h:outputText value="[#{reserva.morador.apartamento.bloco}]-#{reserva.morador.apartamento.id}" />                               
+                                </p:column>                        
+                                <p:column headerText="Funcionario" width="40" sortBy="#{reserva.funcionario.nome}">
+                                    <h:outputText value="#{reserva.funcionario.nome}" />                               
+                                </p:column>                        
+                                <p:column headerText="Data" width="14" style="text-align: center" sortBy="#{reserva.dataReserva}">
+                                    <h:outputText value="#{reserva.dataReserva}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />                        
+                                    </h:outputText>                            
+                                </p:column>                        
+                                <p:column headerText="Editar" width="1" style="text-align: center">
+                                    <p:commandButton icon="ui-icon-pencil" type="button" style="font-size: small" >
+                                        <p:ajax event="click" listener="#{salaoMB.setReservaSalao(reserva)}"  update="divFormReserva" oncomplete="PF('divFormReserva').show()"/> 
+                                    </p:commandButton>
+                                </p:column>                        
+                                <p:column headerText="Apagar" width="1" style="text-align: center">
+                                    <p:commandButton icon="ui-icon-trash" type="button" style="font-size: small" >
+                                        <p:ajax event="click" listener="#{salaoMB.apagarReserva(reserva)}"  update="formSalao"/>  
+                                        <p:confirm header="Apagar" message="Deseja apagar reserva?" />
+                                    </p:commandButton>
+                                </p:column>                        
+                            </p:dataTable>
+                        </div>                
+                    </div>                     
+                </p:panel>
+                <br />
+                <p:panel class="boxConteudo">
+                    <h3 class="titH2">Solicitações de salão de festas</h3> 
+                    <p:tabView  class="boxConteudo">
+                        <p:tab title="Todas">
+                            <p:dataTable value="#{atendimentoMB.listaAtendimentoAberto}" var="aberto" emptyMessage="Nenhum atendimento aberto"
+                                         paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                                <p:column headerText="Status" style="text-align: center" width="8" sortBy="#{aberto.status}">
+                                    <h:outputText value="#{atendimentoMB.statusAtendimento(aberto)}" />
+                                </p:column>                            
+                                <p:column headerText="Morador" width="20" sortBy="#{aberto.morador.nome}">
+                                    <h:outputText value="#{aberto.morador.nome}" />
+                                </p:column>            
+                                <p:column headerText="Descrição" width="40" sortBy="#{aberto.descricao}">
+                                    <h:outputText value="#{aberto.descricao}" />
+                                </p:column>            
+                                <p:column headerText="Abertura" style="text-align: center" width="7" sortBy="#{aberto.dataAbertura}">
+                                    <h:outputText value="#{aberto.dataAbertura}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Atendente" style="text-align: center" width="23" sortBy="#{aberto.funcionario.nome}">
+                                    <h:outputText value="#{aberto.funcionario.nome}" />
+                                </p:column>                                 
+                                <p:column headerText="Ver" style="text-align: center" width="2">
+                                    <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                        <p:ajax event="click" listener="#{atendimentoMB.setVerAtendimento(aberto)}"  update="divVerAtendimento" oncomplete="PF('divVerAtendimento').show()"/>  
+                                    </p:commandButton>
+                                </p:column>                                
+                            </p:dataTable>                            
+                        </p:tab>                        
+                    </p:tabView>                                        
+                </p:panel>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+                </p:confirmDialog>
+            </h:form>
+        </p:panel>        
+        <p:dialog modal="true" draggable="false" id="divFormReserva" widgetVar="divFormReserva" class="backForms" width="450">
+            <h:form id="novoReservaForm" class="conteudo">
+                <p:panel class="boxConteudo">
+                    <h2 class="titH2">#{salaoMB.reservaSalao.id == 0 ? 'Nova reserva' : 'Editar reserva'}</h2>
+                    <p:messages showDetail="false" id="msgReserva" />
+                    <h:outputLabel />
+                    <p:outputLabel for="morador" value="Morador:"/><br />
+                    <p:selectOneMenu id="morador" value="#{salaoMB.reservaSalao.morador}" converter="moradorConverter" disabled="#{salaoMB.moradores.size() == 0}">
+                        <f:selectItems value="#{salaoMB.moradores}" var="moradorVar" itemLabel="AP[#{moradorVar.apartamento.id}] - #{moradorVar.nome}" itemValue="#{moradorVar}" />
+                    </p:selectOneMenu><br /><br />
+                    <p:outputLabel for="data" value="Data da reserva: "/><br />
+                    <p:datePicker id="data" value="#{salaoMB.reservaSalao.dataReserva}" required="true" requiredMessage="Insira a data da reserva" disabledDates="#{salaoMB.datasReservadas}"  />
+                    <br /><br />
+                    <div style=" text-align: center">
+                        <p:commandButton value="Salvar" actionListener="#{salaoMB.novaReserva}" update="msgReserva formSalao" rendered="#{salaoMB.reservaSalao.id == 0}">
+                            <p:confirm header="Salvar" message="Salvar nova reserva do salão de festas?" />
+                        </p:commandButton>                        
+                        <p:commandButton value="Atualizar" actionListener="#{salaoMB.atualizarReserva}" update="msgReserva formSalao" rendered="#{salaoMB.reservaSalao.id != 0}">
+                            <p:confirm header="Atualizar" message="Atualizar reserva do salão de festas?" />
+                        </p:commandButton>                        
+                    </div>
+                </p:panel>                
+            </h:form>            
+        </p:dialog>
+        <ui:include src="formulario/SindicoFormularioAtendimento.xhtml" />    
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <script type="text/javascript" src="js/CalendarioPrimefaces.js"></script>
+        <link type="text/css" rel="stylesheet" href="css/CadastroMorador.css" />
+        <title>SGR - Cadastro Morador</title>
+    </h:head>       
+    <h:body>
+        <h:form enctype="multipart/form-data" id="formMorador">
+            <p:panel id="panel" class="boxCadastro" visible="#{moradorMB.cadastroConcluido == null}">
+                <div class="ui-g">                    
+                    <div class="ui-g-12">
+                        <p:messages id="mensagem"  showDetail="false" escape="false" /> 
+                        <p:growl id="growlMensagem" showDetail="false" escape="false" />
+                        <h2>Cadastro Morador</h2>
+                    </div>            
+                    <div class="ui-g-12"><h3>Dados Pessoais</h3></div>            
+                    <div class="ui-g-3">
+                        <p:outputPanel id="panelImagem">  
+                            <img id="imgVer" height="180vh" width="100%" src="data:image/png;base64,#{moradorMB.verImagemBase64(moradorMB.previewImagem)}" alt="Imagem morador" />
+                            <p:fileUpload label="Adicionar imagem" mode="advanced" skinSimple="true" style="font-size: x-small; width: 100%;"
+                                          fileUploadListener="#{moradorMB.uploadImagem}" multiple="false" update="formMorador:panelImagem" auto="true"
+                                          allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" sizeLimit="1000000"
+                                          invalidSizeMessage="Tamanho Máximo 1MB" invalidFileMessage="Somente arquivos .jpg, .png ou .gif"
+                                          disabled="#{moradorMB.pessoaTemp.imagem != null and moradorMB.pessoaTemp.imagem.id != 0}" />
+                        </p:outputPanel>                        
+                    </div>
+                    <div class="ui-g-9">
+                        <div class="ui-g-12">
+                            <p:outputLabel for="nome" value="Nome" /><br />
+                            <p:inputText value="#{moradorMB.morador.nome}" id="nome" required="true" style="width: 91%" requiredMessage="Digite o nome do morador" validatorMessage="Insira um nome válido" disabled="#{(moradorMB.pessoaTemp != null) ? 'true' : 'false'}">
+                                <f:validateRegex pattern="[A-Za-zÀ-ú ]*"/>                   
+                            </p:inputText> 
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="cpf" value="CPF" /><br />
+                            <p:inputMask id="cpf" value="#{moradorMB.morador.cpf}" mask="999.999.999-99" required="true" requiredMessage="Digite o CPF do morador" disabled="#{(moradorMB.pessoaTemp != null and moradorMB.pessoaTemp.id != 0) ? 'true' : 'false'}" > 
+                                <p:ajax event="blur" listener="#{moradorMB.buscaPessoaCpf}" update="mensagem growlMensagem" />
+                            </p:inputMask> 
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="dataNascimento" value="Data de Nascimento" /><br />
+                            <p:datePicker  id="dataNascimento" value="#{moradorMB.morador.dataNascimento}" required="true" requiredMessage="Insira a data de nascimento do morador" disabled="#{(moradorMB.pessoaTemp != null) ? 'true' : 'false'}"/> 
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="sexo" value="Sexo" /><br />
+                            <p:selectOneRadio id="sexo" value="#{moradorMB.morador.sexo}" unselectable="false" required="true" disabled="#{(moradorMB.pessoaTemp != null) ? 'true' : 'false'}">
+                                <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                <f:selectItem itemLabel="Feminino" itemValue="F" />
+                            </p:selectOneRadio>               
+                        </div> 
+                    </div> 
+                    <div class="ui-g-12"><h3>Contato</h3></div> 
+                    <div class="ui-g-4">  
+                        <p:outputLabel for="email" value="Email" /><br />
+                        <p:inputText id="email" value="#{moradorMB.morador.email}" required="true" requiredMessage="Digite o email do morador" validatorMessage="Insira um email válido"
+                                     disabled="#{(moradorMB.pessoaTemp.email != null) ? 'true' : 'false'}">
+                            <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />                        
+                        </p:inputText>                    
+                    </div> 
+                    <div class="ui-g-4">
+                        <p:outputLabel for="fone" value="Telefone" /><br />
+                        <p:inputMask id="fone" value="#{moradorMB.morador.fone}" mask="(99)9999-9999"/> 
+                    </div> 
+                    <div class="ui-g-4">
+                        <p:outputLabel for="celular" value="Celular" /><br />
+                        <p:inputMask id="celular" value="#{moradorMB.morador.celular}" mask="(99)99999-9999"/> 
+                    </div>
+                    <div class="ui-g-12"><h3>Residencial</h3></div> 
+                    <div class="ui-g-4">
+                        <p:outputLabel for="senha" value="Senha" /><br />
+                        <p:password id="senha" value="#{moradorMB.morador.senha}" match="confSenha" required="true" 
+                                    feedback="true" inline="true" requiredMessage="Digite uma senha" 
+                                    validatorMessage="Senha e/ou confirmação inválida [Minimo 5 Caracteres]"
+                                    promptLabel="Digite a senha"
+                                    weakLabel="Força da senha : Fraca" 
+                                    goodLabel="Força da senha : Média"
+                                    strongLabel="Força da senha : Forte"> 
+                            <f:validateLength minimum="5" maximum="100"/>
+                        </p:password>
+                    </div>
+                    <div class="ui-g-4">
+                        <p:outputLabel for="confSenha" value="Confirmar Senha" /><br />
+                        <p:password id="confSenha" value="#{moradorMB.confirmaSenha}" required="true" 
+                                    feedback="true" inline="true" requiredMessage="Confirme a senha"
+                                    promptLabel="Confirmação de senha"
+                                    weakLabel="Força da senha : Fraca" 
+                                    goodLabel="Força da senha : Média"
+                                    strongLabel="Força da senha : Forte"/>
+                    </div>
+                    <div class="ui-g-2">
+                        <p:outputLabel for="bloco" value="Bloco"/><br />
+                        <p:selectOneMenu id="bloco" value="#{moradorMB.morador.apartamento.bloco}" required="true" requiredMessage="Selecione o bloco do apartamento">
+                            <f:ajax event="change" listener="#{moradorMB.buscaApartamentoBloco}" render="apto" /> 
+                            <f:selectItems value="#{moradorMB.blocos}" />
+                        </p:selectOneMenu>                                       
+                    </div>
+                    <div class="ui-g-2">
+                        <p:outputLabel for="apto" value="Apartamento"/><br />
+                        <p:selectOneMenu id="apto" value="#{moradorMB.morador.apartamento}" converter="apartamentoConverter" required="true" requiredMessage="Selecione o apartamento">                            
+                            <f:selectItems value="#{moradorMB.listaApartamento}" var="apt" itemLabel="#{apt.id}" itemValue="#{apt}" />
+                        </p:selectOneMenu>                       
+                    </div>
+                    <div class="ui-g-12" style="text-align: center">
+                        <br />   
+                        <p:commandButton type="button" value="Inicio" >
+                            <p:confirm header="Inicio" message="Retornar a página de login?" icon="pi pi-exclamation-triangle" />
+                            <p:ajax event="click" listener="#{moradorMB.redirecionar('MoradorLogin.jsf')}" />
+                        </p:commandButton>
+                        <p:commandButton type="button" value="Limpar" rendered="#{(moradorMB.pessoaTemp != null) ? 'true' : 'false'}">
+                            <p:confirm header="Limpar" message="Deseja limpar dados do formulário?" icon="pi pi-exclamation-triangle" />
+                            <p:ajax event="click" listener="#{moradorMB.redirecionar('CadastroMorador.jsf')}" />                                                
+                        </p:commandButton>
+                        <p:commandButton value="Salvar" actionListener="#{moradorMB.cadastrarMorador}" update="formMorador" ajax="true">                            
+                            <p:confirm header="Salvar" message="Salvar dados do morador?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>
+                    </div>
+                </div> 
+            </p:panel>  
+
+            <p:panel class="boxCadastro" visible="#{moradorMB.cadastroConcluido}">
+                <h2 class="titH2">Cadastro realizado com sucesso.</h2>
+                <br />
+                Aguarde a liberação de acesso pelo síndico.
+                <div style="text-align: right">
+                    <a href="MoradorLogin.jsf"><p:button value="Continuar..." ></p:button></a>                 
+                </div>                                
+            </p:panel>
+
+            <p:dialog id="dialogConfirma" widgetVar="dialogConfirma" showHeader="false" closable="false" modal="true" class="dialogConfirmaPessoa">
+                <p:panel class="boxConfirmaPessoa" id="confPessoa" >
+                    <p:outputPanel rendered="#{moradorMB.pessoaTemp != null}">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <h3 style="margin-bottom: 0"> <h:outputText value="Número de CPF cadastrado para:" /> </h3>                                    
+                            </div>       
+                            <div class="ui-g-2">
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{moradorMB.pessoaTemp.imagem == null || moradorMB.pessoaTemp.imagem.id == 0}" />                                     
+                                <p:graphicImage value="/ImagemPessoa/#{moradorMB.pessoaTemp.imagem.id}#{moradorMB.pessoaTemp.imagem.extensao}" height="150" width="120" rendered="#{(moradorMB.pessoaTemp.imagem != null and moradorMB.pessoaTemp.imagem.id != 0)}" />                                     
+                            </div>
+                            <div class="ui-g-10" style="padding-top: 7vh">
+                                <h:outputText value="NOME: #{moradorMB.pessoaTemp.nome}" /><br />
+                                <h:outputText value="CPF: #{moradorMB.imprimeCPF(moradorMB.pessoaTemp.cpf)}" /><br />  
+                                <h:outputText value="DATA DE NASCIMENTO: " />
+                                <h:outputText value="#{moradorMB.pessoaTemp.dataNascimento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                                </h:outputText><br />                                    
+                                <h:outputText value="EMAIL: #{moradorMB.pessoaTemp.email != null ? moradorMB.pessoaTemp.email : '-'}" /><br />                                     
+                            </div>
+                            <div class="ui-g-12" style="text-align: center">
+                                <h:outputText value="Deseja prosseguir?"/> <br />  
+                                <p:commandButton type="button" value="Não">
+                                    <p:ajax event="click" listener="#{moradorMB.cancelarNovoMorador}" update="cpf" oncomplete="PF('dialogConfirma').hide()"/>                        
+                                </p:commandButton>
+                                <p:commandButton type="button" value="Sim">
+                                    <p:ajax event="click" listener="#{moradorMB.prosseguirCadastroMorador}" update="formMorador" />                                                
+                                </p:commandButton>                                                                       
+                            </div>
+                        </div>                            
+                    </p:outputPanel>                                                                        
+                </p:panel>  
+            </p:dialog>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>         
+        <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>  
+        <p:dialog modal="true" widgetVar="statusDialog" draggable="false" closable="false" style="background-color: black">  
+            <p:graphicImage value="/css/icones/load.gif" />
+        </p:dialog> 
+    </h:body>    
+</html>
+

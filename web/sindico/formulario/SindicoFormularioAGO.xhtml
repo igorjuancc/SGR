@@ -1,0 +1,79 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog class="backForms" id="dialogSindico" widgetVar="dialogSindico" modal="true" showHeader="false" position="top" positionType="absolute" width="650">
+        <h:form id="agrForm" enctype="multipart/form-data" class="conteudo">
+            <p:panel class="boxConteudo" rendered="#{!assembleiaMB.cadastroConcluido}"> 
+                <h2 class="titH2">Eleição Síndico</h2> 
+                <p:messages showDetail="false" />
+
+                <p:dataTable value="#{assembleiaMB.moradoresCandidatos}" var="morador" emptyMessage="Nenhum candidato encontrado">
+                    <f:facet name="header">
+                        Candidatos
+                    </f:facet>
+                    <p:column headerText="Imagem" width="10" style="text-align: center">
+                        <p:graphicImage value="/ImagemPessoa/#{morador.imagem.id}#{morador.imagem.extensao}" height="50" width="50" rendered="#{morador.imagem != null}" />                
+                        <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="50" width="50" rendered="#{morador.imagem == null}" />                        
+                    </p:column>
+                    <p:column headerText="Morador" width="80" style="text-align: left">
+                        <h:outputText value="#{morador.nome}" />                         
+                    </p:column>
+                    <p:column headerText="Remover" width="10" style="text-align: center">
+                        <p:commandButton type="button" style="font-size: small" icon="ui-icon-trash">
+                            <p:ajax event="click" listener="#{assembleiaMB.apagarCandidato(morador)}" update="agrForm formAssembleia" />
+                            <p:confirm header="Apagar" message="Apagar candidato de eleição?" />
+                        </p:commandButton> 
+                    </p:column>
+                </p:dataTable>             
+
+                <br />
+                <p:outputPanel rendered="#{assembleiaMB.moradores.size() != 0}">
+                    <p:outputLabel value="Moradores aptos" for="listaMoradoes" /><br />
+                    <p:selectManyMenu id="listaMoradoes" value="#{assembleiaMB.moradoresEleicao}" showCheckbox="true"
+                                      var="morador" style="width: 100%" required="true" requiredMessage="Selecione os candidatos" converter="moradorConverter" >
+                        <f:selectItems value="#{assembleiaMB.moradores}" var="M"  itemLabel="#{M.nome}" itemValue="#{M}" />                    
+                        <p:column>
+                            <p:graphicImage value="/ImagemPessoa/#{morador.imagem.id}#{morador.imagem.extensao}" height="50" width="50" rendered="#{morador.imagem != null}" />                
+                            <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="50" width="50" rendered="#{morador.imagem == null}" />                
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{morador.nome}" />                                               
+                        </p:column>
+                    </p:selectManyMenu>                    
+                </p:outputPanel>                
+                <br />
+                <div style=" text-align: right; padding: 0">
+                    <p:commandButton type="button" value="Cancelar" style="font-size: medium">
+                        <p:ajax oncomplete="PF('dialogSindico').hide()" update="dialogSindico formAssembleia" />
+                        <p:confirm header="Cancelar" message="Cancelar edição de eleição?" icon="pi pi-exclamation-triangle" />                          
+                    </p:commandButton>
+                    <p:commandButton value="Salvar" actionListener="#{assembleiaMB.salvarEleicao}" update="agrForm"  style="font-size: medium">
+                        <p:confirm header="Salvar" message="Salvar eleição?" icon="pi pi-exclamation-triangle" />  
+                    </p:commandButton>                     
+                </div>                
+            </p:panel> 
+            <p:panel class="boxConteudo" rendered="#{assembleiaMB.cadastroConcluido}">
+                <h2>Eleição salva com sucesso.</h2><br/>
+                <div style="text-align: right">
+                    <p:commandButton type="button" value="Continuar">
+                        <p:ajax event="click" listener="#{assembleiaMB.setCadastroConcluido(false)}" oncomplete="PF('dialogSindico').hide()" update="formAssembleia" />
+                    </p:commandButton>                  
+                </div>                                
+            </p:panel>             
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>
+    </p:dialog> 
+    <p:dialog rendered="false" class="backForms" id="as" widgetVar="as" modal="true" showHeader="false" position="top" positionType="absolute" >
+        <h:form id="asas" enctype="multipart/form-data" class="conteudo">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">Novas imagens</h2>
+            </p:panel> 
+        </h:form>
+    </p:dialog> 
+</ui:composition>

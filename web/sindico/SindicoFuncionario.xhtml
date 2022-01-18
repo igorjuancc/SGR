@@ -1,0 +1,274 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/SindicoTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Sindico - Funcionários</ui:define>
+    <ui:define name="conteudo">
+        <p:panel class="boxConteudo">
+            <h2 class="titH2">Funcionários</h2>
+            <h:form id="formDivFunc">
+                <p:growl showDetail="false" id="growlMsg" />
+                <div style="text-align: right">                    
+                    <p:commandButton value="Novo Funcionário" onclick="PF('dialogForms').show()" style="font-size: medium" />
+                </div><br />
+                <p:tabView class="boxConteudo" id="tabViewFuncionarios">
+                    <p:tab title="Ativos">
+                        <h3 class="titH2">Funcionários</h3>
+                        <p:dataTable value="#{funcionarioMB.listaFuncionarioAtv}" var="funcAtv" emptyMessage="Nenhuma funcionário em atividade."
+                             paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="Imagem" style="text-align: center" width="120" sortBy="#{funcAtv.id}">  
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{funcAtv.imagem == null}" />                                     
+                                <p:graphicImage value="/ImagemPessoa/#{funcAtv.imagem.id}#{funcAtv.imagem.extensao}" height="150" width="120" rendered="#{funcAtv.imagem != null}" />   
+                            </p:column>                    
+                            <p:column headerText="Nome" sortBy="#{funcAtv.nome}"> 
+                                <h:outputText value="#{funcAtv.nome}"/>  
+                            </p:column>                    
+                            <p:column headerText="Função" style="text-align: center; width: 7vw;" sortBy="#{funcAtv.funcao.descricao}">   
+                                <h:outputText value="#{funcAtv.funcao.descricao}"/> 
+                            </p:column>                    
+                            <p:column headerText="Ver" style="text-align: center; width: 5vw;"> 
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small">
+                                    <p:ajax event="click" update="formDivFunc:dialogFunc" listener="#{funcionarioMB.setFuncionario(funcAtv)}" oncomplete="PF('dialogFunc').show()"/>  
+                                </p:commandButton>
+                            </p:column>                    
+                            <p:column headerText="Editar" style="text-align: center; width: 5vw;">
+                                <p:commandButton icon="ui-icon-pencil" type="button" disabled="#{funcAtv.id == funcionarioMB.login.funcionario.id}" style="font-size: small"> 
+                                    <p:ajax event="click" update="formDivFunc:dialogEdit" listener="#{funcionarioMB.setEditFuncionarioAtv(funcAtv)}" oncomplete="PF('dialogEdit').show()"/>                                      
+                                </p:commandButton>    
+                            </p:column>                    
+                            <p:column headerText="Desligar" style="text-align: center; width: 5vw;"> 
+                                <p:commandButton icon="ui-icon-power" type="button" disabled="#{funcAtv.id == funcionarioMB.login.funcionario.id}" style="font-size: small"> 
+                                    <p:ajax event="click" update="formDivFunc" listener="#{funcionarioMB.desativarFuncionario(funcAtv)}"/>         
+                                    <p:confirm header="Desligar" message="Deseja desligar #{funcAtv.nome}?" icon="pi pi-exclamation-triangle" /> 
+                                </p:commandButton>    
+                            </p:column>                    
+                        </p:dataTable>
+                    </p:tab>
+
+                    <p:tab title="Novos" id="tabNovos">
+                        <h3 class="titH2">Funcionários Novos</h3>
+                        <p:dataTable value="#{funcionarioMB.listaFuncionarioNovo}" var="funcNovo" emptyMessage="Nenhuma funcionário novo." 
+                             paginator="true" lazy="true" paginatorPosition="bottom" rows="10" id="dataTbFuncNovos">
+                            <p:column headerText="Imagem" style="text-align: center" width="120" sortBy="#{funcNovo.id}">   
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{funcNovo.imagem == null}" />                                     
+                                <p:graphicImage value="/ImagemPessoa/#{funcNovo.imagem.id}#{funcNovo.imagem.extensao}" height="150" width="120" rendered="#{funcNovo.imagem != null}" />
+                            </p:column>                    
+                            <p:column headerText="Nome" sortBy="#{funcNovo.nome}"> 
+                                <h:outputText value="#{funcNovo.nome}"/>  
+                            </p:column>                    
+                            <p:column headerText="Função" style="text-align: center; width: 6vw;" sortBy="#{funcNovo.funcao.descricao}"> 
+                                <h:outputText value="#{funcNovo.funcao.descricao}"/> 
+                            </p:column>                    
+                            <p:column headerText="Ver" style="text-align: center; width: 5vw;"> 
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small">
+                                    <p:ajax event="click" update="formDivFunc:dialogFunc" listener="#{funcionarioMB.setFuncionario(funcNovo)}" oncomplete="PF('dialogFunc').show()"/>  
+                                </p:commandButton>
+                            </p:column>                
+                            <p:column headerText="Editar" style="text-align: center; width: 5vw;">
+                                <p:commandButton icon="ui-icon-pencil" update="dialogForms" actionListener="#{funcionarioMB.setEditFuncionario(funcNovo)}" oncomplete="PF('dialogForms').show()" style="font-size: small" /> 
+                            </p:column>                
+                            <p:column headerText="Nova Senha" style="text-align: center; width: 8vw;">
+                                <p:commandButton actionListener="#{funcionarioMB.setEditFuncionario(funcNovo)}" action="#{funcionarioMB.gerarNovaSenha}" update="formDivFunc:dialogEdit" oncomplete="PF('dialogEdit').show()" icon="ui-icon-key" style="font-size: small">
+                                    <p:confirm header="Nova senha" message="Deseja gerar uma nova senha para o usuário #{funcNovo.nome}?" icon="pi pi-exclamation-triangle" />                                        
+                                </p:commandButton>
+                            </p:column>                
+                            <p:column headerText="Excluir" style="text-align: center; width: 5vw;">    
+                                <p:commandButton icon="ui-icon-trash" type="button" disabled="#{funcNovo.id == funcionarioMB.login.funcionario.id}" style="font-size: small"> 
+                                    <p:ajax event="click" update="dataTbFuncNovos formDivFunc:growlMsg" listener="#{funcionarioMB.removerFuncionario(funcNovo)}"/>         
+                                    <p:confirm header="Remover" message="Deseja deletar #{funcNovo.nome}?" icon="pi pi-exclamation-triangle" /> 
+                                </p:commandButton>    
+                            </p:column>                
+                        </p:dataTable>
+                    </p:tab>
+
+                    <p:tab title="Desligados">
+                        <h3 class="titH2">Funcionários Desligados</h3>
+                        <p:dataTable value="#{funcionarioMB.listaFuncionarioDstv}" var="funcDst" emptyMessage="Nenhuma funcionário desligado." 
+                             paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                            <p:column headerText="Imagem" style="text-align: center" width="120" sortBy="#{funcDst.id}">                        
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{funcDst.imagem == null}" />                                     
+                                <p:graphicImage value="/ImagemPessoa/#{funcDst.imagem.id}#{funcDst.imagem.extensao}" height="150" width="120" rendered="#{funcDst.imagem != null}" />  
+                            </p:column>                    
+                            <p:column headerText="Nome" sortBy="#{funcDst.nome}"> 
+                                <h:outputText value="#{funcDst.nome}"/> 
+                            </p:column>                    
+                            <p:column headerText="Função" style="text-align: center; width: 7vw;" sortBy="#{funcDst.funcao.descricao}">  
+                                <h:outputText value="#{funcDst.funcao.descricao}"/> 
+                            </p:column>                    
+                            <p:column headerText="Ver" style="text-align: center; width: 5vw;">  
+                                <p:commandButton icon="ui-icon-search" type="button" style="font-size: small">
+                                    <p:ajax event="click" update="formDivFunc:dialogFunc" listener="#{funcionarioMB.setFuncionario(funcDst)}" oncomplete="PF('dialogFunc').show()"/>  
+                                </p:commandButton>
+                            </p:column>                
+                            <p:column headerText="Ativar" style="text-align: center; width: 5vw;"> 
+                                <p:commandButton icon="ui-icon-power" type="button" style="font-size: small"> 
+                                    <p:ajax event="click" update="formDivFunc:reatvFuncionario" listener="#{funcionarioMB.setFuncionario(funcDst)}" oncomplete="PF('reatvFuncionario').show()"/>    
+                                </p:commandButton> 
+                            </p:column>                
+                        </p:dataTable>
+                    </p:tab>
+                </p:tabView>
+                <p:dialog id="dialogFunc" widgetVar="dialogFunc" class="backForms" modal="true" closable="false" showHeader="false" width="70vw">
+                    <div class="conteudo">
+                        <p:panel class="boxConteudo" id="verFuncionario" widgetVar="verFuncionario">
+                            <div class="ui-g">
+                                <div class="ui-g-12">  
+                                    <p:commandButton icon="ui-icon-power" update="formDivFunc:reatvFuncionario" onclick="PF('dialogFunc').hide()" oncomplete="PF('reatvFuncionario').show()" style="float: right" rendered="#{funcionarioMB.funcionario.status == 2}" /> 
+                                    <p:commandButton icon="ui-icon-pencil" update="dialogForms" actionListener="#{funcionarioMB.setEditFuncionario(funcionarioMB.funcionario)}" oncomplete="PF('dialogForms').show()" style="float: right" rendered="#{funcionarioMB.funcionario.status == 0}" /> 
+                                    <p:commandButton icon="ui-icon-pencil" type="button" onclick="PF('dialogFunc').hide()" disabled="#{funcionarioMB.funcionario.id == funcionarioMB.login.funcionario.id}" style="float: right" rendered="#{funcionarioMB.funcionario.status != 0 and funcionarioMB.funcionario.status != 2}"> 
+                                        <p:ajax event="click" update="formDivFunc:dialogEdit" listener="#{funcionarioMB.setFuncionario(funcionarioMB.funcionario)}" oncomplete="PF('dialogEdit').show()"/>                                      
+                                    </p:commandButton> 
+                                    <h3 style="margin-bottom: 0" class="titH2">Funcionário</h3>                                    
+                                </div>       
+                                <div class="ui-g-2">  
+                                    <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{funcionarioMB.funcionario.imagem == null}" />                                     
+                                    <p:graphicImage value="/ImagemPessoa/#{funcionarioMB.funcionario.imagem.id}#{funcionarioMB.funcionario.imagem.extensao}" height="150" width="120" rendered="#{funcionarioMB.funcionario.imagem != null}" /> 
+                                </div>
+                                <div class="ui-g-10">
+                                    <h4 class="titH2" style="margin: 0">Dados Pessoais</h4><br />
+                                    <h:outputText value="NOME: #{funcionarioMB.funcionario.nome}" /><br />
+                                    <h:outputText value="CPF: #{(funcionarioMB.funcionario.id != 0) ? funcionarioMB.imprimeCpf(funcionarioMB.funcionario.cpf) : ''}" /><br />  
+                                    <h:outputText value="DATA DE NASCIMENTO: " />
+                                    <h:outputText value="#{funcionarioMB.funcionario.dataNascimento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                                    </h:outputText><br /> 
+                                </div>
+                                <div class="ui-g-6">
+                                    <h4 class="titH2" style="margin: 0">Profissional</h4><br />
+                                    <h:outputText value="FUNÇÃO: #{funcionarioMB.funcionario.funcao.descricao}" /><br />
+                                    <h:outputText value="EMPRESA: #{funcionarioMB.funcionario.empresa}" /><br />
+                                    <h:outputText value="STATUS: #{funcionarioMB.funcionario.status != 1 ? 'Desativado' : 'Ativado'}" rendered="#{funcionarioMB.funcionario.status != 3}" />
+                                    <h:outputText value="STATUS: Reativado" rendered="#{funcionarioMB.funcionario.status == 3}" />
+                                    <br />                                    
+                                </div>
+                                <div class="ui-g-6">
+                                    <h4 class="titH2" style="margin: 0">Contato</h4><br />
+                                    <h:outputText value="EMAIL: #{funcionarioMB.funcionario.email}" /><br />
+                                    <h:outputText value="FONE: #{funcionarioMB.funcionario.fone}" /><br />
+                                    <h:outputText value="CELULAR: #{funcionarioMB.funcionario.celular}" /><br />                                    
+                                </div>
+
+                                <div class="ui-g-12" style="text-align: center">                                                                        
+                                    <p:commandButton type="button" value="Voltar" onclick="PF('dialogFunc').hide()" />                                                                    
+                                </div>
+                            </div>          
+                        </p:panel>                    
+                    </div>                
+                </p:dialog>
+                <p:dialog id="dialogEdit" widgetVar="dialogEdit" class="backForms" modal="true" closable="false" showHeader="false" width="70vw">
+                    <div class="conteudo">
+                        <p:panel class="boxConteudo" id="editFuncionario" widgetVar="verFuncionario" visible="#{!funcionarioMB.cadastroConcluido}">
+                            <div class="ui-g">
+                                <div class="ui-g-12">
+                                    <h3 style="margin-bottom: 0" class="titH2">Funcionário</h3> 
+                                    <p:messages showDetail="false" />
+                                </div>       
+                                <div class="ui-g-2">
+                                    <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{funcionarioMB.funcionario.imagem == null}" />                                     
+                                    <p:graphicImage value="/ImagemPessoa/#{funcionarioMB.funcionario.imagem.id}#{funcionarioMB.funcionario.imagem.extensao}" height="150" width="120" rendered="#{funcionarioMB.funcionario.imagem != null}" /> 
+                                </div>
+                                <div class="ui-g-5">
+                                    <h4 class="titH2" style="margin: 0">Dados Pessoais</h4><br />
+                                    <h:outputText value="NOME: #{funcionarioMB.funcionario.nome}" /><br />
+                                    <h:outputText value="CPF: #{(funcionarioMB.funcionario.id != 0) ? funcionarioMB.imprimeCpf(funcionarioMB.funcionario.cpf) : ''}" /><br />  
+                                    <h:outputText value="DATA DE NASCIMENTO: " />
+                                    <h:outputText value="#{funcionarioMB.funcionario.dataNascimento}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                                    </h:outputText><br /> 
+                                </div>
+                                <div class="ui-g-5">
+                                    <h4 style="margin: 0" class="titH2">Dados profissionais</h4><br />
+                                    <p:outputLabel for="funcaoNvo" value="Função" /><br />
+                                    <p:selectOneMenu id="funcaoNvo" value="#{funcionarioMB.funcionarioTemp.funcao}" converter="funcaoConverter" required="true" requiredMessage="Selecione a função"> 
+                                        <f:selectItems value="#{funcionarioMB.listaFuncao}" var="func" itemLabel="#{func.descricao}" itemValue="#{func}"/>
+                                    </p:selectOneMenu><br />
+                                    <p:outputLabel for="empresa" value="Empresa" /><br />
+                                    <p:inputText id="empresa" value="#{funcionarioMB.funcionario.empresa}" required="false" />  
+                                </div>
+                                <div class="ui-g-6">
+                                    <p:commandButton value="Gerar nova senha" actionListener="#{funcionarioMB.gerarNovaSenha}" update="dialogEdit" oncomplete="PF('dialogEdit').show()" icon="ui-icon-key">
+                                        <p:confirm header="Nova senha" message="Deseja gerar uma nova senha para o usuário #{funcionarioMB.funcionario.nome}?" icon="pi pi-exclamation-triangle" />                                        
+                                    </p:commandButton>
+                                </div>
+                                <div class="ui-g-12" style="text-align: center">
+                                    <p:commandButton value="Cancelar" type="button">
+                                        <p:ajax event="click" listener="#{funcionarioMB.paginaInicio('SindicoFuncionario.jsf')}"/>
+                                        <p:confirm header="Cancelar" message="Deseja cancelar edição de dados de #{funcionarioMB.funcionario.nome}?" icon="pi pi-exclamation-triangle"/>                                        
+                                    </p:commandButton>
+                                    <p:commandButton value="Salvar" update="dialogEdit" actionListener="#{funcionarioMB.atualizarDadosProfissional}" oncomplete="PF('dialogEdit').show()">
+                                        <p:confirm header="Salvar" message="Deseja salvar novos dados de #{funcionarioMB.funcionario.nome}?" icon="pi pi-exclamation-triangle" />                                        
+                                    </p:commandButton>                                                                        
+                                </div>
+                            </div>
+                        </p:panel>
+                        <p:panel visible="#{funcionarioMB.cadastroConcluido}" class="boxConteudo">
+                            <h2>Dados de #{funcionarioMB.funcionario.nome} alterados com sucesso!!!</h2>
+                            <h:outputText value="Nova Senha: #{funcionarioMB.funcionarioTemp.senha}" rendered="#{funcionarioMB.funcionarioTemp.senha != null}" /> 
+                            <div style="text-align: right">
+                                <p:linkButton value="Continuar" outcome="/sindico/SindicoFuncionario"/>                                
+                            </div>                            
+                        </p:panel>
+                    </div>    
+                </p:dialog>
+                <p:dialog id="reatvFuncionario" widgetVar="reatvFuncionario" class="backForms" modal="true" closable="false" showHeader="false" width="70vw">
+                    <div class="ui-g conteudo"> 
+                        <p:panel class="boxConteudo">        
+                            <div class="ui-g-12">
+                                <h3 style="margin-bottom: 0" class="titH2"> <h:outputText value="#{funcionarioMB.cadastroConcluido ? 'Funcionário Ativado' : 'Ativar Funcionário'}" /> </h3>   
+                                <p:messages showDetail="false" />
+                            </div>       
+                            <div class="ui-g-2">    
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{funcionarioMB.funcionario.imagem == null}" />                                     
+                                <p:graphicImage value="/ImagemPessoa/#{funcionarioMB.funcionario.imagem.id}#{funcionarioMB.funcionario.imagem.extensao}" height="150" width="120" rendered="#{funcionarioMB.funcionario.imagem != null}" />  
+                            </div>
+                            <div class="ui-g-5">
+                                <h4 class="titH2" style="margin: 0">Dados Pessoais</h4><br />
+                                <h:outputText value="NOME: #{funcionarioMB.funcionario.nome}" /><br />
+                                <h:outputText value="CPF: #{(funcionarioMB.funcionario.id != 0) ? funcionarioMB.imprimeCpf(funcionarioMB.funcionario.cpf) : ''}" /><br />  
+                                <h:outputText value="DATA DE NASCIMENTO: " />
+                                <h:outputText value="#{funcionarioMB.funcionario.dataNascimento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                                </h:outputText>  
+                            </div>
+                            <div class="ui-g-5">
+                                <h4 class="titH2" style="margin: 0">Profissional</h4><br />
+                                <p:outputLabel for="funcao" value="FUNÇÃO:"/><br />
+                                <p:selectOneMenu id="funcao" value="#{funcionarioMB.funcionario.funcao}" converter="funcaoConverter" disabled="#{funcionarioMB.cadastroConcluido}" style=" margin-bottom: 1vh"> 
+                                    <f:selectItems value="#{funcionarioMB.listaFuncao}" var="func" itemLabel="#{func.descricao}" itemValue="#{func}"/>
+                                </p:selectOneMenu><br />
+                                <h:outputText value="STATUS: #{funcionarioMB.funcionario.status == 2 ? 'DESATIVADO' : 'REATIVADO'}" /><br />                                
+                                <h:outputText value="EMAIL: #{funcionarioMB.funcionario.email}" /><br />
+                                <h:outputText value="SENHA: #{funcionarioMB.funcionario.senha}" rendered="#{funcionarioMB.cadastroConcluido}" />
+                            </div>
+                            <div class="ui-g-12" style="text-align: center; display: #{funcionarioMB.cadastroConcluido ? 'none' : 'block'}">                                                                       
+                                <p:commandButton type="button" value="Cancelar"> 
+                                    <p:ajax event="click" listener="#{funcionarioMB.paginaInicio('SindicoFuncionario.jsf')}" />
+                                    <p:confirm header="Cancelar" message="Cancelar ativação do funcionário #{funcionarioMB.funcionario.nome}?"  icon="pi pi-exclamation-triangle" />
+                                </p:commandButton>   
+                                <p:commandButton value="Salvar" update="reatvFuncionario" actionListener="#{funcionarioMB.reativarFuncionario}" oncomplete="PF('reatvFuncionario').show()">
+                                    <p:confirm header="Salvar" message="Deseja ativar funcionário #{funcionarioMB.funcionario.nome}?" icon="pi pi-exclamation-triangle" />                                        
+                                </p:commandButton>  
+                            </div>
+                            <div class="ui-g-12" style="text-align: center; display: #{funcionarioMB.cadastroConcluido ? 'block' : 'none'}">
+                                <p:commandButton type="button" value="Continuar"> 
+                                    <p:ajax event="click" listener="#{funcionarioMB.paginaInicio('SindicoFuncionario.jsf')}" />
+                                </p:commandButton>   
+                            </div>
+                        </p:panel> 
+                    </div>   
+                </p:dialog>
+            </h:form>            
+            <ui:include src="formulario/SindicoFormularioFuncionario.xhtml" /> 
+        </p:panel>
+        <p:ajaxStatus onstart="PF('statusDialog').show();" onsuccess="PF('statusDialog').hide();"/>  
+        <p:dialog showHeader="false" modal="true" widgetVar="statusDialog" draggable="false" closable="false" style="background-color: black">  
+            <p:graphicImage value="/css/icones/load.gif" />
+        </p:dialog> 
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog id="divDeb" widgetVar="divDeb" class="backForms" modal="true" closable="true" showHeader="true" width="1100" positionType="absolute">
+        <div class="ui-g conteudo">
+            <h:form id="formDeb" style="width: 100%">
+                <p:panel class="boxConteudo" id="panelDeb">
+                    <div class="ui-g">
+                        <div class="ui-g-12">
+                            <h2 class="titH2">Débitos Moradores</h2>
+                            <p:dataTable value="#{moradorInfoMB.listaMoradoresDebitos}" var="morador" emptyMessage="Nenhum morador encontrado" 
+                                         paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                                <p:column headerText="Nome" width="46" sortBy="#{morador.nome}">
+                                    <h:outputText value="#{morador[1]}"/>                                
+                                </p:column>           
+                                <p:column headerText="Apartamento" width="17" sortBy="#{morador.apartamento}" >
+                                    <h:outputText value="[#{morador[2]}]-#{morador[3]}"/>                                
+                                </p:column>            
+                                <p:column headerText="Condomínio" style="text-align: center" width="12" sortBy="#{morador.taxa}" >
+                                    <h:outputText value="#{morador[6] == null ? '0' : morador[6]}"/> 
+                                </p:column>            
+                                <p:column headerText="Multas" style="text-align: center" width="5" sortBy="#{morador.multa}">
+                                    <h:outputText value="#{morador[4]}"/>                                                                                                                
+                                </p:column>             
+                                <p:column headerText="Ver" style="text-align: center" width="5">
+                                    <p:commandButton icon="ui-icon-search" type="button" style="font-size: small">
+                                        <p:ajax event="click" update="divMorador" listener="#{moradorInfoMB.setSindicoMoradorDados(morador[0])}" oncomplete="PF('divMorador').show()" /> 
+                                    </p:commandButton>                                                                                                                
+                                </p:column>            
+                            </p:dataTable>
+                        </div>                                             
+                    </div> 
+                </p:panel>
+            </h:form>
+        </div>
+    </p:dialog> 
+    <ui:include src="SindicoMoradorDados.xhtml" />
+</ui:composition>

@@ -1,0 +1,169 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog class="backForms" id="dialogForms" widgetVar="dialogForms" modal="true" width="80vw" showHeader="false" fitViewport="true" positionType="absolute">
+        <h:form id="novoFuncionarioForm" enctype="multipart/form-data" class="conteudo">
+            <p:panel class="boxConteudo" id="formFuncionario" widgetVar="formFuncionario" visible="#{funcionarioMB.cadastroConcluido == null}">   
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <h2 class="titH2"> <h:outputText value="#{funcionarioMB.funcionario.id == 0 ? 'Novo Funcionário' : 'Editar Funcionário'}" /> </h2>
+                        <p:messages id="msg" showDetail="false" escape="false" /> 
+                        <h3 class="titH2" style="margin-bottom: 0">Dados Pessoais</h3>
+                    </div>
+                    <div class="ui-g-3">
+                        <p:outputPanel id="panelImagem">  
+                            <img id="imgVer" height="180vh" width="90%" src="data:image/png;base64,#{funcionarioMB.verImagemBase64(funcionarioMB.imagemPreview)}" alt="Imagem funcionario" />
+                            <p:fileUpload label="Adicionar imagem" mode="advanced" skinSimple="true" style="font-size: x-small; width: 90%;"
+                                          fileUploadListener="#{funcionarioMB.uploadImagem}" multiple="false" update="novoFuncionarioForm:panelImagem novoFuncionarioForm:msg" auto="true"
+                                          allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" sizeLimit="1000000"
+                                          invalidSizeMessage="Tamanho Máximo 1MB" invalidFileMessage="Somente arquivos .jpg, .png ou .gif" 
+                                          disabled="#{(funcionarioMB.funcionarioTemp.imagem != null) ? 'true' : 'false'}"/>   
+                        </p:outputPanel>
+                    </div>
+                    <div class="ui-g-9">
+                        <div class="ui-g-12">
+                            <p:outputLabel for="nome" value="Nome" /><br />
+                            <p:inputText value="#{funcionarioMB.funcionario.nome}" id="nome" required="true" style="width: 91%" requiredMessage="Digite o nome do funcionário" validatorMessage="Insira um nome válido" disabled="#{(funcionarioMB.funcionarioTemp.nome != null) ? 'true' : 'false'}">
+                                <f:validateRegex pattern="[A-Za-zÀ-ú ]*"/>                   
+                            </p:inputText>                             
+                        </div> 
+                        <div class="ui-g-6">
+                            <p:outputLabel for="cpf" value="CPF" /><br />
+                            <p:inputMask id="cpf" value="#{funcionarioMB.funcionario.cpf}" mask="999.999.999-99" required="true" requiredMessage="Digite o CPF do funcionário" disabled="#{(funcionarioMB.funcionarioTemp.cpf != null) ? 'true' : 'false'}">                                                  
+                                <p:ajax event="blur" listener="#{funcionarioMB.buscaPessoaCpf}" update="msg cpf" />
+                            </p:inputMask>
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="dataNascimento" value="Data de Nascimento" /><br />
+                            <p:datePicker  id="dataNascimento" value="#{funcionarioMB.funcionario.dataNascimento}" required="true" requiredMessage="Insira a data de nascimento do funcionário" disabled="#{(funcionarioMB.funcionarioTemp.dataNascimento != null) ? 'true' : 'false'}"/>               
+                        </div>
+                        <div class="ui-g-6">
+                            <p:outputLabel for="sexo" value="Sexo" /><br />
+                            <p:selectOneRadio id="sexo" value="#{funcionarioMB.funcionario.sexo}" unselectable="false" required="true">
+                                <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                <f:selectItem itemLabel="Feminino" itemValue="F" />
+                            </p:selectOneRadio>       
+                        </div>
+                    </div>
+                    <div class="ui-g-12">
+                        <h3 class="titH2" style="margin-bottom: 0">Contato</h3>
+                    </div> 
+                    <div class="ui-g-4">  
+                        <p:outputLabel for="email" value="Email" /><br />
+                        <p:inputText id="email" value="#{funcionarioMB.funcionario.email}" disabled="#{(funcionarioMB.funcionarioTemp.email != null) ? 'true' : 'false'}" />                                                  
+                    </div> 
+                    <div class="ui-g-4">
+                        <p:outputLabel for="fone" value="Telefone" /><br />
+                        <p:inputMask id="fone" value="#{funcionarioMB.funcionario.fone}" mask="(99)9999-9999" /> 
+                    </div> 
+                    <div class="ui-g-4">
+                        <p:outputLabel for="celular" value="Celular" /><br />
+                        <p:inputMask id="celular" value="#{funcionarioMB.funcionario.celular}" mask="(99)99999-9999" /> 
+                    </div>
+
+                    <div class="ui-g-12">
+                        <h3 class="titH2" style="margin-bottom: 0">Profissional</h3>
+                    </div> 
+                    <div class="ui-g-4">  
+                        <p:outputLabel for="funcao" value="Função" /><br />
+                        <p:selectOneMenu id="funcao" value="#{funcionarioMB.funcionario.funcao}" converter="funcaoConverter" required="true" requiredMessage="Selecione a função"> 
+                            <f:selectItems value="#{funcionarioMB.listaFuncao}" var="func" itemLabel="#{func.descricao}" itemValue="#{func}"/>
+                        </p:selectOneMenu>
+                    </div>
+                    <div class="ui-g-4">  
+                        <p:outputLabel for="empresa" value="Empresa" /><br />
+                        <p:inputText id="empresa" value="#{funcionarioMB.funcionario.empresa}" required="false" />                                                  
+                    </div> 
+                    <div class="ui-g-12" style="text-align: center">             
+                        <p:commandButton value="Cancelar" type="button">
+                            <p:confirm header="Cancelar" message="Deseja cancelar #{funcionarioMB.funcionario.id == 0 ? 'cadastro' : 'atualização'} de novo funcionário?" icon="pi pi-exclamation-triangle" />
+                            <p:ajax event="click" listener="#{funcionarioMB.paginaInicio('SindicoFuncionario.jsf')}" />
+                        </p:commandButton>  
+                        <p:commandButton value="Limpar" type="button" rendered="#{funcionarioMB.funcionarioTemp.id != 0}">
+                            <p:confirm header="Limpar" message="Deseja limpar dados do formulario de novo funcionário?" icon="pi pi-exclamation-triangle" />
+                            <p:ajax event="click" listener="#{funcionarioMB.limparCampos}" update="novoFuncionarioForm" oncomplete="PF('dialogForms').show()" />
+                        </p:commandButton>  
+                        <p:commandButton value="Salvar" actionListener="#{funcionarioMB.cadastrarFuncionario}" update="novoFuncionarioForm boxSucesso" oncomplete="PF('dialogForms').show()" rendered="#{!funcionarioMB.atualizar}">
+                            <p:confirm header="Salvar" message="Salvar dados de novo funcionário?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>  
+                        <p:commandButton value="Atualizar" actionListener="#{funcionarioMB.atualizarDadosFuncionario}" update="novoFuncionarioForm" oncomplete="PF('dialogForms').show()" rendered="#{funcionarioMB.atualizar}">
+                            <p:confirm header="Atualizar" message="Atualizar dados de novo funcionário?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>  
+                    </div>
+                </div>                  
+            </p:panel> 
+            <p:panel class="boxConteudo" id="confPessoa" visible="#{funcionarioMB.cadastroConcluido == false}" >
+                <div class="ui-g">
+                    <div class="ui-g-12">
+                        <h3 style="margin-bottom: 0"> <h:outputText value="Número de CPF cadastrado para:" /> </h3>                                    
+                    </div>       
+                    <div class="ui-g-2">
+                        <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{funcionarioMB.funcionarioTemp.imagem == null}" />                                     
+                        <p:graphicImage value="/ImagemPessoa/#{funcionarioMB.funcionarioTemp.imagem.id}#{funcionarioMB.funcionarioTemp.imagem.extensao}" height="150" width="120" rendered="#{funcionarioMB.funcionarioTemp.imagem != null}" />                                     
+                    </div>
+                    <div class="ui-g-10" style="padding-top: 7vh">
+                        <h:outputText value="NOME: #{funcionarioMB.funcionarioTemp.nome}" /><br />
+                        <h:outputText value="CPF: #{(funcionarioMB.funcionarioTemp != null and funcionarioMB.funcionarioTemp.id != 0) ? funcionarioMB.imprimeCpf(funcionarioMB.funcionarioTemp.cpf) : ''}" /><br />  
+                        <h:outputText value="DATA DE NASCIMENTO: " />
+                        <h:outputText value="#{funcionarioMB.funcionarioTemp.dataNascimento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText><br />                                    
+                        <h:outputText value="EMAIL: #{funcionarioMB.funcionarioTemp.email}" /><br />                                     
+                    </div>
+                    <div class="ui-g-12" style="text-align: center">
+                        <h:outputText value="Deseja prosseguir?"/> <br /> 
+                        <p:commandButton type="button" value="Não">
+                            <p:ajax event="click" listener="#{funcionarioMB.cancelarNovoFuncionario}"/>
+                        </p:commandButton>                                                                        
+                        <p:commandButton type="button" value="Sim"> 
+                            <p:ajax event="click" listener="#{funcionarioMB.prosseguirCadastroFuncionario}" update="novoFuncionarioForm" oncomplete="PF('dialogForms').show()" />
+                        </p:commandButton>                                                                        
+                    </div>
+                </div>                                                        
+            </p:panel>
+            <p:panel class="boxConteudo" id="boxSucesso" visible="#{funcionarioMB.cadastroConcluido}">
+                <div class="ui-g">                    
+                    <div class="ui-g-12">
+                        <h3 class="titH2" style="margin-bottom: 0"> <h:outputText value="Funcionário #{funcionarioMB.funcionario.id == funcionarioMB.funcionarioTemp.id ? 'atualizado' : 'cadastrado'} com sucesso:" /> </h3>                                    
+                    </div>       
+                    <div class="ui-g-2">
+                        <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="150" width="120" rendered="#{funcionarioMB.funcionario.imagem == null}" />     
+                        <p:outputPanel rendered="#{funcionarioMB.funcionario.imagem != null}">
+                            <img id="imgVer" height="150" width="120" src="data:image/png;base64,#{funcionarioMB.verImagemBase64(funcionarioMB.imagemPreview)}" alt="Imagem funcionario" />                            
+                        </p:outputPanel>                        
+                    </div>
+                    <div class="ui-g-10" style="padding-top: 7vh">
+                        <h:outputText value="NOME: #{funcionarioMB.funcionario.nome}" /><br />
+                        <h:outputText value="CPF: #{(funcionarioMB.funcionario.id != 0) ? funcionarioMB.imprimeCpf(funcionarioMB.funcionario.cpf) : ''}" /><br />  
+                        <h:outputText value="DATA DE NASCIMENTO: " />
+                        <h:outputText value="#{funcionarioMB.funcionario.dataNascimento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy"/>                                        
+                        </h:outputText><br />                                    
+                        <h:outputText value="EMAIL: #{funcionarioMB.funcionario.email}" /><br />                                     
+                        <h:outputText value="SENHA: #{funcionarioMB.funcionario.senha.length() == 5 ? funcionarioMB.funcionario.senha : '*******'}" /><br />                                     
+                    </div>
+                    <div class="ui-g-12" style="text-align: center">                                                                       
+                        <p:linkButton outcome="SindicoFuncionario" value="Continuar" />
+                    </div>
+                </div>           
+            </p:panel>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>
+    </p:dialog>
+    <style>
+        .ui-fileupload-content.ui-widget-content.ui-corner-bottom{   
+            background-color: rgba(255,255,255,0);
+            border: none;  
+        }
+
+        .ui-fileupload.ui-widget.ui-fileupload-responsive {  
+            text-align: center;
+        }
+    </style>    
+</ui:composition>

@@ -1,0 +1,128 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <p:dialog  modal="true" draggable="false" id="dialogVer" widgetVar="dialogVer" class="dialogFormDependente" showHeader="true" header="#{votoMB.questao.titulo}" position="left,top" positionType="absolute" onShow="PF('myPoll').start()" onHide="PF('myPoll').stop()">
+        <p:ajax event="close" update="formAssembleia" />
+        <h:form id="verForm" enctype="multipart/form-data" class="conteudo">
+            <p:growl id="msgGrowl" showDetail="false" />
+            <p:panel class="boxConteudo"> 
+                <div class="ui-g">                                               
+                    <div class="ui-g-12">
+                        <div class="ui-g-12">
+                            <h2 class="titH2">#{votoMB.questao.titulo}</h2> 
+                            <br/>                                
+                            <h:outputLabel for="desc" value="DESCRIÇÃO:" /><br />
+                            <h:outputText id="desc" value="#{votoMB.questao.descricao}" />
+                        </div>   
+                        <p:outputPanel class="#{votoMB.questao.arquivos.size() > 0 ? 'ui-g-6' : 'ui-g-12'}" rendered="#{votoMB.questao.opcoes.size() > 0}">
+                            <h2 class="titH2">Votos</h2> 
+                            <br/> 
+                            <p:barChart model="#{votoMB.graficoBar(votoMB.questao)}" style="width: 100%"/>
+                            <br />
+                            <p:dataTable value="#{votoMB.questao.opcoes}" var="opc" >
+                                <f:facet name="header">
+                                    Detalhes
+                                </f:facet>
+                                <p:column headerText="Opção" width="56">
+                                    #{opc.descricao}
+                                </p:column>
+                                <p:column headerText="Votos %" width="16" style="text-align: center">
+                                    #{votoMB.percentualVoto(opc)}%
+                                </p:column>
+                                <p:column headerText="Nº Votos" width="16" style="text-align: center">
+                                    #{opc.votos.size()}
+                                </p:column>
+                                <p:column headerText="Voto" width="12" style="text-align: center">
+                                    <p:commandButton type="button" style="font-size: small" icon="ui-icon-check" disabled="#{(opc.id == votoMB.voto.opcao.id) || (votoMB.assembleia.encerramento == 2)}">
+                                        <p:ajax event="click" listener="#{votoMB.executarVoto(opc)}" update="formAssembleia verForm" />
+                                        <p:confirm header="Voto" message="Confirma voto em #{opc.descricao}?" />
+                                    </p:commandButton>                                     
+                                </p:column>
+                            </p:dataTable>
+                        </p:outputPanel>  
+                        <p:outputPanel class="#{votoMB.questao.opcoes.size() > 0 ? 'ui-g-6' : 'ui-g-12'}" rendered="#{votoMB.questao.arquivos.size() > 0}">
+                            <h2 class="titH2">Arquivos</h2> 
+                            <br/> 
+                            <p:galleria value="#{votoMB.questao.arquivos}" var="arquivo"  showCaption="true">
+                                <p:graphicImage value="/ImagemQuestao/#{arquivo.id}#{arquivo.extensao}" alt="Imagem: #{votoMB.questao.arquivos.indexOf(arquivo)+1}" title="#{arquivo.descricao}" width="100%" height="100%" />         
+                            </p:galleria>                            
+                        </p:outputPanel>  
+                    </div> 
+
+                    <div class="ui-g-12">
+                        <div class="ui-g-12">
+                            <h2 class="titH2">Discussão</h2>             
+                        </div> 
+                        <div class="ui-g-12">
+                            <p:dataView id="dataViewComentarios" value="#{votoMB.questao.comentarios}" var="comentario" gridIcon="pi pi-th-large" listIcon="pi pi-bars">
+                                <p:dataViewListItem>
+                                    <p:outputPanel>
+                                        <h:panelGrid columns="3" onmouseover="exibeDelete(this)" onmouseout=" ocultaDelete(this)" id="eleComentario">
+                                            <p:outputPanel>
+                                                <p:graphicImage value="/ImagemPessoa/#{comentario.pessoa.imagem.id}#{comentario.pessoa.imagem.extensao}" height="45" width="45" style="border-radius: 100%" rendered="#{comentario.pessoa.imagem != null}"/>  
+                                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="45" width="45" style="border-radius: 100%" rendered="#{comentario.pessoa.imagem == null}"/> 
+                                            </p:outputPanel> 
+                                            <p:outputPanel class="comentarioAtendimentoMorador" style="background-color: #{votoMB.corComentario(comentario)}; border: none" >
+                                                <h:outputText value="#{comentario.pessoa.nome}" style="font-size: xx-small; margin: 0; font-weight: bold" /><br />                                                
+                                                <h:outputText value="#{comentario.descricao}" />                                                 
+                                            </p:outputPanel>
+                                            <p:outputPanel>
+                                                <p:commandButton type="button" style=" font-size: xx-small; display: none" icon="ui-icon-trash" rendered="#{comentario.pessoa.id == votoMB.login.morador.id}" disabled="#{votoMB.assembleia.encerramento != 0}" >
+                                                    <p:confirm header="Apagar" message="Deseja apagar comentário?" />
+                                                    <p:ajax event="click" listener="#{votoMB.apagarComentario(comentario)}" update="verForm" />                                            
+                                                </p:commandButton><br />
+                                                <h:outputText value="#{comentario.data}" style="font-size: xx-small">
+                                                    <f:convertDateTime pattern="dd/MM/yyyy" />                        
+                                                </h:outputText>   
+                                            </p:outputPanel>                                             
+                                        </h:panelGrid>                                        
+                                    </p:outputPanel>
+                                </p:dataViewListItem>                                
+                            </p:dataView> 
+                        </div>
+
+                        <div class="ui-g-12">                            
+                            <div class="ui-g-1">
+                                <p:graphicImage value="/ImagemPessoa/#{LoginMB.morador.imagem.id}#{LoginMB.morador.imagem.extensao}" height="45" width="45" style="border-radius: 100%" rendered="#{LoginMB.morador.imagem != null}"/>  
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="45" width="45" style="border-radius: 100%" rendered="#{LoginMB.morador.imagem == null}"/>  
+                            </div>
+                            <div class="ui-g-11">
+                                <div class="ui-inputgroup">
+                                    <p:inputText value="#{votoMB.comentario.descricao}" placeholder="Escreva um comentário..." style="margin-top: 1vh; width: 80%" required="true" id="inputComentario" />
+                                    <p:commandButton icon="ui-icon-comment" styleClass="white-button" style="font-size: small; margin-top: 1vh" actionListener="#{votoMB.novoComentario}" update="verForm inputComentario"  />
+                                </div>
+                            </div> 
+                        </div>            
+                    </div> 
+                </div>                    
+            </p:panel> 
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>
+    </p:dialog>     
+    <script>
+        function exibeDelete(ele) {
+            var id = ele.id;
+            id = id.split(":");
+            $("#verForm\\:dataViewComentarios\\:" + id[2] + "\\:eleComentario").find("button").css("display", "inline-block");
+        }
+        ;
+        function ocultaDelete(ele) {
+            var id = ele.id;
+            id = id.split(":");
+            $("#verForm\\:dataViewComentarios\\:" + id[2] + "\\:eleComentario").find("button").css("display", "none");
+        }
+        ;
+    </script>
+    <style>
+        .ui-dataview-content {
+            background-color: rgba(255,255,255,0);     
+            border: none;
+        }      
+    </style>
+</ui:composition>

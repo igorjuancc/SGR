@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/MoradorTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Morador - Dados</ui:define>
+    <ui:define name="conteudo">
+        <h:form id="formMorador">
+            <p:panel class="boxCadastro">
+                <div class="ui-g">                    
+                    <div class="ui-g-12">                        
+                        <h2 class="titH2">Meus Dados</h2>
+                        <p:messages showDetail="false" id="mensagem" /> 
+                    </div>            
+                    <div class="ui-g-12" align="right">
+                        <p:commandButton value="Nova Senha" oncomplete="PF('alterarSenha').show()" update="alterarSenha" style="font-size: medium" />
+                    </div>
+                    <div class="ui-g-12"><h3>Dados Pessoais</h3></div> 
+                    <div class="ui-g-2">
+                        <p:outputPanel id="panelImagem">  
+                            <img id="imgVer" height="180vh" width="100%" src="data:image/png;base64,#{moradorMB.verImagemBase64(moradorMB.previewImagem)}" alt="Imagem morador" />
+                            <p:fileUpload label="Adicionar imagem" mode="advanced" skinSimple="true" style="font-size: x-small; width: 100%;"
+                                          fileUploadListener="#{moradorMB.uploadImagem}" multiple="false" update="formMorador:panelImagem formMorador:mensagem" auto="true"
+                                          allowTypes="/(\.|\/)(gif|jpe?g|png|PNG)$/" sizeLimit="1000000"
+                                          invalidSizeMessage="Tamanho Máximo 1MB" invalidFileMessage="Somente arquivos .jpg, .png ou .gif" />    
+
+                        </p:outputPanel>                    
+                    </div>
+                    <div class="ui-g-6">
+                        <p:outputLabel for="nome" value="Nome" /><br />
+                        <p:inputText value="#{moradorMB.morador.nome}" id="nome" required="true" style="width: 34.2vw" requiredMessage="Digite o nome do morador" validatorMessage="Insira um nome válido">
+                            <f:validateRegex pattern="[A-Za-zÀ-ú ]*"/>                    
+                        </p:inputText> 
+                        <hr></hr>
+                        <p:outputLabel for="cpf" value="CPF" /><br />
+                        <p:inputMask id="cpf" value="#{moradorMB.morador.cpf}" mask="999.999.999-99" required="true" requiredMessage="Digite o CPF do morador" disabled="true"/> 
+                    </div>            
+                    <div class="ui-g-4">
+                        <p:outputLabel for="dataNascimento" value="Data de Nascimento" /><br />
+                        <p:datePicker  id="dataNascimento" value="#{moradorMB.morador.dataNascimento}" required="true" requiredMessage="Insira a data de nascimento do morador" />                 
+                        <hr></hr>
+                        <p:outputLabel for="sexo" value="Sexo" /><br />                        
+                        <p:selectOneRadio id="sexo" value="#{moradorMB.morador.sexo}" unselectable="false" required="true">
+                            <f:selectItem itemLabel="Masculino" itemValue="M" />
+                            <f:selectItem itemLabel="Feminino" itemValue="F" />
+                        </p:selectOneRadio>  
+                    </div>   
+                    <div class="ui-g-12"><h3>Contato</h3></div> 
+                    <div class="ui-g-4">  
+                        <p:outputLabel for="email" value="Email" /><br />
+                        <p:inputText id="email" value="#{moradorMB.morador.email}" required="true" requiredMessage="Digite o email do morador" validatorMessage="Insira um email válido">
+                            <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />                        
+                        </p:inputText>                    
+                    </div> 
+                    <div class="ui-g-4">
+                        <p:outputLabel for="fone" value="Telefone" /><br />
+                        <p:inputMask id="fone" value="#{moradorMB.morador.fone}" mask="(99)9999-9999"/> 
+                    </div> 
+                    <div class="ui-g-4">
+                        <p:outputLabel for="celular" value="Celular" /><br />
+                        <p:inputMask id="celular" value="#{moradorMB.morador.celular}" mask="(99)99999-9999"/> 
+                    </div>
+                    <div class="ui-g-12" style="text-align: center">
+                        <br />    
+                        <p:commandButton value="Cancelar" type="button"> 
+                            <p:ajax event="click" listener="#{moradorMB.redirecionar('MoradorHome.jsf')}" />
+                            <p:confirm header="Cancelar" message="Cancelar alteração de dados?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton> 
+                        <p:commandButton value="Salvar" actionListener="#{moradorMB.atualizarMorador}" update="formMorador" ajax="true">                            
+                            <p:confirm header="Salvar" message="Salvar dados do morador?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton>                         
+                    </div>
+                </div> 
+            </p:panel>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form> 
+        <p:dialog modal="true" draggable="false" id="alterarSenha" widgetVar="alterarSenha" class="dialogFormDependente" closable="false" showHeader="false" >
+            <h:form class="formDependente" id="frmSenha">
+                <p:panel class="boxCadastro" visible="#{!moradorMB.cadastroConcluido}">
+                    <h2 class="titH2">Definir nova senha</h2>    
+                    <br /><p:messages showDetail="false" />
+                    <h:panelGrid columns="1" style="text-align: left; width: 95%; height: 100%">
+                        <p:outputLabel for="senha" value="Senha atual" />
+                        <p:password id="senhaAtual" value="#{moradorMB.senhaAtual}" required="true" 
+                                    inline="true" requiredMessage="Digite a senha atual" 
+                                    validatorMessage="Digite a senha atual"
+                                    promptLabel="Digite a senha atual"                                
+                                    style="width: 100%" > 
+                            <f:validateLength minimum="5" maximum="100"/>
+                        </p:password><br/>
+                        <p:outputLabel for="senha" value="Nova Senha" />
+                        <p:password id="senha" value="#{moradorMB.morador.senha}" match="confSenha" required="true" 
+                                    feedback="true" inline="true" requiredMessage="Digite uma senha" 
+                                    validatorMessage="Senha e/ou confirmação inválida [Minimo 5 Caracteres]"
+                                    promptLabel="Digite a senha"
+                                    weakLabel="Força da senha : Fraca" 
+                                    goodLabel="Força da senha : Média"
+                                    strongLabel="Força da senha : Forte"
+                                    style="width: 100%" > 
+                            <f:validateLength minimum="5" maximum="100"/>
+                        </p:password><br/>
+                        <p:outputLabel for="confSenha" value="Confirmar Senha" />
+                        <p:password id="confSenha" value="#{moradorMB.confirmaSenha}" required="true" 
+                                    feedback="true" inline="true" requiredMessage="Confirme a senha"
+                                    promptLabel="Confirme a senha"
+                                    weakLabel="Força da senha : Fraca" 
+                                    goodLabel="Força da senha : Média"
+                                    strongLabel="Força da senha : Forte"
+                                    style="width: 100%"/>
+                        <br />                    
+                    </h:panelGrid>
+                    <div style="text-align: center">
+                        <p:commandButton value="Cancelar" type="button"> 
+                            <p:ajax event="click" listener="#{moradorMB.redirecionar('MoradorDados.jsf')}" />
+                            <p:confirm header="Cancelar" message="Cancelar alteração de senha?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton> 
+                        <p:commandButton value="Salvar" actionListener="#{moradorMB.alterarSenha}" update="alterarSenha" oncomplete="PF('alterarSenha').show()">                            
+                            <p:confirm header="Salvar" message="Alterar senha?" icon="pi pi-exclamation-triangle" />
+                        </p:commandButton> 
+                    </div>
+                </p:panel> 
+                <p:panel class="boxCadastro" visible="#{moradorMB.cadastroConcluido}">
+                    <h2>Senha alterada com sucesso, clique no botão para continuar...</h2><br />
+                    <div style="text-align: right">
+                        <p:linkButton outcome="/morador/MoradorDados" value="Continuar..." />                                            
+                    </div>
+                </p:panel>
+            </h:form>            
+        </p:dialog>
+        <style>
+            .ui-fileupload-content.ui-widget-content.ui-corner-bottom{   
+                background-color: rgba(255,255,255,0);
+                border: none;  
+            }
+
+            .ui-fileupload.ui-widget.ui-fileupload-responsive {  
+                text-align: center;
+            }
+        </style>
+    </ui:define>
+</ui:composition>
+

@@ -1,0 +1,82 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/css/Porteiro.css" />
+        <title><ui:insert name="titulo">Template</ui:insert></title>
+    </h:head>
+    <h:body> 
+        <div class="ui-g">            
+            <div class="topMenu ui-g-12">
+                <div class="ui-g-1" style="padding-top: 2vh">
+                    <img class="icone-menu" src="#{facesContext.externalContext.requestContextPath}/css/logo.png"  alt="inicio"/>
+                </div>
+                <div class="ui-g-8">
+
+                </div>
+                <h:form>
+                    <div class="ui-g-1" style="height: 9.95vh">
+                        <div class="ui-g-6" style="padding-top:2vh">                            
+                        </div>
+                        <div class="ui-g-6" style="padding-top:2vh">
+                            <p:menuButton class="btnMsg" icon="ui-icon-mail-closed" rendered="#{menuMB.totalMensagem > 0}"  >
+                                <p:menuitem value="Você tem #{menuMB.totalMensagem} nova(s) mensagen(s)!" url="../porteiro/PorteiroMensagem.jsf" style="font-size: small" />
+                            </p:menuButton>                            
+                        </div>
+                    </div>
+                    <div class="ui-g-2" style="padding: 0">
+                        <div class="ui-g-3" style="padding-bottom: 0; padding-top: 1.3vh">
+                            <p:graphicImage class="imagemLogin" value="/ImagemPessoa/SemFoto.PNG" rendered="#{menuMB.login.funcionario.imagem == null}"/> 
+                            <p:graphicImage class="imagemLogin" value="/ImagemPessoa/#{menuMB.login.funcionario.imagem.id}#{menuMB.login.funcionario.imagem.extensao}" rendered="#{menuMB.login.funcionario.imagem != null}"/>                         
+                        </div>
+                        <div class="ui-g-9" style="padding-bottom: 0; padding-top: 1.2vh;">
+                            <p:menuButton class="menuBtn" value="#{menuMB.login.funcionario.nome.length() > 17 ? menuMB.login.funcionario.nome.substring(0,16) : menuMB.login.funcionario.nome}" iconPos="right" >
+                                <p:menuitem value="Meus Dados" url="../porteiro/PorteiroDados.jsf" style="font-size: small" />
+                                <p:menuitem value="Sair" action="#{loginMB.logout}" style="font-size: small">
+                                    <p:confirm header="Sair" message="Deseja sair de SGR?" />                                    
+                                </p:menuitem>
+                            </p:menuButton>
+                        </div>                                        
+                    </div>
+                </h:form>
+            </div>
+        </div>
+        <div class="ui-g-2 boxMenu">
+
+        </div>
+        <h:form>
+            <div class="ui-g-2 boxMenu"> 
+                <div class="ui-g-12 vertical-menu">
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/porteiro/PorteiroHome.xhtml') ? '' : 'active'}">
+                        <p:link outcome="/porteiro/PorteiroHome.jsf" value="Inicio" style="width: 100%"/>
+                    </div>                      
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/porteiro/PorteiroMensagem.xhtml') ? '' : 'active'}">
+                        <p:link outcome="/porteiro/PorteiroMensagem.jsf" value="Mensagens" style="width: 100%"/>
+                    </div>       
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/porteiro/PorteiroMorador.xhtml') ? '' : 'active'}">
+                        <p:link outcome="/porteiro/PorteiroMorador.jsf" value="Moradores" style="width: 100%"/>
+                    </div> 
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/porteiro/PorteiroVeiculos.xhtml') ? '' : 'active'}">
+                        <p:link outcome="/porteiro/PorteiroVeiculos.jsf" value="Veículos" style="width: 100%"/>
+                    </div>             
+                    <div class="elemento-menu #{(facesContext.viewRoot.viewId).equals('/porteiro/PorteiroVisitaHoje.xhtml') ? '' : 'active'}">
+                        <p:link outcome="/porteiro/PorteiroVisitaHoje.jsf" value="Visita Hoje" style="width: 100%"/>
+                    </div>             
+                </div>
+            </div>
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+            </p:confirmDialog>
+        </h:form>    
+        <div class="ui-g-10">
+            <div class="ui-g-12 conteudo">
+                <ui:insert name="conteudo">                    
+                </ui:insert>
+            </div>
+        </div>   
+    </h:body>
+</html>
+

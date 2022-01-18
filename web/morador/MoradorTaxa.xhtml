@@ -1,0 +1,218 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/MoradorTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Morador - Taxa de Condomínio</ui:define>
+    <ui:define name="conteudo">        
+        <p:panel class="boxConteudo">
+            <p:tab title="Taxa de Condomínio">
+                <h2 class="titH2">Taxa de Condomínio e Notificações</h2>
+                <br />
+                <p:tabView class="boxConteudo" id="tabViewConteudo">                    
+                    <p:tab title="Taxa de condomínio">                        
+                        <h:form id="formTaxa">
+                            <p:messages id="msgTaxa"  showDetail="false" />
+                            <h3>Taxa de condomínio</h3>
+                            <p:selectOneMenu value="#{boletoMB.anoFiltro}" style="font-size: small; margin-top: 1vh; margin-bottom: 1vh">
+                                <f:selectItems value="#{boletoMB.listaAnoBoleto}" var="ano" itemLabel="#{ano}" itemValue="#{ano}" />  
+                                <p:ajax event="change" listener="#{boletoMB.iniciaListaBoleto}" update="tabelaTaxa" />
+                            </p:selectOneMenu>
+
+                            <p:dataTable value="#{boletoMB.listaBoletoTaxa}" var="boletoTaxa" emptyMessage="Nenhum pagamento registrado" id="tabelaTaxa">
+                                <p:column headerText="Mês" style="text-align: left" width="23">
+                                    <h:outputText value="#{boletoMB.nomeMes(boletoTaxa.dataReferencia.month)}" />   
+                                </p:column>
+                                <p:column headerText="Ult. Emissão" style="text-align: center;" width="23">
+                                    <h:outputText value="#{boletoTaxa.dataEmissao}" rendered="#{boletoTaxa.dataEmissao != null}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText> 
+                                    <h:outputText value="Não emitido" rendered="#{boletoTaxa.dataEmissao == null and boletoMB.statusPagamento(boletoTaxa) != 2}" /> 
+                                    <h:outputText value="-" rendered="#{boletoMB.statusPagamento(boletoTaxa) == 2}" />
+                                </p:column>
+                                <p:column headerText="Vencimento" style="text-align: center" width="23">
+                                    <h:outputText value="#{boletoTaxa.dataVencimento}" rendered="#{boletoMB.statusPagamento(boletoTaxa) != 2}" >
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText> 
+                                    <h:outputText value="-" rendered="#{boletoMB.statusPagamento(boletoTaxa) == 2}" />  
+                                </p:column>
+                                <p:column headerText="Pagamento"    style="text-align: left" width="23">
+                                    <h:outputText value="Pago"      rendered="#{boletoMB.statusPagamento(boletoTaxa) == 1}" />                                 
+                                    <h:outputText value="-"         rendered="#{boletoMB.statusPagamento(boletoTaxa) == 2}" />                                 
+                                    <h:outputText value="Atrasado"  rendered="#{boletoMB.statusPagamento(boletoTaxa) == 3}" />                                 
+                                    <h:outputText value="Em aberto" rendered="#{boletoMB.statusPagamento(boletoTaxa) == 4}" />                                 
+                                </p:column>
+                                <p:column headerText="Emitir" style="text-align: center" width="5">
+                                    <p:commandButton icon="ui-icon-print" type="button" style="font-size: small" disabled="#{boletoMB.statusPagamento(boletoTaxa) == 1 or boletoMB.statusPagamento(boletoTaxa) == 2}">
+                                        <p:confirm header="Emitir" message="Emitir novo boleto?" /> 
+                                        <p:ajax event="click" listener="#{boletoMB.novoBoleto(boletoTaxa)}" update="tabViewConteudo:formTaxa:tabelaTaxa divViewBoleto" oncomplete="PF('divViewBoleto').show()"/>  
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no"  />
+                                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" />                
+                            </p:confirmDialog>                             
+                        </h:form>
+                    </p:tab>     
+                    <p:tab title="Advertências e Multas">
+                        <h:form>
+                            <p:messages id="msgTaxa"  showDetail="false" />
+                            <h3>Advertências e Multas</h3>
+                            <br />
+                            <p:dataTable value="#{notificacaoMB.listaNotificacoes}" var="notificacao" emptyMessage="Nenhuma notificação registrada."
+                                         paginator="true" lazy="true" paginatorPosition="bottom" rows="10">
+                                <p:column headerText="Id" width="1" style="text-align: center" sortBy="#{notificacao.id}">
+                                    <h:outputText value="#{notificacao.id}" />
+                                </p:column>                                 
+                                <p:column headerText="Infração" width="68" sortBy="#{notificacao.infracao.descricao}">
+                                    <h:outputText value="#{notificacao.infracao.descricao}" />
+                                </p:column>
+                                <p:column headerText="Emissão" style="text-align: center" width="8" sortBy="#{notificacao.dataEmissao}">
+                                    <h:outputText value="#{notificacao.dataEmissao}">
+                                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                                    </h:outputText>
+                                </p:column> 
+                                <p:column headerText="Tipo" width="8" sortBy="#{notificacao.tipo}">
+                                    <h:outputText value="#{notificacao.tipo == 0 ? 'Advertência' : 'Multa'}" />
+                                </p:column>                     
+                                <p:column headerText="Status" style="text-align: center" width="14">
+                                    <h:outputText value="#{notificacaoMB.statusNotificacao(notificacao)}" />
+                                </p:column>                                 
+                                <p:column headerText="Ver" style="text-align: center" width="1">
+                                    <p:commandButton icon="ui-icon-search" type="button" style="font-size: small" >
+                                        <p:ajax event="click" listener="#{notificacaoMB.setVerNotificacao(notificacao)}" oncomplete="PF('divVerAdv').show()" update="divVerAdv" />  
+                                    </p:commandButton>
+                                </p:column>                                    
+                            </p:dataTable> 
+                        </h:form>                            
+                    </p:tab> 
+                </p:tabView>    
+            </p:tab>
+            <ui:include src="/BoletoView.xhtml" />
+        </p:panel>
+        <p:dialog id="divVerAdv" widgetVar="divVerAdv" class="dialogFormDependente" modal="true" closable="true" showHeader="true" width="1030" positionType="absolute">
+            <div class="ui-g">
+                <h:form id="formVerAdv" style="width: 100%" class="formDependente">
+                    <p:panel class="boxCadastro" id="panelVerAdv" rendered="#{notificacaoMB.notificacao != null}">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <h3 style="margin-bottom: 0; border-bottom: none">
+                                    <h:outputText value="#{notificacaoMB.notificacao.tipo == 0 ? 'Advertência' : 'Notificação de Multa'} - #{notificacaoMB.notificacao.id}" />                            
+                                </h3>                            
+                                <h5 class="titH2" style="margin-top: 0; margin-bottom: 0">
+                                    <h:outputText value="Apartamento [#{notificacaoMB.notificacao.morador.apartamento.bloco}-#{notificacaoMB.notificacao.morador.apartamento.id}]" />                            
+                                </h5>                  
+                            </div> 
+                            <div class="ui-g-6">
+                                <h:outputText value="STATUS: #{notificacaoMB.statusNotificacao(notificacaoMB.notificacao)}" rendered="#{notificacaoMB.notificacao.tipo != 0}" />                            
+                            </div>
+                            <div class="ui-g-6" style="text-align: right">
+                                <h:outputText value="#{notificacaoMB.notificacao.dataEmissao}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText>                            
+                            </div>
+                            <div class="ui-g-12">
+                                <p>
+                                    À
+                                    SR(A). #{notificacaoMB.notificacao.morador.nome},<br />
+                                    RUA ÂNGELO ZENI, 555, JARDIM SCHAFFER, CURITIBA - PR <br />
+                                    APARTAMENTO #{notificacaoMB.notificacao.morador.apartamento.id}, BLOCO #{notificacaoMB.notificacao.morador.apartamento.bloco}
+                                    <br /><br />
+                                    PREZADO(A) SENHOR(A),
+
+                                    <p:outputPanel rendered="#{notificacaoMB.notificacao.tipo == 0}">
+                                        NA QUALIDADE DE SÍNDICO(A) DO CONDOMÍNIO AZTECA, FAÇO USO DA PRESENTE PARA ADVERTI-LO(A) A RESPEITO 
+                                        DO DESCUMPRIMENTO DO REGIMENTO INTERNO NO QUE DIZ RESPEITO A #{notificacaoMB.notificacao.infracao.descricao} COM CLASSIFICAÇÃO DE NATUREZA "#{notificacaoMB.classificacaoMulta()}",
+                                        NA DATA DE <h:outputText value="#{notificacaoMB.notificacao.dataReferencia}"><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText>.
+                                        SOLICITO, ASSIM, UMA MELHOR OBSERVÂNCIA DAS NORMAS DO CONDOMÍNIO A FIM DE EVITAR DESCUMPRIMENTOS FUTUROS E EVENTUAL
+                                        IMPOSIÇÃO DE MULTA.                                    
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{notificacaoMB.notificacao.tipo != 0}">
+                                        NO EXERCÍCIO DA FUNÇÃO DE SÍNDICO DO CONDOMÍNIO AZTECA, CONSIDERANDO O DISPOSTO NO ARTIGO 22, § 1º, ALÍNEA D, DA LEI Nº 4.591/64 E INCISOS IV E VII DO ARTIGO 1.348 DO CÓDIGO CIVIL, 
+                                        E TENDO EM VISTA QUE VOSSA SENHORIA COMETEU A INFRAÇÃO #{notificacaoMB.notificacao.infracao.descricao} COM CLASSIFICAÇÃO DE NATUREZA "#{notificacaoMB.classificacaoMulta()}" 
+                                        NA DATA DE <h:outputText value="#{notificacaoMB.notificacao.dataReferencia}"><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText> PREVISTA NO REGIMENTO INTERNO DO CONDOMÍNIO, 
+                                        FICA-LHE COMINADA A MULTA NO VALOR DE #{notificacaoMB.valorMulta()}, RESSALVADO O DIREITO DE RECURSO PARA A ASSEMBLÉIA GERAL, NA FORMA DO § 3º DO ARTIGO 22 DA MENCIONADA LEI Nº 4.591/64.
+                                        <br /><br />
+                                        FICA VOSSA SENHORIA DESDE LOGO INTIMADO A RECOLHER A REFERIDA IMPORTÂNCIA NO PRAZO DE 15 (QUINZE) DIAS A CONTAR DO RECEBIMENTO DESTA NOTIFICAÇÃO, OU DA CONFIRMAÇÃO DA MULTA PELA ASSEMBLÉIA 
+                                        EM CASO DE RECURSO, SOB PENA DE LHE SER COBRADA POR VIA EXECUTIVA, SEM PREJUÍZO DAS DEMAIS SANÇÕES PREVISTAS NA LEI OU NA CONVENÇÃO.
+                                        <br /><br />
+                                        APROVEITO A OPORTUNIDADE PARA RENOVAR EXPRESSÕES DE ELEVADA ESTIMA E CONSIDERAÇÃO.
+                                        <br /><br />
+                                        *EM DESACORDO COM A MULTA RECEBIDA FAVOR ABRIR UMA SOLICITAÇÃO NA ÁREA DE <a href="../morador/MoradorAtendimento.jsf">ATENDIMENTOS</a> DO PORTAL SGR INDICANDO A MOTIVAÇÃO DO DESCONTENTAMENTO E O ID DA NOTIFICAÇÃO PARA QUE A MESMA SEJA
+                                        ANALISADA E DISCUTIDA EM ASSEMBLÉIA.
+                                    </p:outputPanel> 
+                                    <p:outputPanel rendered="#{notificacaoMB.notificacao.descricao != null and notificacaoMB.notificacao.descricao != ''}">
+                                        <br />
+                                        <h:outputText value="OBS: #{notificacaoMB.notificacao.descricao}" />                                    
+                                    </p:outputPanel> 
+                                    <br />
+                                    <h:outputText value="#{notificacaoMB.dataAssinatura(notificacaoMB.notificacao.dataEmissao)}" />
+                                    <br /><br />
+                                    <h:outputText value="#{notificacaoMB.notificacao.funcionario.nome}" />
+                                    <br />
+                                    <h:outputText value="SÍNDICO(A)" />
+                                </p>                            
+                            </div>
+                            <div class="ui-g-12" style="display: #{notificacaoMB.notificacao.atendimentos.size() > 0 ? 'block' : 'none'}">
+                                <p:outputPanel rendered="#{notificacaoMB.notificacao.atendimentos.size() > 0}">                                
+                                    <h3 class="titH2">Atendimentos referentes</h3>
+                                    <p:dataView id="tabAtendimentosVer" value="#{notificacaoMB.notificacao.atendimentos}" var="atendimentoVer" >
+                                        <p:dataViewListItem>
+                                            <h:panelGrid columns="1">
+                                                <p:outputPanel>
+                                                    <h:outputText value="#{atendimentoVer.tipo.descricao}" style="font-weight: bolder" /><br /> 
+                                                    <h:outputText value="ABERTURA: " /><h:outputText value="#{atendimentoVer.dataAbertura}"><f:convertDateTime pattern="dd/MM/yyyy" /></h:outputText><br /> 
+                                                    <h:outputText value="MORADOR: *****" /><br />                                                  
+                                                    <h:outputText value="#{atendimentoVer.descricao}" /><br />                                              
+                                                </p:outputPanel>
+                                            </h:panelGrid>                                        
+                                        </p:dataViewListItem> 
+                                    </p:dataView>                      
+                                </p:outputPanel>                            
+                            </div>                        
+                            <div class="ui-g-12" style="display: #{notificacaoMB.notificacao.arquivos.size() > 0 ? 'block' : 'none'}">
+                                <p:outputPanel rendered="#{notificacaoMB.notificacao.arquivos.size() > 0}">                                
+                                    <h3 class="titH2">Anexos</h3>
+                                    <p:repeat value="#{notificacaoMB.notificacao.arquivos}" var="anexoVer">
+                                        <div class="ui-g-#{anexoVer.extensao == '.MP4' ? '12' : '6'}" style="text-align: center" >
+                                            <p:outputPanel rendered="#{anexoVer.extensao != '.MP4'}">
+                                                <img id="imgVer" height="220vh" width="90%" src="../AnexoAdvertencia/#{anexoVer.id}#{anexoVer.extensao}" alt="Imagem anexo" />                                                 
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{anexoVer.extensao == '.MP4'}" >
+                                                <video controls="true" src="../AnexoAdvertencia/#{anexoVer.id}#{anexoVer.extensao}" height="300vh" width="80%"></video>                                                
+                                            </p:outputPanel>
+                                            <h:outputText value="#{anexoVer.descricao == null or anexoVer.descricao == '' ? 'Sem descrição' : anexoVer.descricao}" />           
+                                        </div>                                    
+                                    </p:repeat>                   
+                                </p:outputPanel>                            
+                            </div>
+                            <div class="ui-g-12" style="text-align: center">
+                                <p:commandButton value="Emitir Boleto" type="button" icon="ui-icon-arrowreturnthick-1-s" styleClass="p-d-block p-shadow-2 p-mb-3" 
+                                                 style="font-size: medium" rendered="#{notificacaoMB.notificacao.tipo == 1}"
+                                                 disabled="#{notificacaoMB.statusNotificacao(notificacaoMB.notificacao) == 'PAGO'}" >
+                                    <p:ajax event="click" listener="#{boletoMB.novoBoletoNotificacao(notificacaoMB.notificacao)}" update="divViewBoleto" onstart="PF('divVerAdv').hide()" oncomplete="PF('divViewBoleto').show()"/> 
+                                    <p:confirm header="Emitir" message="Emitir boleto de notificação?" />
+                                </p:commandButton>
+                                <p:commandButton value="Imprimir" type="button" icon="ui-icon-print" styleClass="p-d-block p-shadow-2 p-mb-3" style="font-size: medium">
+                                    <p:printer target="formVerAdv:panelVerAdv"/>
+                                </p:commandButton>
+                            </div>
+                        </div> 
+                    </p:panel>
+                </h:form>
+            </div>
+        </p:dialog> 
+        <style>
+            .ui-dataview-content {
+                background: none;
+                border: none;
+            }
+        </style>
+    </ui:define>
+</ui:composition>
+

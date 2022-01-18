@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <link type="text/css" rel="stylesheet" href="#{facesContext.externalContext.requestContextPath}/css/ErroPage.css" />
+        <title>SGR - Erro</title> 
+    </h:head>
+    <h:body>
+        <p:panel class="divPanel">
+            <div class="ui-g">
+                <div class="ui-g-2">
+                </div>
+                <div class="ui-g-8">
+                    <div class="divError">
+                        <h1 class="titH1">Ooops...</h1>  
+                        <img id="imgErro" height="200vh" width="200vw" align="left" src="#{facesContext.externalContext.requestContextPath}/css/icones/AjusteErro.png" alt="manutencao" />
+                        <h3>O sistema apresentou uma falha</h3> 
+                        <h:messages />
+                        <p>Uma mensagem foi enviada ao administrador do sistema, tente novamente mais tarde.</p>
+                        <div style="text-align: center">
+                            <button type="button" class="btn1">
+                                <a href="index.jsf" class="linkBtn">Início</a>                                
+                            </button>                            
+                        </div>                                                                        
+                    </div>                    
+                </div>
+                <div class="ui-g-2">                    
+                </div>                
+            </div>
+        </p:panel>
+    </h:body>
+</html>
+

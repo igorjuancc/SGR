@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition template="/templates/PorteiroTemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <ui:define name="titulo">Porteiro - Visita Hoje</ui:define>
+    <ui:define name="conteudo">  
+        <h:form id="formVisitas">
+            <p:panel class="boxConteudo">
+                <h2 class="titH2">
+                    Visita Hoje 
+                    (<h:outputText value="#{porteiroMB.hoje}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>) 
+                </h2>  
+                <p:messages showDetail="false" />
+                <br />
+                <p:panel class="boxConteudo">
+                    <h3 class="titH2">Em andamento</h3>  
+                    <p:dataTable value="#{porteiroMB.listaVisitanteSaida}" var="visitSaida" emptyMessage="Nenhum visitante encontrado."
+                                 paginator="true" lazy="true" paginatorPosition="bottom" rows="10">                         
+                        <p:column headerText="Visitante" width="56" sortBy="#{visitSaida.nome}">
+                            <h:outputText value="#{visitSaida.nome}" />
+                        </p:column>                 
+                        <p:column headerText="Apartamento" width="10" style="text-align: center">
+                            <h:outputText value="[#{visitSaida.visitas.get(0).apartamento.bloco}] - " />
+                            <h:outputText value="#{visitSaida.visitas.get(0).apartamento.id}" />
+                        </p:column>                 
+                        <p:column headerText="Inicio" width="10" style="text-align: center">
+                            <h:outputText value="#{visitSaida.regEntradaSaida.get(0).dataEntrada}">
+                                <f:convertDateTime pattern="dd/MM/yyyy - HH:mm" />
+                            </h:outputText>                        
+                        </p:column>                 
+                        <p:column headerText="Fim" width="10" style="text-align: center">
+                            <h:outputText value="#{visitSaida.visitas.get(0).dataFim}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>                        
+                        </p:column>                 
+                        <p:column headerText="Ver" width="2" style="text-align: center">
+                            <p:commandButton icon="ui-icon-search" style="font-size: small" action="#{porteiroMB.setVisitante(visitSaida)}" update="formVisitas:verVisitante" oncomplete="PF('verVisitante').show()" />                      
+                        </p:column>                 
+                        <p:column headerText="Saida" width="2" style="text-align: center">
+                            <p:commandButton icon=" ui-icon-circle-arrow-e" style="font-size: small" action="#{porteiroMB.registroSaidaVisitante(visitSaida)}" update="formVisitas"> 
+                                <p:confirm header="Saida" message="Registrar saida de visitante?" />
+                            </p:commandButton>  
+                        </p:column>                 
+                    </p:dataTable> 
+                </p:panel>
+                <br />
+                <p:panel class="boxConteudo">
+                    <h3 class="titH2">Agendada</h3>  
+                    <p:dataTable value="#{porteiroMB.listaVisitanteAndamento}" var="visitante" emptyMessage="Nenhum visitante encontrado."
+                                 paginator="true" lazy="true" paginatorPosition="bottom" rows="10">                         
+                        <p:column headerText="Visitante" width="56" sortBy="#{visitante.nome}">
+                            <h:outputText value="#{visitante.nome}" />
+                        </p:column>                 
+                        <p:column headerText="Apartamento" width="10" style="text-align: center">
+                            <h:outputText value="[#{visitante.visitas.get(0).apartamento.bloco}] - " />
+                            <h:outputText value="#{visitante.visitas.get(0).apartamento.id}" />
+                        </p:column>                 
+                        <p:column headerText="Inicio" width="10" style="text-align: center">
+                            <h:outputText value="#{visitante.visitas.get(0).dataInicio}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>                        
+                        </p:column>                 
+                        <p:column headerText="Fim" width="10" style="text-align: center">
+                            <h:outputText value="#{visitante.visitas.get(0).dataFim}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>                        
+                        </p:column>                 
+                        <p:column headerText="Ver" width="2" style="text-align: center">
+                            <p:commandButton icon="ui-icon-search" style="font-size: small" action="#{porteiroMB.setVisitante(visitante)}" update="formVisitas:verVisitante" oncomplete="PF('verVisitante').show()" />                      
+                        </p:column>                 
+                        <p:column headerText="Entrada" width="2" style="text-align: center">
+                            <p:commandButton icon="ui-icon-circle-arrow-w" style="font-size: small" action="#{porteiroMB.novoRegistroEntradaVisitante(visitante)}"> 
+                                <p:confirm header="Entrada" message="Registrar entrada de visitante?" />
+                            </p:commandButton>  
+                        </p:column>                 
+                    </p:dataTable>  
+                </p:panel>
+            </p:panel> 
+            <p:dialog header="Visitante" modal="true" id="verVisitante" widgetVar="verVisitante" class="backForms" width="50vw" positionType="absolute">
+                <p:panel class="conteudo" rendered="#{porteiroMB.visitante != null}">
+                    <p:panel class="boxConteudo">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <h2 class="titH2">Visitante</h2>  
+                                <p:messages showDetail="false" /> 
+                                <p:staticMessage severity="warn" summary="ATENÇÃO!" detail="É necessário inserir uma imagem do visitante." rendered="#{porteiroMB.visitante.imagem == null}" />
+                            </div>                            
+                            <div class="ui-g-4" style="text-align: center">                              
+                                <p:graphicImage value="/ImagemPessoa/SemFoto.PNG" height="170" width="100%" rendered="#{porteiroMB.visitante.imagem == null}"/>    
+                                <p:outputPanel rendered="#{porteiroMB.visitante.imagem != null}">
+                                    <img height="170" width="100%" src="data:image/png;base64,#{porteiroMB.verImagemBase64(porteiroMB.previewImagem)}" alt="Imagem visitante"  />
+                                </p:outputPanel>
+                                <p:commandButton value="Nova Foto" style="font-size: small" rendered="#{porteiroMB.visitante.imagem == null}" action="#{porteiroMB.setExec(false)}" oncomplete="PF('novaFoto').show()" update="novaFoto" />
+                            </div>                            
+                            <div class="ui-g-8" style="padding-top: 8%">
+                                <h:outputText value="NOME: #{porteiroMB.visitante.nome}" /><br />
+                                <h:outputText value="CPF: #{porteiroMB.imprimeCpf(porteiroMB.visitante.cpf)}" /><br />
+                                <h:outputText value="NASCIMENTO:" />
+                                <h:outputText value="#{porteiroMB.visitante.dataNascimento}">
+                                    <f:convertDateTime pattern="dd/MM/yyyy" />
+                                </h:outputText><br />
+                                <h:outputText value="FONE: #{porteiroMB.visitante.fone}" /><br />
+                                <h:outputText value="CEL: #{porteiroMB.visitante.celular}" />
+                            </div>  
+                            <div class="ui-g-12">
+                                <h3 class="titH2" style="margin-top: 0">Ultimas visitas</h3> 
+                                <p:dataTable value="#{porteiroMB.visitante.visitas}" var="visita" emptyMessage="Nenhum visita encontrada.">
+                                    <p:column headerText="Apartamento" width="20" style="text-align: center">
+                                        <h:outputText value="[#{visita.apartamento.bloco}] - " />
+                                        <h:outputText value="#{visita.apartamento.id}" />
+                                    </p:column>                                
+                                    <p:column headerText="Inicio" width="40" style="text-align: center">
+                                        <h:outputText value="#{visita.dataInicio}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>                                
+                                    <p:column headerText="Fim" width="40" style="text-align: center">
+                                        <h:outputText value="#{visita.dataFim}">
+                                            <f:convertDateTime pattern="dd/MM/yyyy" />
+                                        </h:outputText>
+                                    </p:column>                                
+                                </p:dataTable>                                
+                            </div>
+                            <div class="ui-g-12" style="text-align: right">
+                                <p:commandButton icon="ui-icon-circle-arrow-w" iconPos="right" style="font-size: medium" value="Entrada" action="#{porteiroMB.novoRegistroEntradaVisitante(porteiroMB.visitante)}" rendered="#{porteiroMB.visitante.regEntradaSaida == null || porteiroMB.visitante.regEntradaSaida.size() == 0 || porteiroMB.visitante.regEntradaSaida.get(0).dataSaida != null}"> 
+                                    <p:confirm header="Entrada" message="Registrar entrada de visitante?" />
+                                </p:commandButton>  
+                                <p:commandButton icon="ui-icon-circle-arrow-e" iconPos="right" style="font-size: medium" value="Saida" action="#{porteiroMB.registroSaidaVisitante(porteiroMB.visitante)}" update="formVisitas" rendered="#{porteiroMB.visitante.regEntradaSaida != null and porteiroMB.visitante.regEntradaSaida.size() != 0 and porteiroMB.visitante.regEntradaSaida.get(0).dataSaida == null}"> 
+                                    <p:confirm header="Saida" message="Registrar saida de visitante?" />
+                                </p:commandButton>  
+                            </div>
+                        </div>                        
+                    </p:panel>
+                </p:panel>                
+            </p:dialog>
+            <p:dialog modal="true" id="novaFoto" widgetVar="novaFoto" class="backForms" closable="false" position="center" showHeader="false" width="900" >
+                <p:panel class="conteudo" rendered="#{porteiroMB.exec == false}" id="panelImagem">
+                    <p:panel class="boxConteudo">
+                        <div class="ui-g">
+                            <div class="ui-g-12">
+                                <h3 class="titH2" style="margin-top: 0; margin-bottom: 0">Nova Foto</h3>
+                                <p:messages showDetail="false" />
+                                <br />
+                                <h:outputText value="NOME: #{porteiroMB.visitante.nome}" /><br />
+                                <h:outputText value="CPF: #{porteiroMB.imprimeCpf(porteiroMB.visitante.cpf)}" /><br />
+                            </div>                            
+                            <div class="ui-g-6" style="text-align: center;">
+                                <p:photoCam widgetVar="pc" listener="#{porteiroMB.novaCapturaFoto}" update="formVisitas:foto formVisitas:btnSalvar" style="margin-left: 6%"/>                                    
+                                <br />
+                                <p:commandButton type="button" value="Capturar" onclick="PF('pc').capture()" style="font-size: medium"/>
+                            </div>                            
+                            <div class="ui-g-6" style="text-align: center">
+                                <p:outputPanel id="foto">
+                                    <img height="240px" width="320px" src="data:image/png;base64,#{porteiroMB.verImagemBase64(porteiroMB.previewImagem)}" alt="Imagem visitante"  />
+                                </p:outputPanel>
+                            </div>
+                            <div class="ui-g-12" style="text-align: center;">
+                                <p:commandButton value="Cancelar" style="font-size: medium" action="#{porteiroMB.cancelarCapturaFoto}" oncomplete="PF('verVisitante').show()" update="novaFoto verVisitante">
+                                    <p:confirm header="Cancelar" message="Cancelar inserção de nova imagem?" />                                    
+                                </p:commandButton>     
+                                <p:commandButton value="Salvar" style="font-size: medium" disabled="#{porteiroMB.confirmaSalvarFoto()}" action="#{porteiroMB.salvarCapturaFoto}" id="btnSalvar" update="panelImagem" >
+                                    <p:confirm header="Salvar" message="Salvar nova imagem?" />                                    
+                                </p:commandButton> 
+                            </div>
+                        </div>                        
+                    </p:panel>                        
+                </p:panel>
+            </p:dialog>
+        </h:form>                       
+    </ui:define>
+</ui:composition>
+

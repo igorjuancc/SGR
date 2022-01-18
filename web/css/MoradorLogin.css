@@ -1,0 +1,43 @@
+html{
+    background-image: url("back/MoradorLogin.jpg"); 
+    background-size: cover;
+}
+
+.ui-fieldset{
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+    width: 23vw;
+    height: 50vh;
+    text-align: center;
+    margin-left: 37vw;
+    margin-top: 15vh;
+    border: none;
+}
+
+.ui-fieldset-content > table{
+    width: 100%;
+}
+
+.ui-inputfield{
+    width: 21vw;
+    margin-bottom: 2vh;
+}
+
+.b1{
+    width: 21.5vw;
+    height: 4.9vh;
+}
+
+.a1{
+    float: right;
+    font-size: 2.2vh;
+    text-decoration: none;
+    color: #00FFFF !important;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.a1:hover{
+    color: #2E64FE !important;    
+    text-decoration: underline;
+}
