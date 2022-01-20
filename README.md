@@ -89,58 +89,90 @@ git clone https://github.com/igorjuancc/SGR.git
 5. Ainda na IDE utilizada, modifique as seguintes linhas do arquivo JavaMailApp.java do pacote sgr.util: 36 e 41 com um email valído do gmail (**apenas**) e a linha 37 com a senha desse email. Esse email será utilizado para o envio de mensagens da aplicação (Necessário configurar o acesso de aplicações externas, consulte a aba [Guias](#Guias) para mais informações). 
 6. Com o auxilio do Netbeans (ou da IDE utilizada) ou do Apache Ant, crie o arquivo .war da aplicação.
 
-    5.1  Com o Apache Ant dentro da pasta do projeto.
+    6.1  Com o Apache Ant dentro da pasta do projeto.
     ```
      $ ant
     ```
     
-6. Copie o arquivo SGR.war da pasta "dist" para a pasta autodeploy do servidor glassfish ou insira via interface gráfica do console do servidor.
+7. Copie o arquivo SGR.war da pasta "dist" para a pasta autodeploy do servidor glassfish ou insira via interface gráfica do console do servidor.
 ```
 cd ~/SGR/src/dist
 cp SGR.war ~/glassfish4/glassfish/domains/domain1/autodeploy
 ```
-7. Inicie (ou reinicie) o servidor da aplicação e acesse o projeto no navegador de acordo com as configurações do glassfish, normalmente http://localhost:8080/SGR/index.jsf.
+8. Inicie (ou reinicie) o servidor da aplicação e acesse o projeto no navegador de acordo com as configurações do glassfish, normalmente http://localhost:8080/SGR/index.jsf.
 
 ## 🥇 Utilização do SGR
 
-1. A aplicação SGR inicia-se na tela de index do projeto, na qual existem dois botões para as funcionalidades da aplicação "Morador" e "Funcionário".
+1. A aplicação SGR inicia-se na tela de index do projeto, na qual existem dois botões para as funcionalidades da aplicação "Morador" e "Funcionário", esse redirecionam para as telas de login dos respectivos perfis.
 
-## Guias
+<div align="center">
+  <h3>Index</h3>
+  <img height="300vh" width="600vw" src="https://github.com/igorjuancc/documentacao/blob/main/SGR/Telas/1.Index.PNG" />   
+</div>
+
+2. O SGR possuí três tipos de perfis:
+
+    2.1 Morador: Acessado a partir do botão de mesmo nome no index e utiliza do email e senha cadastrados para efetivar o login.
+    
+    2.2 Síndico e Porteiro: Acessados a partir do botão de nome "Funcionário" no index e utiliza do CPF e da senha cadastrada para efetivar o login.
+   
+    <table>
+      <tr align="center">
+        <th>Login Morador</th>
+        <th>Login Funcionário</th>
+      </tr>
+      <tr>
+        <td>
+          <img height="250vh" width="600vw" src="https://github.com/igorjuancc/documentacao/blob/main/SGR/Telas/Morador/LoginMorador%20-%201.1.PNG" />
+        </td>
+        <td>
+          <img height="250vh" width="600vw" src="https://github.com/igorjuancc/documentacao/blob/main/SGR/Telas/1.LoginFuncionario.PNG" />
+        </td>
+      </tr>  
+    </table> 
+
+3. Por padrão o sistema terá um Síndico já cadastrado com email = "vito@aol.com" e senha = "senha".
+4. A tela de login do morador possuí um atalho para uma página de autocadastro, essa possuí um formulário para realizar as solicitações de cadastro dos moradores.
+5. Os moradores só irão possuír acesso após a aprovação do síndico na seção dedicada do software.
+6. As [Funcionalidades](#Funcionalidades) do sistema estão listadas na seção de mesmo nome desse documento, para mais detalhes, acesse a documentação do projeto em: [Documentação SGR](https://github.com/igorjuancc/documentacao/tree/main/SGR). 
+
+## 🔭 Guias
 >[Guia GlassFish 4.1](https://github.com/igorjuancc/guia/blob/main/Servidores/GlassFish/4.1/glassfish-4.1.md) 
 
+>[Guia Apache Ant 1.10.7](https://github.com/igorjuancc/guia/blob/main/Automacao(build)/ApacheAnt/1.10.7/apacheant-1.10.7.md) 
 
-## Sobre o Projeto
+## ℹ️ Sobre o Projeto
 O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
 mútuo. 
 O projeto foi desenvolvido como requisito parcial para obtenção do grau de Tecnólogo em Análise de Desenvolvimento de Sistemas, do Setor de Educação Profissional e Tecnológica, 
 da Universidade Federal do Paraná, dentro da disciplina TI166 - Trabalho de Conclusão de Curso.
 
-### Técnologias 
- * Java EE 8
- * JSF 2.x
- * Hibernate 5.x
- * PrimeFaces 7.0
+### 📡 Técnologias 
+ * Java EE
+ * JSF 
+ * Hibernate
+ * PrimeFaces
  
-### Ferramentas
- * Netbeans 8.2
- * PgAdmin 4
- * PostgreSQL 10
- * Jaspersoft Studio 6.17
+### 🔧 Ferramentas
+ * Netbeans 
+ * PgAdmin
+ * PostgreSQL 
+ * Jaspersoft Studio 
  * Git 2.34 e GitHub
  
-### Bibliotecas Adicionais
+### 🎒 Bibliotecas Adicionais
  * JRimum Bopepo 
  * Java Mail API
  
-### Funcionalidades
- #### Comum (Aos perfis)
+## 🛠️ Funcionalidades
+ ### Comum (Aos perfis)
   - [x] Login e Logoff
   - [x] Mural de Notícias
   - [x] Balanço Financeiro
   - [x] Mensagens
   - [x] Alteração de Dados Pessoais
   - [x] Alertas 
- #### Síndico 
+ ### Síndico 
    - [x] Controle de acesso de moradores
    - [x] Lista de débitos de moradores
    - [x] Cadastro, edição, visualização e exclusão de advertências e multas
@@ -158,7 +190,7 @@ da Universidade Federal do Paraná, dentro da disciplina TI166 - Trabalho de Con
    - [x] Aprovação de cadastro de novo morador
    - [x] Emissão de relatórios gerênciais
    - [x] Reserva de salão de festas   
- #### Morador 
+ ### Morador 
    - [x] Participação e votos (Assembléia)   
    - [x] Inserção de parecer (Assembléia)  
    - [x] Cadastro, edição, visualização e exclusão de atendimentos
@@ -171,20 +203,9 @@ da Universidade Federal do Paraná, dentro da disciplina TI166 - Trabalho de Con
    - [x] Cadastro, edição, visualização e exclusão de visitantes
    - [x] Cadastro, edição, visualização e exclusão de visitas
    - [x] Recuperação de senha
-  #### Porteiro 
+  ### Porteiro 
    - [x] Consulta moradores   
    - [x] Consulta veículos
    - [x] Consulta, visitantes agendados
    - [x] Registro de entrada e saída de visitantes
    - [x] Registro de foto de visitantes   
- 
-## Pré-requisitos
-
-### Obrigatório
-
-* JRE - Java Runtime Environment 8 (Ou superior)
-* JDK - Java Development Kit 8 (ou superior)
-
-### Opcional
-
-* Git 2.33 (Ou superior)
