@@ -28,7 +28,7 @@ A plataforma disponibiliza controle de acesso de visitantes, cadastro de morador
        * [Ferramentas](#Ferramentas)
        * [Bibliotecas Adicionais](#Bibliotecas-Adicionais)
    * [Funcionalidades](#Funcionalidades)
-       * [Comum (Aos perfis)](#Comum-(Aos perfis)) 
+       * [Comum (Aos perfis)](#Comum-Aos-perfis) 
        * [Síndico](#Síndico)
        * [Morador](#Morador)
        * [Porteiro](#Porteiro)
