@@ -166,15 +166,17 @@ da Universidade Federal do Paraná, dentro da disciplina TI166 - Trabalho de Con
  * [PrimeFaces](https://www.primefaces.org/)
  
 ### Ferramentas
- * Netbeans 
- * PgAdmin
- * PostgreSQL 
- * Jaspersoft Studio 
- * Git 2.34 e GitHub
+ * [Netbeans](https://netbeans.apache.org/)
+ * [PgAdmin](https://www.pgadmin.org/)
+ * [PostgreSQL](https://www.postgresql.org/)
+ * [Jaspersoft Studio](https://community.jaspersoft.com/project/jaspersoft-studio)
+ * [Git](https://git-scm.com/) e [GitHub](https://github.com/)
+ * [Apache Ant](https://ant.apache.org/) 
+ * [GlassFish](https://javaee.github.io/glassfish/)
  
 ### Bibliotecas Adicionais
- * JRimum Bopepo 
- * Java Mail API
+ * [Bopepo](https://jrimum.org/)
+ * [Java Mail API](https://javaee.github.io/javamail/)
  
 ## Funcionalidades
  ### Comum (Aos perfis)
