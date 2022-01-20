@@ -33,7 +33,7 @@ Todas as bibliotecas e o servidor para deploy da aplicação estão disponíveis
 <br/>
 Informações sobre servidor ou ferramentas para execução do projeto podem ser encontradas na seção [Guias](#Guias) desse documento.
 
-### ⚠️ Obrigatório
+### ⚠️ Obrigatórios
 
 #### 💽 Softwares
 
@@ -41,7 +41,8 @@ Informações sobre servidor ou ferramentas para execução do projeto podem ser
 * [JDK - Java Development Kit 8 (Ou superior)](https://www.oracle.com/br/java/technologies/javase/javase8-archive-downloads.html)    
 * [PostgreSQL 10 (Ou superior)](https://www.postgresql.org/download/)  
 * [GlassFish 4.1](https://download.oracle.com/glassfish/4.1/release/index.html) 
-* [Netbeans 8.2](https://netbeans.apache.org/download/archive/index.html) 
+* [Netbeans 8.2 (Ou superior)](https://netbeans.apache.org/download/archive/index.html) 
+    * Ou outra IDE de sua preferência
 
 #### 📚 Bibliotecas
 
@@ -66,13 +67,43 @@ Informações sobre servidor ou ferramentas para execução do projeto podem ser
 * [Commons FileUpload 1.4](https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload/1.4) 
 * [Commons IO 2.6](https://mvnrepository.com/artifact/commons-io/commons-io/2.6) 
 * [JavaMail API 1.6.0](https://mvnrepository.com/artifact/javax.mail/javax.mail-api/1.6.0) 
+* [JDBC Driver Postgresql 9.4.1209](https://repo1.maven.org/maven2/org/postgresql/postgresql/9.4.1209/) 
 
-### Opcional
+### 🔀 Opcionais
 
 * [Git 2.33 (Ou superior)](https://git-scm.com/downloads)
-* APACHE ANT
+* [Apache Ant 1.10.7 (Ou superior)](https://ant.apache.org/easyant/download.cgi)
 
+## ⚙️ Configuração
 
+1. Para executar o projeto, efetue o download ou o colone desse repositório.
+```
+git clone https://github.com/igorjuancc/SGR.git
+```
+2. Acesse o PostgreSQL via psql ou pgAdmin e crie uma nova base de dados com o nome **SGR**.
+    
+    2.1 Utlize o arquivo **script_bd_sgr.sql** localizado na pasta "DB" desse projeto para criar as tabelas e os inserts necessários para utilizar a aplicação.
+     
+3. Abra o projeto clonado com o NetBeans (ou a IDE de sua preferência) e efetue a importação de **todas** as bibliotecas indicadas na seção [Obrigatórios](#Obrigatórios) desse repositório.
+4. Abra o arquivo hibernate.cfg.xml localizado no pacote default do projeto e modifique as propriedades de conexão com as informações pertinentes ao seu computador ou ao servidor utilizado para o deploy da aplicação.
+5. Ainda na IDE utilizada, modifique as seguintes linhas do arquivo JavaMailApp.java do pacote sgr.util: 36 e 41 com um email valído do gmail (**apenas**) e a linha 37 com a senha desse email. Esse email será utilizado para o envio de mensagens da aplicação (Necessário configurar o acesso de aplicações externas, consulte a aba [Guias](#Guias) para mais informações). 
+6. Com o auxilio do Netbeans (ou da IDE utilizada) ou do Apache Ant, crie o arquivo .war da aplicação.
+
+    5.1  Com o Apache Ant dentro da pasta do projeto.
+    ```
+     $ ant
+    ```
+    
+6. Copie o arquivo SGR.war da pasta "dist" para a pasta autodeploy do servidor glassfish ou insira via interface gráfica do console do servidor.
+```
+cd ~/SGR/src/dist
+cp SGR.war ~/glassfish4/glassfish/domains/domain1/autodeploy
+```
+7. Inicie (ou reinicie) o servidor da aplicação e acesse o projeto no navegador de acordo com as configurações do glassfish, normalmente http://localhost:8080/SGR/index.jsf.
+
+## 🥇 Utilização do SGR
+
+1. A aplicação SGR inicia-se na tela de index do projeto, na qual existem dois botões para as funcionalidades da aplicação "Morador" e "Funcionário".
 
 ## Guias
 >[Guia GlassFish 4.1](https://github.com/igorjuancc/guia/blob/main/Servidores/GlassFish/4.1/glassfish-4.1.md) 
