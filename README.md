@@ -12,7 +12,7 @@ A plataforma disponibiliza controle de acesso de visitantes, cadastro de morador
 # 🔎 Índice
 
 <!--ts-->
-   * [Resumo](#Sistema-de-Gerenciamento-Residêncial)
+   * [Resumo](#🏢-Sistema-de-Gerenciamento-Residêncial)
    * [Índice](#Índice)
    * [Instalação](#instalacao)
    * [Como usar](#como-usar)
