@@ -2,7 +2,7 @@
   <img src="https://github.com/igorjuancc/SGR/blob/master/web/css/logo.png" width="160vw" height="80vh" />
 </div>
 
-# 🏢 Sistema de Gerenciamento Residêncial
+# Sistema de Gerenciamento Residêncial 🏢 
 <div align="justify">
 O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
 mútuo. <br />
@@ -12,8 +12,8 @@ A plataforma disponibiliza controle de acesso de visitantes, cadastro de morador
 # 🔎 Índice
 
 <!--ts-->
-   * [Resumo](#🏢-Sistema-de-Gerenciamento-Residêncial)
-   * [Índice](#Índice)
+   * [Resumo](#Sistema-de-Gerenciamento-Residêncial)
+   * [Índice](#🔭-Guias)
    * [Instalação](#instalacao)
    * [Como usar](#como-usar)
       * [Pre Requisitos](#pre-requisitos)
@@ -31,7 +31,7 @@ A plataforma disponibiliza controle de acesso de visitantes, cadastro de morador
 
 Todas as bibliotecas e o servidor para deploy da aplicação estão disponíveis no Google Drive que pode ser acessado através desse [link](https://drive.google.com/drive/folders/1-a_gxheCg5lmCAPxIASGAi7MjywlnjqY).
 <br/>
-Informações sobre servidor ou ferramentas para execução do projeto podem ser encontradas na seção [Guias](#Guias) desse documento.
+Informações sobre servidor ou ferramentas para execução do projeto podem ser encontradas na seção [Guias](#🔭-Guias) desse documento.
 
 ### ⚠️ Obrigatórios
 
