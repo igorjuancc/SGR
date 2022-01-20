@@ -24,7 +24,7 @@ A plataforma disponibiliza controle de acesso de visitantes, cadastro de morador
    * [Utilização do SGR](#Utilização-do-SGR)
    * [Guias](#Guias)
    * [Sobre o Projeto](#Sobre-o-Projeto)
-       * [Tecnologias](#Tecnologias)
+       * [Técnologias](#Técnologias)
        * [Ferramentas](#Ferramentas)
        * [Bibliotecas Adicionais](#Bibliotecas-Adicionais)
    * [Funcionalidades](#Funcionalidades)
@@ -150,6 +150,8 @@ cp SGR.war ~/glassfish4/glassfish/domains/domain1/autodeploy
 >[Guia GlassFish 4.1](https://github.com/igorjuancc/guia/blob/main/Servidores/GlassFish/4.1/glassfish-4.1.md) 
 
 >[Guia Apache Ant 1.10.7](https://github.com/igorjuancc/guia/blob/main/Automacao(build)/ApacheAnt/1.10.7/apacheant-1.10.7.md) 
+
+>[Guia JavaMail API](https://github.com/igorjuancc/guia/blob/main/Plataformas/Google/Gmail/gmail.md) 
 
 ## Sobre o Projeto
 O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
