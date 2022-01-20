@@ -2,40 +2,50 @@
   <img src="https://github.com/igorjuancc/SGR/blob/master/web/css/logo.png" width="160vw" height="80vh" />
 </div>
 
-# Sistema de Gerenciamento Residêncial 🏢 
+# Sistema de Gerenciamento Residêncial
 <div align="justify">
 O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
 mútuo. <br />
 A plataforma disponibiliza controle de acesso de visitantes, cadastro de moradores, agendamento de visitas e utilização de salão de festas, gerenciamento de vagas de garagem, painel de notícias, emissão de boletos de cobrança, troca de mensagens, notificação de multas, controle de finanças e consulta ao balanço, emissão de relatórios gerencias e realização de assembléia online para condomínios.
 </div>
 
-# 🔎 Índice
+# Índice
 
 <!--ts-->
    * [Resumo](#Sistema-de-Gerenciamento-Residêncial)
-   * [Índice](#🔭-Guias)
-   * [Instalação](#instalacao)
-   * [Como usar](#como-usar)
-      * [Pre Requisitos](#pre-requisitos)
-      * [Local files](#local-files)
-      * [Remote files](#remote-files)
-      * [Multiple files](#multiple-files)
-      * [Combo](#combo)
-   * [Tests](#testes)
-   * [Tecnologias](#tecnologias)
+   * [Índice](#Índice)
+   * [Começando](#Começando)
+       * [Pré-requisitos](#Pré-requisitos)
+         * [Obrigatórios](#Obrigatórios)
+           * [Softwares](#Softwares)
+           * [Bibliotecas](#Bibliotecas)
+         * [Opcionais](#Opcionais)
+   * [Configuração](#Configuração)
+   * [Utilização do SGR](#Utilização-do-SGR)
+   * [Guias](#Guias)
+   * [Sobre o Projeto](#Sobre-o-Projeto)
+       * [Tecnologias](#Tecnologias)
+       * [Ferramentas](#Ferramentas)
+       * [Bibliotecas Adicionais](#Bibliotecas-Adicionais)
+   * [Funcionalidades](#Funcionalidades)
+       * [Comum (Aos perfis)](#Comum-(Aos perfis)) 
+       * [Síndico](#Síndico)
+       * [Morador](#Morador)
+       * [Porteiro](#Porteiro)
+      
 <!--te-->
 
-# 🚀 Começando
+# Começando
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 
 Todas as bibliotecas e o servidor para deploy da aplicação estão disponíveis no Google Drive que pode ser acessado através desse [link](https://drive.google.com/drive/folders/1-a_gxheCg5lmCAPxIASGAi7MjywlnjqY).
 <br/>
-Informações sobre servidor ou ferramentas para execução do projeto podem ser encontradas na seção [Guias](#🔭-Guias) desse documento.
+Informações sobre servidor ou ferramentas para execução do projeto podem ser encontradas na seção [Guias](#Guias) desse documento.
 
-### ⚠️ Obrigatórios
+### Obrigatórios
 
-#### 💽 Softwares
+#### Softwares
 
 * [JRE - Java Runtime Environment 8 (Ou superior)](https://www.java.com/pt-BR/download/manual.jsp)    
 * [JDK - Java Development Kit 8 (Ou superior)](https://www.oracle.com/br/java/technologies/javase/javase8-archive-downloads.html)    
@@ -44,7 +54,7 @@ Informações sobre servidor ou ferramentas para execução do projeto podem ser
 * [Netbeans 8.2 (Ou superior)](https://netbeans.apache.org/download/archive/index.html) 
     * Ou outra IDE de sua preferência
 
-#### 📚 Bibliotecas
+#### Bibliotecas
 
 * [JSF 2.2](https://mvnrepository.com/artifact/com.sun.faces/jsf-api/2.2.20) 
 * [Hibernate 4.3.1](https://mvnrepository.com/artifact/org.hibernate/hibernate-core/4.3.1.Final)
@@ -69,12 +79,12 @@ Informações sobre servidor ou ferramentas para execução do projeto podem ser
 * [JavaMail API 1.6.0](https://mvnrepository.com/artifact/javax.mail/javax.mail-api/1.6.0) 
 * [JDBC Driver Postgresql 9.4.1209](https://repo1.maven.org/maven2/org/postgresql/postgresql/9.4.1209/) 
 
-### 🔀 Opcionais
+### Opcionais
 
 * [Git 2.33 (Ou superior)](https://git-scm.com/downloads)
 * [Apache Ant 1.10.7 (Ou superior)](https://ant.apache.org/easyant/download.cgi)
 
-## ⚙️ Configuração
+## Configuração
 
 1. Para executar o projeto, efetue o download ou o colone desse repositório.
 ```
@@ -101,7 +111,7 @@ cp SGR.war ~/glassfish4/glassfish/domains/domain1/autodeploy
 ```
 8. Inicie (ou reinicie) o servidor da aplicação e acesse o projeto no navegador de acordo com as configurações do glassfish, normalmente http://localhost:8080/SGR/index.jsf.
 
-## 🥇 Utilização do SGR
+## Utilização do SGR
 
 1. A aplicação SGR inicia-se na tela de index do projeto, na qual existem dois botões para as funcionalidades da aplicação "Morador" e "Funcionário", esse redirecionam para as telas de login dos respectivos perfis.
 
@@ -136,35 +146,35 @@ cp SGR.war ~/glassfish4/glassfish/domains/domain1/autodeploy
 5. Os moradores só irão possuír acesso após a aprovação do síndico na seção dedicada do software.
 6. As [Funcionalidades](#Funcionalidades) do sistema estão listadas na seção de mesmo nome desse documento, para mais detalhes, acesse a documentação do projeto em: [Documentação SGR](https://github.com/igorjuancc/documentacao/tree/main/SGR). 
 
-## 🔭 Guias
+## Guias
 >[Guia GlassFish 4.1](https://github.com/igorjuancc/guia/blob/main/Servidores/GlassFish/4.1/glassfish-4.1.md) 
 
 >[Guia Apache Ant 1.10.7](https://github.com/igorjuancc/guia/blob/main/Automacao(build)/ApacheAnt/1.10.7/apacheant-1.10.7.md) 
 
-## ℹ️ Sobre o Projeto
+## Sobre o Projeto
 O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
 mútuo. 
 O projeto foi desenvolvido como requisito parcial para obtenção do grau de Tecnólogo em Análise de Desenvolvimento de Sistemas, do Setor de Educação Profissional e Tecnológica, 
 da Universidade Federal do Paraná, dentro da disciplina TI166 - Trabalho de Conclusão de Curso.
 
-### 📡 Técnologias 
- * Java EE
- * JSF 
- * Hibernate
- * PrimeFaces
+### Técnologias  
+ * [Java EE](https://www.oracle.com/br/java/technologies/java-ee-glance.html)
+ * [JSF](https://netbeans.apache.org/kb/docs/web/jsf20-intro_pt_BR.html#:~:text=O%20JavaServer%20Faces%20(JSF)%20%C3%A9,a%20um%20cliente%20de%20destino.)
+ * [Hibernate](https://hibernate.org/)
+ * [PrimeFaces](https://www.primefaces.org/)
  
-### 🔧 Ferramentas
+### Ferramentas
  * Netbeans 
  * PgAdmin
  * PostgreSQL 
  * Jaspersoft Studio 
  * Git 2.34 e GitHub
  
-### 🎒 Bibliotecas Adicionais
+### Bibliotecas Adicionais
  * JRimum Bopepo 
  * Java Mail API
  
-## 🛠️ Funcionalidades
+## Funcionalidades
  ### Comum (Aos perfis)
   - [x] Login e Logoff
   - [x] Mural de Notícias
