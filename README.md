@@ -24,6 +24,7 @@ A plataforma disponibiliza controle de acesso de visitantes, cadastro de morador
    * [Utilização do SGR](#Utilização-do-SGR)
    * [Guias](#Guias)
    * [Sobre o Projeto](#Sobre-o-Projeto)
+       * [Documentação](#Documentação)
        * [Técnologias](#Técnologias)
        * [Ferramentas](#Ferramentas)
        * [Bibliotecas Adicionais](#Bibliotecas-Adicionais)
@@ -158,6 +159,10 @@ O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvi
 mútuo. 
 O projeto foi desenvolvido como requisito parcial para obtenção do grau de Tecnólogo em Análise de Desenvolvimento de Sistemas, do Setor de Educação Profissional e Tecnológica, 
 da Universidade Federal do Paraná, dentro da disciplina TI166 - Trabalho de Conclusão de Curso.
+
+### Documentação 
+
+A documentação completa desse projeto pode ser encontrada no seguinte link: [Documentação SGR](https://github.com/igorjuancc/documentacao/tree/main/SGR).
 
 ### Técnologias  
  * [Java EE](https://www.oracle.com/br/java/technologies/java-ee-glance.html)
