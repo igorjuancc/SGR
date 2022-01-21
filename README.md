@@ -225,6 +225,6 @@ A documentação completa desse projeto pode ser encontrada no seguinte link: [D
   ### Porteiro 
    - [x] Consulta moradores   
    - [x] Consulta veículos
-   - [x] Consulta, visitantes agendados
+   - [x] Consulta visitantes agendados
    - [x] Registro de entrada e saída de visitantes
    - [x] Registro de foto de visitantes   
