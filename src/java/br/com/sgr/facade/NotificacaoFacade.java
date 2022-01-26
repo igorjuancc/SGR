@@ -319,13 +319,13 @@ public class NotificacaoFacade {
 
     private static void salvarArquivoNotificacao(UploadedFile upArquivo, Arquivo arquivo) throws ArquivoException {
         String nomeArquivo = Integer.toString(arquivo.getId()) + arquivo.getExtensao();
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\AnexoAdvertencia";
+        String caminho = SgrUtil.caminhoProjeto() + "AnexoAdvertencia\\";
         SgrUtil.gravarArquivo(upArquivo, caminho, nomeArquivo);
     }
 
     private static void apagarArquivoNotificacao(Arquivo arquivo) throws ArquivoException {
         String nomeArquivo = Integer.toString(arquivo.getId()) + arquivo.getExtensao();
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\AnexoAdvertencia";
+        String caminho = SgrUtil.caminhoProjeto() + "AnexoAdvertencia\\";
         SgrUtil.apagarArquivo(caminho, nomeArquivo);
     }
 }

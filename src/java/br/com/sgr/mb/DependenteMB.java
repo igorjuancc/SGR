@@ -50,7 +50,7 @@ public class DependenteMB implements Serializable {
             this.filtroDependentes = new FiltroBD();
             iniciaListaDependentes();
             this.dependente = new Morador();
-            File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+            File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
             this.previewImagem = Files.readAllBytes(objFile.toPath());
         } catch (IOException e) {
             e.printStackTrace(System.out);
@@ -196,7 +196,7 @@ public class DependenteMB implements Serializable {
             this.pessoaTemp = new Morador();
             this.dependente.setApartamento(this.login.getMorador().getApartamento());
             this.imagem = null;
-            File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+            File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
             this.previewImagem = Files.readAllBytes(objFile.toPath());
         } catch (IOException e) {
             e.printStackTrace(System.out);
@@ -224,7 +224,7 @@ public class DependenteMB implements Serializable {
             this.dependente.setSexo(this.pessoaTemp.getSexo());
             this.dependente.setImagem(this.pessoaTemp.getImagem());
             if ((this.dependente.getImagem() != null) && (this.dependente.getImagem().getId() != 0)) {
-                File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\"
+                File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\"
                         + this.dependente.getImagem().getId() + this.dependente.getImagem().getExtensao());
                 this.previewImagem = Files.readAllBytes(objFile.toPath());
             }
@@ -242,7 +242,7 @@ public class DependenteMB implements Serializable {
             this.dependente = dependente;
             this.pessoaTemp.setCpf(this.dependente.getCpf());
             if ((this.dependente.getImagem() != null) && (this.dependente.getImagem().getId() != 0)) {
-                File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\"
+                File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\"
                         + this.dependente.getImagem().getId() + this.dependente.getImagem().getExtensao());
                 this.previewImagem = Files.readAllBytes(objFile.toPath());
             }

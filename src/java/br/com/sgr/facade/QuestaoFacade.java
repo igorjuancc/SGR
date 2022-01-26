@@ -301,8 +301,8 @@ public class QuestaoFacade {
             }
             questaoDao.novaQuestao(eleicao);
             for (int i = 0; moradores.size() > i; i++) {
-                File arquivoOrigem = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\" + moradores.get(i).getImagem().getId() + moradores.get(i).getImagem().getExtensao());
-                File arquivoDestino = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemQuestao\\" + eleicao.getArquivos().get(i).getId() + eleicao.getArquivos().get(i).getExtensao());
+                File arquivoOrigem = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\" + moradores.get(i).getImagem().getId() + moradores.get(i).getImagem().getExtensao());
+                File arquivoDestino = new File(SgrUtil.caminhoProjeto() + "ImagemQuestao\\" + eleicao.getArquivos().get(i).getId() + eleicao.getArquivos().get(i).getExtensao());
                 FileUtils.copyFile(arquivoOrigem, arquivoDestino);
             }
         } catch (DaoException e) {
@@ -349,10 +349,10 @@ public class QuestaoFacade {
                 }
                 questaoDao.atualizarQuestao(eleicao);
                 for (Morador m : moradores) {
-                    File arquivoOrigem = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\" + m.getImagem().getId() + m.getImagem().getExtensao());
+                    File arquivoOrigem = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\" + m.getImagem().getId() + m.getImagem().getExtensao());
                     for (Arquivo a : eleicao.getArquivos()) {
                         if (a.getDescricao().equals(m.getNome())) {
-                            File arquivoDestino = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemQuestao\\" + a.getId() + a.getExtensao());
+                            File arquivoDestino = new File(SgrUtil.caminhoProjeto() + "ImagemQuestao\\" + a.getId() + a.getExtensao());
                             FileUtils.copyFile(arquivoOrigem, arquivoDestino);
                         }
                     }
@@ -409,13 +409,13 @@ public class QuestaoFacade {
 
     private static void salvarImagemQuestao(UploadedFile imagem, Arquivo arquivo) throws ArquivoException {
         String nomeArquivo = Integer.toString(arquivo.getId()) + arquivo.getExtensao();
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemQuestao";
+        String caminho = SgrUtil.caminhoProjeto() + "ImagemQuestao\\";
         SgrUtil.gravarArquivo(imagem, caminho, nomeArquivo);
     }
 
     private static void apagarImagemQuestao(Arquivo arquivo) throws ArquivoException {
         String nomeArquivo = Integer.toString(arquivo.getId()) + arquivo.getExtensao();
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemQuestao";
+        String caminho = SgrUtil.caminhoProjeto() + "ImagemQuestao\\";
         SgrUtil.apagarArquivo(caminho, nomeArquivo);
     }
 }

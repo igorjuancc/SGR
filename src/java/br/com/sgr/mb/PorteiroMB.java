@@ -26,6 +26,7 @@ import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.inject.Named;
@@ -68,7 +69,7 @@ public class PorteiroMB implements Serializable {
                     this.hoje = new Date();
                     iniciaListaVisitaAndamento();
                     iniciaListaVisitanteSaida();
-                    File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+                    File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
                     this.previewImagem = Files.readAllBytes(objFile.toPath());
                     break;
                 case "/porteiro/PorteiroMorador.xhtml":
@@ -193,7 +194,7 @@ public class PorteiroMB implements Serializable {
     public void novaCapturaFoto(CaptureEvent captureEvent) {
         try {
             byte[] data = captureEvent.getData();
-            String newFileName = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\NovaCaptura.PNG";
+            String newFileName = SgrUtil.caminhoProjeto() + "ImagemPessoa\\NovaCaptura.PNG";
             FileImageOutputStream imageOutput;
 
             imageOutput = new FileImageOutputStream(new File(newFileName));
@@ -208,7 +209,7 @@ public class PorteiroMB implements Serializable {
 
     public void cancelarCapturaFoto() {
         try {
-            File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+            File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
             this.previewImagem = Files.readAllBytes(objFile.toPath());
             this.exec = null;
         } catch (IOException e) {
@@ -238,7 +239,7 @@ public class PorteiroMB implements Serializable {
 
     public Boolean confirmaSalvarFoto() {
         try {
-            File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+            File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
             byte[] data = Files.readAllBytes(objFile.toPath());
             return Arrays.equals(data, this.previewImagem);
         } catch (IOException e) {
@@ -349,10 +350,11 @@ public class PorteiroMB implements Serializable {
     public void setVisitante(Visitante visitante) {
         try {
             File objFile;
+            String caminho = SgrUtil.caminhoProjeto() + "ImagemPessoa\\";
             if (visitante.getImagem() != null) {
-                objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\" + Integer.toString(visitante.getImagem().getId()) + visitante.getImagem().getExtensao());
+                objFile = new File(caminho + Integer.toString(visitante.getImagem().getId()) + visitante.getImagem().getExtensao());
             } else {
-                objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+                objFile = new File(caminho + "SemFoto.PNG");
             }
             this.previewImagem = Files.readAllBytes(objFile.toPath());
             this.visitante = visitante;

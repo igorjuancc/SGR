@@ -46,7 +46,7 @@ public class VisitanteMB implements Serializable {
                 this.visitantesPrazo.removeAll(this.visitantesCadastrados);
             }
             this.visitante = new Visitante();
-            File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+            File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
             this.previewImagem = Files.readAllBytes(objFile.toPath());
         } catch (IOException e) {
             e.printStackTrace(System.out);
@@ -125,7 +125,7 @@ public class VisitanteMB implements Serializable {
             this.visitante = new Visitante();
             this.pessoaTemp = new Pessoa();
             this.imagem = null;
-            File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+            File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
             this.previewImagem = Files.readAllBytes(objFile.toPath());
         } catch (IOException e) {
             e.printStackTrace(System.out);
@@ -153,7 +153,7 @@ public class VisitanteMB implements Serializable {
             this.visitante.setSexo(this.pessoaTemp.getSexo());
             this.visitante.setImagem(this.pessoaTemp.getImagem());
             if ((this.visitante.getImagem() != null) && (this.visitante.getImagem().getId() != 0)) {
-                File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\"
+                File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\"
                         + this.visitante.getImagem().getId() + this.visitante.getImagem().getExtensao());
                 this.previewImagem = Files.readAllBytes(objFile.toPath());
             }
@@ -169,7 +169,7 @@ public class VisitanteMB implements Serializable {
         try {
             this.visitante = visitante;
             if ((this.visitante.getImagem() != null) && (this.visitante.getImagem().getId() != 0)) {
-                File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\"
+                File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\"
                         + this.visitante.getImagem().getId() + this.visitante.getImagem().getExtensao());
                 this.previewImagem = Files.readAllBytes(objFile.toPath());
             }

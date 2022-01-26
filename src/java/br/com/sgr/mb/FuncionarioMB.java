@@ -61,7 +61,7 @@ public class FuncionarioMB implements Serializable {
                 case "/sindico/SindicoFuncionario.xhtml":
                     this.funcionario = new Funcionario();
                     this.funcionarioTemp = new Funcionario();
-                    objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+                    objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
                     this.imagemPreview = Files.readAllBytes(objFile.toPath());
                     this.listaFuncao = FuncaoFacade.funcaoLista();
                     this.filtroFuncionario = new FiltroBD();
@@ -75,9 +75,9 @@ public class FuncionarioMB implements Serializable {
                     this.funcionarioTemp = new Funcionario();
                     
                     if (this.funcionario.getImagem() == null) {
-                        objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+                        objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
                     } else {
-                        objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\" + Integer.toString(this.funcionario.getImagem().getId()) + this.funcionario.getImagem().getExtensao());
+                        objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\" + Integer.toString(this.funcionario.getImagem().getId()) + this.funcionario.getImagem().getExtensao());
                     }
                     this.imagemPreview = Files.readAllBytes(objFile.toPath());
                     break;
@@ -87,9 +87,9 @@ public class FuncionarioMB implements Serializable {
                     this.funcionarioTemp = new Funcionario();
                     
                     if (this.funcionario.getImagem() == null) {
-                        objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+                        objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
                     } else {
-                        objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\" + Integer.toString(this.funcionario.getImagem().getId()) + this.funcionario.getImagem().getExtensao());
+                        objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\" + Integer.toString(this.funcionario.getImagem().getId()) + this.funcionario.getImagem().getExtensao());
                     }
                     this.imagemPreview = Files.readAllBytes(objFile.toPath());
                     break;
@@ -225,7 +225,7 @@ public class FuncionarioMB implements Serializable {
             this.funcionario.setSexo(this.funcionarioTemp.getSexo());
             this.funcionario.setImagem(this.funcionarioTemp.getImagem());
             if ((this.funcionario.getImagem() != null) && (this.funcionario.getImagem().getId() != 0)) {
-                File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\"
+                File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\"
                         + this.funcionario.getImagem().getId() + this.funcionario.getImagem().getExtensao());
                 this.imagemPreview = Files.readAllBytes(objFile.toPath());
             }
@@ -242,7 +242,7 @@ public class FuncionarioMB implements Serializable {
             this.funcionario = new Funcionario();
             this.funcionarioTemp = new Funcionario();
             this.imagem = null;
-            File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+            File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
             this.imagemPreview = Files.readAllBytes(objFile.toPath());
         } catch (IOException e) {
             e.printStackTrace(System.out);
@@ -290,7 +290,7 @@ public class FuncionarioMB implements Serializable {
             this.funcionario = func;
             Morador buscarMorador = MoradorFacade.moradorPorCpf(func.getCpf());
             if ((this.funcionario.getImagem() != null) && (this.funcionario.getImagem().getId() != 0)) {
-                File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\"
+                File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\"
                         + this.funcionario.getImagem().getId() + this.funcionario.getImagem().getExtensao());
                 this.imagemPreview = Files.readAllBytes(objFile.toPath());
             }

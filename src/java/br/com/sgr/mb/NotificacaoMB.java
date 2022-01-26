@@ -454,6 +454,7 @@ public class NotificacaoMB implements Serializable {
     public void setVerNotificacao(Notificacao notifi) {
         try {
             this.notificacao = notifi;
+            this.notificacao.setArquivos(ArquivoFacade.listaArquivoNotificacao(notifi.getId()));
             this.notificacao.setAtendimentos(AtendimentoFacade.atendimentosPorNotificacao(this.notificacao.getId()));
         } catch (Exception e) {
             e.printStackTrace(System.out);
@@ -481,7 +482,7 @@ public class NotificacaoMB implements Serializable {
                 this.previewArquivos = new ArrayList<>();
                 File objFile;
                 for (Arquivo a : this.notificacao.getArquivos()) {
-                    objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\AnexoAdvertencia\\" + a.getId() + a.getExtensao());
+                    objFile = new File(SgrUtil.caminhoProjeto() + "AnexoAdvertencia\\" + a.getId() + a.getExtensao());
                     if (objFile.isFile()) {
                         this.upArquivos.add(null);
                         this.previewArquivos.add(Files.readAllBytes(objFile.toPath()));
