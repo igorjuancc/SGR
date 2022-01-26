@@ -755,13 +755,13 @@ public class MoradorFacade {
     }
 
     private static void removerImagemMorador(Morador morador) throws ArquivoException {
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa";
+        String caminho = SgrUtil.caminhoProjeto() + "ImagemPessoa\\";
         String nomeArquivo = Integer.toString(morador.getImagem().getId()) + morador.getImagem().getExtensao();
         SgrUtil.apagarArquivo(caminho, nomeArquivo);
     }
 
     private static void gravarImagemMorador(UploadedFile imagem, Arquivo arquivo) throws ArquivoException {
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa";
+        String caminho = SgrUtil.caminhoProjeto() + "ImagemPessoa\\";
         String nomeArquivo = Integer.toString(arquivo.getId()) + arquivo.getExtensao();
         SgrUtil.gravarArquivo(imagem, caminho, nomeArquivo);
     }

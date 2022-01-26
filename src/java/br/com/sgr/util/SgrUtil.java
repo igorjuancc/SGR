@@ -271,4 +271,9 @@ public class SgrUtil {
             return false;
         }
     }
+    
+    public static String caminhoProjeto() {
+        ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+        return ec.getRealPath("/");
+    }
 }

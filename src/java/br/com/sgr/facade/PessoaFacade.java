@@ -116,13 +116,13 @@ public class PessoaFacade {
     }
 
     public static void removerImagemPessoa(Pessoa pessoa) throws ArquivoException {
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa";
+        String caminho = SgrUtil.caminhoProjeto() + "ImagemPessoa\\";
         String nomeArquivo = Integer.toString(pessoa.getImagem().getId()) + pessoa.getImagem().getExtensao();
         SgrUtil.apagarArquivo(caminho, nomeArquivo);
     }
 
     public static void salvarImagemPessoa(UploadedFile imagem, Arquivo arquivo) throws ArquivoException {
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa";
+        String caminho = SgrUtil.caminhoProjeto() + "ImagemPessoa\\";
         String nomeArquivo = Integer.toString(arquivo.getId()) + arquivo.getExtensao();
         SgrUtil.gravarArquivo(imagem, caminho, nomeArquivo);
     }

@@ -395,7 +395,7 @@ public class AssembleiaMB implements Serializable {
                 this.previewImagens = new ArrayList<>();
                 File objFile;
                 for (Arquivo a : this.questao.getArquivos()) {
-                    objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemQuestao\\" + a.getId() + a.getExtensao());
+                    objFile = new File(SgrUtil.caminhoProjeto() + "ImagemQuestao\\" + a.getId() + a.getExtensao());
                     if (objFile.isFile()) {
                         this.upImagens.add(null);
                         this.previewImagens.add(Files.readAllBytes(objFile.toPath()));

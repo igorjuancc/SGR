@@ -54,7 +54,7 @@ public class MoradorMB implements Serializable {
                         this.blocos = ApartamentoFacade.blocosApartamentos();
                         morador.getApartamento().setBloco(blocos.get(0));
                         buscaApartamentoBloco();
-                        File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+                        File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
                         this.previewImagem = Files.readAllBytes(objFile.toPath());
                     }
                     break;
@@ -70,9 +70,9 @@ public class MoradorMB implements Serializable {
 
                     File objFile = null;
                     if (this.morador.getImagem() == null) {
-                        objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\SemFoto.PNG");
+                        objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\SemFoto.PNG");
                     } else {
-                        objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\" + Integer.toString(this.morador.getImagem().getId()) + this.morador.getImagem().getExtensao());
+                        objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\" + Integer.toString(this.morador.getImagem().getId()) + this.morador.getImagem().getExtensao());
                     }
                     this.previewImagem = Files.readAllBytes(objFile.toPath());
                     break;
@@ -126,7 +126,7 @@ public class MoradorMB implements Serializable {
             this.morador.setImagem(this.pessoaTemp.getImagem());
 
             if (this.morador.getImagem() != null) {
-                File objFile = new File("C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\"
+                File objFile = new File(SgrUtil.caminhoProjeto() + "ImagemPessoa\\"
                         + this.morador.getImagem().getId() + this.morador.getImagem().getExtensao());
                 this.previewImagem = Files.readAllBytes(objFile.toPath());
             }

@@ -189,13 +189,13 @@ public class NoticiaFacade {
 
     private static void apagarImagemNoticia(Arquivo arquivo) throws ArquivoException {
         String nomeArquivo = Integer.toString(arquivo.getId()) + arquivo.getExtensao();
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemNoticia";
+        String caminho = SgrUtil.caminhoProjeto() + "ImagemNoticia\\";
         SgrUtil.apagarArquivo(caminho, nomeArquivo);
     }
 
     private static void salvarImagemNoticia(UploadedFile imagem, Arquivo arquivo) throws ArquivoException {
         String nomeArquivo = Integer.toString(arquivo.getId()) + arquivo.getExtensao();
-        String caminho = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemNoticia";
+        String caminho = SgrUtil.caminhoProjeto() + "ImagemNoticia\\";
         SgrUtil.gravarArquivo(imagem, caminho, nomeArquivo);
     }
 }

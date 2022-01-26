@@ -407,7 +407,7 @@ public class VisitanteFacade {
                 visitante.setImagem(a);
                 visitanteDao.atualizarVisitante(visitante);
                 LogBDFacade.inserirLog(3, visitante);
-                String newFileName = "C:\\Users\\Igor Juan\\Desktop\\TCC\\SGR\\web\\ImagemPessoa\\" + Integer.toString(a.getId()) + a.getExtensao();
+                String newFileName = SgrUtil.caminhoProjeto() + "ImagemPessoa\\" + Integer.toString(a.getId()) + a.getExtensao();
                 FileImageOutputStream imageOutput;
                 imageOutput = new FileImageOutputStream(new File(newFileName));
                 imageOutput.write(imagem, 0, imagem.length);
