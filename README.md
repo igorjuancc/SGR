@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/igorjuancc/SGR/blob/master/web/css/logo.png" width="160vw" height="80vh" />
+  <img src="https://github.com/igorjuancc/SGR/blob/main/web/css/logo.png" width="160vw" height="80vh" />
 </div>
 
 # Sistema de Gerenciamento Residêncial
@@ -93,11 +93,19 @@ git clone https://github.com/igorjuancc/SGR.git
 ```
 2. Acesse o PostgreSQL via psql ou pgAdmin e crie uma nova base de dados com o nome **SGR**.
     
-    2.1 Utlize o arquivo **script_bd_sgr.sql** localizado na pasta "DB" desse projeto para criar as tabelas e os inserts necessários para utilizar a aplicação.
+    2.1 Utlize o arquivo **script_bd_sgr.sql** localizado na pasta [BD](https://github.com/igorjuancc/SGR/tree/main/BD) desse projeto para criar as tabelas e os inserts necessários para utilizar a aplicação.
      
 3. Abra o projeto clonado com o NetBeans (ou a IDE de sua preferência) e efetue a importação de **todas** as bibliotecas indicadas na seção [Obrigatórios](#Obrigatórios) desse repositório.
 4. Abra o arquivo hibernate.cfg.xml localizado no pacote default do projeto e modifique as propriedades de conexão com as informações pertinentes ao seu computador ou ao servidor utilizado para o deploy da aplicação.
-5. Ainda na IDE utilizada, modifique as seguintes linhas do arquivo JavaMailApp.java do pacote sgr.util: 36 e 41 com um email valído do gmail (**apenas**) e a linha 37 com a senha desse email. Esse email será utilizado para o envio de mensagens da aplicação (Necessário configurar o acesso de aplicações externas, consulte a aba [Guias](#Guias) para mais informações). 
+5. Ainda na IDE utilizada, modifique as seguintes linhas dos arquivos:  
+ * JavaMailApp.java do pacote sgr.util:
+     * *Esse email será utilizado para o envio de mensagens da aplicação (Necessário configurar o acesso de aplicações externas, consulte a aba [Guias](#Guias) para mais informações).*
+     * Linhas 36 e 37 com email válido do gmail (**apenas**) e a senha nos locais indicados
+     * Linha 41 com o mesmo email indicado no passo anterior
+ * MoradorFacade.java do pacote sgr.facade (**Caso utilize emails fictícios**):
+     * "Descomente" a linha 729 e complemente com seu email no local índicado
+       * *Esse email irá receber as mensagens de recuperação de senha* 
+     * Comente a linha 730     
 6. Com o auxilio do Netbeans (ou da IDE utilizada) ou do Apache Ant, crie o arquivo .war da aplicação.
 
     6.1  Com o Apache Ant dentro da pasta do projeto.
@@ -158,7 +166,7 @@ cp SGR.war ~/glassfish4/glassfish/domains/domain1/autodeploy
 O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
 mútuo. 
 O projeto foi desenvolvido como requisito parcial para obtenção do grau de Tecnólogo em Análise de Desenvolvimento de Sistemas, do Setor de Educação Profissional e Tecnológica, 
-da Universidade Federal do Paraná, dentro da disciplina TI166 - Trabalho de Conclusão de Curso.
+da Universidade Federal do Paraná, dentro das disciplina TI166 - Trabalho de Conclusão de Curso e TI163 - Laboratório de Desenvolvimento de sistemas, sob orientação do Prof. Dr. Razer Anthom Nizer Rojas Montaño.
 
 ### Documentação 
 
@@ -228,3 +236,16 @@ A documentação completa desse projeto pode ser encontrada no seguinte link: [D
    - [x] Consulta visitantes agendados
    - [x] Registro de entrada e saída de visitantes
    - [x] Registro de foto de visitantes   
+   
+## Autor
+<a href="https://br.linkedin.com/in/igor-juan-cordeiro-da-costa-2b4a77101">
+<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/50890812?s=400&u=566e615dd1691c75eabd1dcb4ba749be82d1e86c&v=4" width="100px;" alt="Igor Juan"/>
+<br />
+<sub><b>Igor Juan</b></sub></a> <br />
+Desenvolvido por Igor Juan 🤙 <br />
+Em caso de dúvidas, sugestões e informações, entre em contato. <br />
+<a href="https://br.linkedin.com/in/igor-juan-cordeiro-da-costa-2b4a77101" target="_blank"> <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" target="_blank"> </a>
+<a href="https://www.facebook.com/igorjuan.cordeirodacosta" target="_blank"> <img src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" target="_blank"> </a>
+<a href="https://twitter.com/zig_cwb" target="_blank"> <img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" target="_blank"> </a>
+<a href="https://github.com/igorjuancc" target="_blank"> <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white" target="_blank"> </a>
+
