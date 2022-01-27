@@ -3,6 +3,7 @@ package br.com.sgr.mb;
 import br.com.sgr.bean.Funcionario;
 import br.com.sgr.bean.Morador;
 import br.com.sgr.facade.LoginFacade;
+import br.com.sgr.util.Seguranca;
 import br.com.sgr.util.SgrUtil;
 import java.io.IOException;
 import java.io.Serializable;
@@ -29,7 +30,7 @@ public class LoginMB implements Serializable {
 
     public void efetuarLoginMorador() {
         try {
-            this.morador.setSenha(md5(this.morador.getSenha()));
+            this.morador.setSenha(Seguranca.md5(this.morador.getSenha()));
             this.morador = LoginFacade.loginMorador(this.morador);
 
             if (this.morador.getNome() == null) {
@@ -59,7 +60,7 @@ public class LoginMB implements Serializable {
 
             this.funcionario.setCpf(this.funcionario.getCpf().replace(".", ""));
             this.funcionario.setCpf(this.funcionario.getCpf().replace("-", ""));
-            this.funcionario.setSenha(md5(this.funcionario.getSenha()));
+            this.funcionario.setSenha(Seguranca.md5(this.funcionario.getSenha()));
             this.funcionario = LoginFacade.LoginFuncionario(this.funcionario);
 
             if (this.funcionario.getNome() == null) {
@@ -87,12 +88,6 @@ public class LoginMB implements Serializable {
             e.printStackTrace(System.out);
             SgrUtil.mensagemErroRedirecionamento("Houve um problema ao processar dados de login de funcionário");
         }
-    }
-
-    private static String md5(String senha) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        BigInteger hash = new BigInteger(1, md.digest(senha.getBytes()));
-        return String.format("%32x", hash);
     }
 
     public void logout() {

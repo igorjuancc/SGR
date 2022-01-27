@@ -428,15 +428,14 @@ public class NotificacaoMB implements Serializable {
     }
 
     public void apagarNotificacao(Notificacao notifi) {
-        FacesContext ctx = null;
-        try {
-            ctx = FacesContext.getCurrentInstance();
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        try {            
             notifi.setArquivos(ArquivoFacade.listaArquivoNotificacao(notifi.getId()));
             NotificacaoFacade.apagarNotificacao(notifi);
             iniciaListaNotificacoes();
             ctx.addMessage(null, SgrUtil.emiteMsg("Notificação deletada com sucesso", 1));
         } catch (NotificacaoException e) {
-
+            ctx.addMessage(null, SgrUtil.emiteMsg(e.getMessage(), 2));
         } catch (ArquivoException ex) {
             ex.printStackTrace(System.out);
             if (ctx != null) {
