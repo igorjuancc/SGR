@@ -239,11 +239,12 @@ A documentação completa desse projeto pode ser encontrada no seguinte link: [D
    
 ## Autor
 <a href="https://br.linkedin.com/in/igor-juan-cordeiro-da-costa-2b4a77101">
-<img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/50890812?s=400&u=566e615dd1691c75eabd1dcb4ba749be82d1e86c&v=4" width="100px;" alt="Igor Juan"/>
+<img src="https://avatars.githubusercontent.com/u/50890812?s=400&u=566e615dd1691c75eabd1dcb4ba749be82d1e86c&v=4" width="100px;" alt="Igor Juan" />
+</a>
 <br />
-<sub><b>Igor Juan</b></sub></a> <br />
-Desenvolvido por Igor Juan 🤙 <br />
-Em caso de dúvidas, sugestões e informações, entre em contato. <br />
+<a href="https://br.linkedin.com/in/igor-juan-cordeiro-da-costa-2b4a77101" target="_blank"> >Igor Juan< </a><br />
+Desenvolvido por Igor Juan 🤙<br />
+Em caso de dúvidas, sugestões e informações, entre em contato: <br /> 
 <a href="https://br.linkedin.com/in/igor-juan-cordeiro-da-costa-2b4a77101" target="_blank"> <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" target="_blank"> </a>
 <a href="https://www.facebook.com/igorjuan.cordeirodacosta" target="_blank"> <img src="https://img.shields.io/badge/Facebook-1877F2?style=for-the-badge&logo=facebook&logoColor=white" target="_blank"> </a>
 <a href="https://twitter.com/zig_cwb" target="_blank"> <img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" target="_blank"> </a>
