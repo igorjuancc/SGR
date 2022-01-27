@@ -266,17 +266,14 @@ public class VisitanteFacade {
         }
     }
 
-    public static Boolean verificaVisitaDataVisitante(Visitante visitante) throws DaoException {
+    public static Boolean verificaVisitaDataVisitante(Visitante visitante) {
         try {
             return visitanteDao.verificaVisitaDataVisitante(visitante);
-        } catch (DaoException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } catch (Exception e) {
-            System.out.println("****Problema ao verificar visita por data visitante [Facade]****" + e);
-            e.printStackTrace();
-            throw e;
+        } catch (DaoException ex) {
+            ex.printStackTrace(System.out);
+            String msg = "Houve um problema ao verificar visita por data visitante";
+            SgrUtil.mensagemErroRedirecionamento(msg);
+            return null;
         }
     }
 
