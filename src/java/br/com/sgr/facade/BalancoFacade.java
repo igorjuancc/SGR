@@ -1,6 +1,5 @@
 package br.com.sgr.facade;
 
-import br.com.sgr.exception.DaoException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
