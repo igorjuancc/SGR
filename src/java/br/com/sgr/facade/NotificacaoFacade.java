@@ -43,18 +43,15 @@ public class NotificacaoFacade {
         }
     }
 
-    public static List<Notificacao> listaNotificacaoMorador(int idMorador) throws DaoException {
+    public static List<Notificacao> listaNotificacaoMorador(int idMorador) {
         try {
             return notificacaoDao.listaNotificacaoMorador(idMorador);
         } catch (DaoException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            throw e;
-        } catch (Exception e) {
-            System.out.println("****Problema ao listar notificações de morador [Facade]****" + e);
-            e.printStackTrace();
-            throw e;
-        }
+            e.printStackTrace(System.out);
+            String msg = "Houve um problema ao listar notificações de morador";
+            SgrUtil.mensagemErroRedirecionamento(msg);
+            return null;
+        }   
     }
 
     public static void cadastrarInfracao(Infracao infracao) throws InfracaoException {
