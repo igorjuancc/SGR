@@ -33,12 +33,12 @@ public class JavaMailApp {
                     new javax.mail.Authenticator() {
                 @Override
                 protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication("t3stetool@gmail.com",
-                            "!@#t3stetool");
+                    return new PasswordAuthentication("*****SEU EMAIL CORPORATIVO (GMAIL)*****",
+                            "*****SENHA DO SEU EMAIL*****");
                 }
             });
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("t3stetool@gmail.com"));
+            message.setFrom(new InternetAddress("*****SEU EMAIL CORPORATIVO (GMAIL)*****"));
             //Remetente
 
             //Destinatário(s)

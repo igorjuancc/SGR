@@ -721,12 +721,12 @@ public class MoradorFacade {
 
                 Email novoEmail = new Email();
                 novoEmail.setAssunto("Recuperação de acesso");
-                novoEmail.setMensagem("Nova senha para aceeso ao sistema SGR: " + novaSenha + ". Acesse a página de login com seu email"
+                novoEmail.setMensagem("Nova senha para acesso ao sistema SGR: " + novaSenha + ". Acesse a página de login com seu email"
                         + " e a nova senha para iniciar o processo de recuperação do acesso.");
 
                 List<String> listaEmail = new ArrayList<>();
-                //listaEmail.add(morador.getEmail());
-                listaEmail.add("igor_juan@live.com");
+                listaEmail.add(morador.getEmail());
+                //listaEmail.add("*****SEU EMAIL*****"); //Em caso de utilização em ambientes de testes, defina o seu email para receber a recuperação e comente a linha de cima.
                 novoEmail.setDestinatario(listaEmail);
                 if (!JavaMailApp.enviaEmail(novoEmail)) {
                     //Erro ao enviar email
