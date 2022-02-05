@@ -4,7 +4,7 @@
 
 # Sistema de Gerenciamento Residencial
 <div align="justify">
-O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
+O Sistema de Gerenciamento Residencial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
 mútuo. <br />
 A plataforma disponibiliza controle de acesso de visitantes, cadastro de moradores, agendamento de visitas e utilização de salão de festas, gerenciamento de vagas de garagem, painel de notícias, emissão de boletos de cobrança, troca de mensagens, notificação de multas, controle de finanças e consulta ao balanço, emissão de relatórios gerencias e realização de assembléia online para condomínios.
 </div>
