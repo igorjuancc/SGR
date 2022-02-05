@@ -2,7 +2,7 @@
   <img src="https://github.com/igorjuancc/SGR/blob/main/web/css/logo.png" width="160vw" height="80vh" />
 </div>
 
-# Sistema de Gerenciamento Residêncial
+# Sistema de Gerenciamento Residencial
 <div align="justify">
 O Sistema de Gerenciamento Residêncial - SGR é uma aplicação WEB, desenvolvida para atender as demandas e automatizar rotinas de moradores e funcionários em uma área de convívio 
 mútuo. <br />
